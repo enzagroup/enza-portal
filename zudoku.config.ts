@@ -1,13 +1,13 @@
 import type { ZudokuConfig } from "zudoku";
 
 const config: ZudokuConfig = {
-  basePath: "/enza-openapi-dev-portal",
+  basePath: "/enza-portal",
   page: {
     pageTitle: "APIs",
     logo: {
       src: {
-        light: "/enza-openapi-dev-portal/logos/logo.svg",
-        dark: "/enza-openapi-dev-portal/logos/logo-dark.svg",
+        light: "/enza-portal/logos/logo.svg",
+        dark: "/enza-portal/logos/logo-dark.svg",
       },
       width: "99px",
     },
