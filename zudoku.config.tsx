@@ -2,7 +2,7 @@ import type { ZudokuConfig } from "zudoku";
 
 const config: ZudokuConfig = {
   // Set the base path for GitHub Pages deployment
-  basePath: "",
+  basePath: "/enza-portal",
   
   topNavigation: [
     { id: "docs", label: "Documentation" },
