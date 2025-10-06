@@ -6,9 +6,10 @@
     "scripts": {
       "dev": "zudoku dev",
       "build": "zudoku build",
-      "deploy": "npm run build && gh-pages -d dist",
+      "deploy": "npm run build & gh-pages -d dist",
       "sync-api": "node sync-api.js",
       "prebuild": "npm run sync-api",
+      "predeploy": "npm run build",
       "lint": "eslint"
     },
     "homepage": "https://enzagroup.github.io/enza-openapi-dev-portal/",
