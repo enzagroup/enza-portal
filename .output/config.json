@@ -1,0 +1,16 @@
+{
+  "version": 3,
+  "framework": {
+    "version": "0.32.5"
+  },
+  "routes": [
+    {
+      "src": "/enza-openapi-dev-portal/api",
+      "dest": "/enza-openapi-dev-portal/api/card-management",
+      "status": 301,
+      "headers": {
+        "Location": "/enza-openapi-dev-portal/api/card-management"
+      }
+    }
+  ]
+}
