@@ -22,6 +22,13 @@ const config: ZudokuConfig = {
   metadata: {
     title: "enza Open API Developer Portal",
     description: "This is enza Open API Developer Portal",
+    logo: "https://www.enzagroup.global/wp-content/uploads/2024/06/enza-logo.svg",
+    favicon: "https://www.enzagroup.global/wp-content/uploads/2024/06/cropped-fav-icon-32x32.png",
+    referrer: "no-referrer",
+    keywords: ["enza", "liberating", "payments", "Africa"],
+    authors: ["enza Group - Payments Liberated"],
+    creator: "enza Payments",
+    publisher: "enza Payments",
   },
   
   // Custom branding
