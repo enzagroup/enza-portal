@@ -6,10 +6,7 @@ const config: ZudokuConfig = {
   
   // Redirect root to API page
   redirects: [
-    {
-      from: "/",
-      to: "/api/card-management",
-    },
+    { from: "/", to: "/api/card-management" },
   ],
   
   topNavigation: [
@@ -33,13 +30,13 @@ const config: ZudokuConfig = {
     },
   ],
   metadata: {
-    title: "Enza Portal API Documentation",
-    description: "High quality, interactive API documentation for Enza Group",
+    title: "enza Open API Developer Portal",
+    description: "This is enza Open API Developer Portal",
   },
   
   // Custom branding
   page: {
-    pageTitle: "Enza REST API Documentation",
+    pageTitle: "APIs",
     logo: {
       src: {
         light: "/enza-portal/assets/logo/light.svg",
