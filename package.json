@@ -1,0 +1,26 @@
+{
+  "name": "enza-openapi-dev-portal",
+  "version": "0.1.0",
+  "type": "module",
+  "private": false,
+  "scripts": {
+    "dev": "zudoku dev",
+    "build": "zudoku build",
+    "deploy": "npm run build && gh-pages -d dist",
+    "lint": "eslint"
+  },
+  "homepage": "https://enzagroup.github.io/enza-openapi-dev-portal/",
+  "dependencies": {
+    "lucide-react": "^0.469.0",
+    "react": ">18.0.0",
+    "react-dom": ">18.0.0",
+    "zudoku": "0.32.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "gh-pages": "^6.3.0",
+    "typescript": "^5"
+  }
+}
