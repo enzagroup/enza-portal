@@ -6,10 +6,9 @@
     "scripts": {
       "dev": "zudoku dev",
       "build": "zudoku build",
-      "deploy": "npm run build & gh-pages -d dist",
+      "deploy": "gh-pages -d dist/enza-portal",
       "sync-api": "node sync-api.js",
       "prebuild": "npm run sync-api",
-      "predeploy": "npm run build",
       "lint": "eslint"
     },
     "homepage": "https://enzagroup.github.io/enza-portal/",
