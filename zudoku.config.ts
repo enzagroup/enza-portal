@@ -57,26 +57,10 @@ const config: ZudokuConfig = {
     },
   },
   redirects: [{ from: "/", to: "/api" }],
-/*   topNavigation: [
-    { id: "docs", label: "Documentation" },
-    { id: "api", label: "API Reference" },
-  ],
-  sidebar: {
-    docs: [
-      {
-        type: "category",
-        label: "Overview",
-        items: ["docs/introduction", "docs/example"],
-      },
-    ],
-  }, */
   apis: {
     type: "file",
     input: "./public/apis/generalapi.yaml",
     navigationId: "api",
-  },
-  docs: {
-    files: "/pages/**/*.{md,mdx}",
   },
 };
 
