@@ -33,11 +33,11 @@ jobs:
         run: npm run build
         
       - name: Add .nojekyll file
-        run: echo "" > ./dist/.nojekyll
+        run: echo "" > ./dist/enza-portal/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./dist/enza-portal
           publish_branch: gh-pages
