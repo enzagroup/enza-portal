@@ -5,11 +5,11 @@
   },
   "routes": [
     {
-      "src": "/api",
-      "dest": "/api/card-management",
+      "src": "/enza-portal/api",
+      "dest": "/enza-portal/api/card-management",
       "status": 301,
       "headers": {
-        "Location": "/api/card-management"
+        "Location": "/enza-portal/api/card-management"
       }
     }
   ]
