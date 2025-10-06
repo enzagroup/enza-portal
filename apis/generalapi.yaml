@@ -36,38 +36,11 @@ tags:
     description: "Set and change card PINs securely"
   - name: "Instant Issuing"
     description: "Instant card issuance for new and existing customers"
-  - name: "Getting Started"
-    description: "Quick authentication and base URL info for new integrators"
-
 
 paths:
   ##Customer
   ##CARDS
-
-  /getting-started:
-    get:
-      operationId: gettingStarted
-      tags:
-        - Getting Started
-      summary: Getting Started
-      description: |
-        Use the `x-api-key` header for all requests.
-        
-        Base URL: `https://uat-api.enza.cloud/TX/v1`
-      parameters:
-        - $ref: '#/components/parameters/contentType'
-      responses:
-        '200':
-          description: Info
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "See Documentation → Getting Started for full details."
-
+  
   /instantissuing:
     post:
       operationId: instantIssueCard

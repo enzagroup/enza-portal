@@ -40,6 +40,13 @@ const config: ZudokuConfig = {
   // Custom branding
   page: {
     pageTitle: "Enza REST API Documentation",
+    logo: {
+      src: {
+        light: "/enza-portal/assets/logo/light.svg",
+        dark: "/enza-portal/assets/logo/dark.svg",
+      },
+      width: "120px",
+    },
   },
 };
 
