@@ -10,18 +10,8 @@ const config: ZudokuConfig = {
   ],
   
   topNavigation: [
-    { id: "docs", label: "Documentation" },
     { id: "api", label: "API Reference" },
   ],
-  sidebar: {
-    docs: [
-      {
-        type: "category",
-        label: "Getting Started",
-        items: ["index"],
-      },
-    ],
-  },
   apis: [
     {
       type: "file",
@@ -39,8 +29,8 @@ const config: ZudokuConfig = {
     pageTitle: "APIs",
     logo: {
       src: {
-        light: "/enza-portal/assets/logo/light.svg",
-        dark: "/enza-portal/assets/logo/dark.svg",
+        light: "/enza-portal/assets/logo.svg",
+        dark: "/enza-portal/assets/logo-dark.svg",
       },
       width: "120px",
     },
