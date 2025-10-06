@@ -15,8 +15,7 @@ info:
     
     ## Getting Started
     All API requests require:
-    - `x-api-key` header for authentication
-    - `Content-Type: application/json` for POST requests
+    - `x-api-key` is required for authentication
     
     Base URL: `https://uat-api.enza.cloud/TX/v1`
   version: 2025-02-16T14:26:47Z
@@ -48,7 +47,7 @@ paths:
       operationId: instantIssueCard
       summary: Instant Issue Card
       description: |
-        Instantly issue a card for a new or existing customer with account linking.
+        Instantly issue a card for a new or existing customer.
         
         This endpoint handles two scenarios:
         
@@ -153,11 +152,6 @@ paths:
       summary: Enable or Disable E-Commerce Transactions
       description: |
         Control e-commerce (online) transaction capabilities for a card.
-        
-        **Use Cases:**
-        - Enable e-commerce for online shopping
-        - Disable e-commerce to restrict card to physical POS transactions only
-        - Enhance security by disabling online transactions when not needed
       tags:
         - E-Commerce
       parameters:
@@ -371,12 +365,6 @@ paths:
       summary: Set PIN for Card
       description: |
         Set a new PIN for a card using the encrypted PIN block.
-        
-        **Requirements:**
-        - Card PAN (Primary Account Number)
-        - Encrypted PIN block
-        
-        **Security Note**: The PIN block must be encrypted according to ISO 9564 standards.
       tags:
         - PIN Management
       parameters:
@@ -506,13 +494,6 @@ paths:
       summary: Change PIN for Card
       description: |
         Change a card's PIN by providing both the current and new encrypted PIN blocks.
-        
-        **Requirements:**
-        - Card PAN
-        - Current (old) encrypted PIN block for verification
-        - New encrypted PIN block
-        
-        **Security**: This operation requires the current PIN for authentication before allowing the change.
       tags:
         - PIN Management
       parameters:
@@ -749,12 +730,6 @@ paths:
       description: |
         Retrieve comprehensive card information using the card ID (TokenId).
         
-        **Returns:**
-        - Card ID and reference number
-        - Current card status
-        - Expiration date
-        - PAN (Primary Account Number)
-        - Cardholder name
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -850,10 +825,7 @@ paths:
         Retrieve all cards issued to a customer using their identification document.
         
         **Search By:**
-        - Passport number, OR
-        - National ID number
-        
-        **Returns**: Array of all cards associated with the customer, including card status and details.
+        - Passport number, OR National ID number
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -863,14 +835,17 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - NationalId
+                - Passport
               properties:
                 Passport:
                   type: string
-                  description: Customer's passport number (required if NationalId is not provided)
+                  description: Either NationalId or Passport is required. Customer's passport number
                   example: "76238310075"
                 NationalId:
                   type: string
-                  description: Customer's national ID (required if Passport is not provided)
+                  description: Either NationalId or Passport is required. Customer's national ID
                   example: "1234567890"
             example:
               Passport: "76238310075"
@@ -986,12 +961,6 @@ paths:
         
         **Date Range:** Specify startDate and endDate to filter transactions
         
-        **Returns:**
-        - Transaction ID and timestamp
-        - Transaction amount and currency
-        - Transaction types (Purchase, Withdrawal, Refund, etc.)
-        - Terminal owner and terminal type
-        - Complete transaction details
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -1189,13 +1158,6 @@ paths:
         - **New Customer**: Creates customer profile and issues card
         - **Existing Customer**: Links card to existing customer profile
         
-        **Required Fields:**
-        - FirstName, LastName, BirthDate, Email, MobilePhone, StreetTitle, Zip, NotificationStatus
-        - **Either** NationalId **or** Passport (at least one required)
-        
-        **Optional Fields:**
-        - MiddleName
-        
         **Process Flow:**
         1. **Customer Verification**: Check if customer exists using document ID (NationalId or Passport)
         2. **Customer Creation**: Create new customer profile (if new) OR link to existing customer
@@ -1203,7 +1165,6 @@ paths:
         4. **Card Details**: Retrieve PAN and calculate CVV2
         5. **Notifications**: Set up SMS/Email notifications (if enabled)
         
-        **Returns**: Complete card details including PAN, CVV2, expiry date, and customer information.
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -1499,7 +1460,7 @@ components:
     Customer:
       type: object
       required:
-        [RequestType, AccountNum, CardRefNum, EmbossedName,NationalId, Passport, FirstName, LastName]
+        [RequestType, AccountNum, CardRefNum, EmbossedName, NationalId, Passport, FirstName, LastName]
       properties:
         RequestType:
           type: string
@@ -1535,21 +1496,21 @@ components:
           type: string
           format: date          
           pattern: '^\d{4}-\d{2}-\d{2}$'
-          description: "**Required for new customers.** Date of birth in YYYY-MM-DD format"
+          description: "Date of birth in YYYY-MM-DD format"
           example: '1990-01-01'       
         Email:
           type: string
           format: email
-          description: "**Required for new customers.** Customer's email address"
+          description: "Customer's email address"
         MobilePhone:
           type: string
-          description: "**Required for new customers.** Customer's mobile phone number"
+          description: "Customer's mobile phone number"
         StreetTitle:
           type: string
-          description: "**Required for new customers.** Customer's street address"
+          description: "Customer's street address"
         Zip:
           type: string
-          description: "**Required for new customers.** Customer's postal code"
+          description: "Customer's postal code"
 
     PinSetting:
       type: object
@@ -1645,6 +1606,8 @@ components:
         - StreetTitle
         - Zip
         - NotificationStatus
+        - NationalId
+        - Passport
       properties:
         FirstName:
           type: string
