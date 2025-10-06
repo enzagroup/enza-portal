@@ -72,7 +72,7 @@ const config: ZudokuConfig = {
   }, */
   apis: {
     type: "file",
-    input: "./apis/generalapi.yaml",
+    input: "./public/apis/generalapi.yaml",
     navigationId: "api",
   },
   docs: {
