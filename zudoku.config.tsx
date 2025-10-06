@@ -4,6 +4,14 @@ const config: ZudokuConfig = {
   // Set the base path for GitHub Pages deployment
   basePath: "/enza-portal",
   
+  // Redirect root to API page
+  redirects: [
+    {
+      from: "/",
+      to: "/api/card-management",
+    },
+  ],
+  
   topNavigation: [
     { id: "docs", label: "Documentation" },
     { id: "api", label: "API Reference" },
@@ -27,6 +35,11 @@ const config: ZudokuConfig = {
   metadata: {
     title: "Enza Portal API Documentation",
     description: "High quality, interactive API documentation for Enza Group",
+  },
+  
+  // Custom branding
+  page: {
+    pageTitle: "Enza REST API Documentation",
   },
 };
 

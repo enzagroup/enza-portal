@@ -36,11 +36,37 @@ tags:
     description: "Set and change card PINs securely"
   - name: "Instant Issuing"
     description: "Instant card issuance for new and existing customers"
+  - name: "Getting Started"
+    description: "Quick authentication and base URL info for new integrators"
 
 
 paths:
   ##Customer
   ##CARDS
+
+  /getting-started:
+    get:
+      operationId: gettingStarted
+      tags:
+        - Getting Started
+      summary: Getting Started
+      description: |
+        Use the `x-api-key` header for all requests.
+        
+        Base URL: `https://uat-api.enza.cloud/TX/v1`
+      parameters:
+        - $ref: '#/components/parameters/contentType'
+      responses:
+        '200':
+          description: Info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "See Documentation → Getting Started for full details."
 
   /instantissuing:
     post:
@@ -1226,7 +1252,6 @@ paths:
                         required:
                           - pan
                           - cvv2
-                          - expiryDate
                         properties:
                           pan:
                             type: string
@@ -1236,11 +1261,6 @@ paths:
                             type: string
                             description: Card verification value
                             example: "123"
-                          expiryDate:
-                            type: string
-                            format: date
-                            description: Card expiry date
-                            example: "2025-12-31"
                       notificationEnabled:
                         type: boolean
                         description: Whether notifications are enabled
@@ -1261,7 +1281,6 @@ paths:
                       cardDetails:
                         pan: "1234567890123456"
                         cvv2: "123"
-                        expiryDate: "2025-12-31"
                       notificationEnabled: true
         '400':
           description: 'Bad request – validation failed'
