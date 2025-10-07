@@ -416,6 +416,9 @@ paths:
                   params:
                     type: object
                     properties:
+                      message:
+                        type: string
+                        example: Invalid PIN block format
                       missingProperty:
                         type: string
                         example: Pan
@@ -456,6 +459,12 @@ paths:
                     code: ERR_PIN_SETTING_DECLINED
                     params:
                       message: "Error importing PIN block: Input length not multiple of 8 bytes"
+                invalidPinBlock:
+                  summary: Invalid PIN block format
+                  value:
+                    code: ERR_INVALID_PIN_BLOCK
+                    params:
+                      message: Invalid PIN block format
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
@@ -586,6 +595,12 @@ paths:
                     code: ERR_PIN_CHANGE_DECLINED
                     params:
                       message: "Error importing PIN block: bad PIN block format"
+                invalidPinBlock:
+                  summary: Invalid PIN block format
+                  value:
+                    code: ERR_INVALID_PIN_BLOCK
+                    params:
+                      message: Invalid PIN block format
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
@@ -809,6 +824,19 @@ paths:
                       message: "Missing required field: cardId"
         '401':
           $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: 'Conflict – card not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
