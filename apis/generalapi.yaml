@@ -1167,7 +1167,33 @@ paths:
         '401':
           $ref: '#/components/responses/AuthenticationError'
         '409':
-          $ref: '#/components/responses/ConflictError'  
+          description: 'Conflict – card not found'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_READTOKEN_DECLINED
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card not found
+              examples:
+                conflictExample:
+                  summary: Card not found
+                  value:
+                    code: ERR_READTOKEN_DECLINED
+                    params:
+                      message: Card not found
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
@@ -1405,6 +1431,19 @@ components:
                 code: ERR_AUTH_CONTEXT
                 params:
                   message: Authentication context is missing
+    ConflictError:
+      description: 'Conflict – operation declined'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConflictError'
+          examples:
+            requestDeclined:
+              summary: Operation declined
+              value:
+                code: ERR_REQUEST_DECLINED
+                params:
+                  message: Operation was declined
     
     InternalServerError:
       description: 'An unexpected error occurred'
