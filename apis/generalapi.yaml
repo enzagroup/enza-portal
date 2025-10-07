@@ -451,14 +451,14 @@ paths:
                     properties:
                       message:
                         type: string
-                        example: "Error importing PIN block: Input length not multiple of 8 bytes"
+                        example: "Invalid PIN block format"
               examples:
                 conflictExample:
                   summary: PIN setting declined
                   value:
                     code: ERR_PIN_SETTING_DECLINED
                     params:
-                      message: "Error importing PIN block: Input length not multiple of 8 bytes"
+                      message: "Invalid PIN block format"
                 invalidPinBlock:
                   summary: Invalid PIN block format
                   value:
@@ -576,25 +576,25 @@ paths:
                 required:
                   - code
                   - params
-                properties:
-                  code:
-                    type: string
-                    example: ERR_PIN_CHANGE_DECLINED
-                  params:
-                    type: object
-                    required:
-                      - message
-                    properties:
-                      message:
-                        type: string
-                        example: "Error importing PIN block: bad PIN block format"
+              properties:
+                code:
+                  type: string
+                  example: ERR_PIN_CHANGE_DECLINED
+                params:
+                  type: object
+                  required:
+                    - message
+                  properties:
+                    message:
+                      type: string
+                      example: "Invalid PIN block format"
               examples:
                 conflictExample:
                   summary: PIN change declined
                   value:
                     code: ERR_PIN_CHANGE_DECLINED
                     params:
-                      message: "Error importing PIN block: bad PIN block format"
+                      message: "Invalid PIN block format"
                 invalidPinBlock:
                   summary: Invalid PIN block format
                   value:
@@ -631,7 +631,6 @@ paths:
                     code: ERR_TIMEOUT
                     params:
                       message: Request timeout. Please try again later.
-
   /cards/cardStatusById:
     post:
       operationId: updateCardStatusById
@@ -729,7 +728,7 @@ paths:
                   value:
                     code: ERR_CARD_DECLINED
                     params:
-                      message: Card activation was declined
+                      message: Card not found
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
@@ -1167,6 +1166,8 @@ paths:
                       message: Invalid startDate format
         '401':
           $ref: '#/components/responses/AuthenticationError'
+        '409':
+          $ref: '#/components/responses/ConflictError'  
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
