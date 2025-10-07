@@ -41,7 +41,7 @@ paths:
   ##Customer
   ##CARDS
   
-  /instantissuing:
+  /instant-issuing:
     post:
       operationId: instantIssueCard
       summary: Instant Issue Card
@@ -145,7 +145,7 @@ paths:
                   value:
                     errorMessage: Task timed out after 1.10 seconds
 
-  /cards/tdsenrollement:
+  /cards/tds-enrollment:
     post:
       operationId: updateEcommerceStatus
       summary: Enable or Disable E-Commerce Transactions
@@ -262,7 +262,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
-  /cards/cardstatus:
+  /cards/update-status-by-ref:
     post:
       operationId: updateCardStatusByRefNum
       tags:
@@ -355,7 +355,7 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
 
   ##PIN Management
-  /pin/setting_pin:
+  /pin/set:
     post:
       operationId: setCardPin
       summary: Set PIN for Card
@@ -493,7 +493,7 @@ paths:
                     params:
                       message: Request timeout. Please try again later.
 
-  /pin/changing_pin:
+  /pin/change:
     post:
       operationId: changeCardPin
       summary: Change PIN for Card
@@ -628,7 +628,7 @@ paths:
                     code: ERR_TIMEOUT
                     params:
                       message: Request timeout. Please try again later.
-  /cards/cardStatusById:
+  /cards/update-status-by-id:
     post:
       operationId: updateCardStatusById
       tags:
@@ -832,7 +832,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
-  /customers/listofcards:
+  /customers/list-of-cards:
     post:
       operationId: listCustomerCards
       tags:
