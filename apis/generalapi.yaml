@@ -344,7 +344,7 @@ paths:
                 $ref: '#/components/schemas/ConflictError'
               examples:
                 conflictExample:
-                  summary: 'Card declined – token not found'
+                  summary: 'Card declined – Card not found'
                   value:
                     code: ERR_CARD_DECLINED
                     params:
@@ -635,7 +635,7 @@ paths:
         - Card Management
       summary: Update Card Status by Card ID
       description: |
-        Update card status using the internal card ID (TokenId).
+        Update card status using the card ID.
         
       parameters:
         - $ref: '#/components/parameters/apiKey'
@@ -657,7 +657,7 @@ paths:
                   example: Active
                 CardId:
                   type: string
-                  description: "**Required.** Unique card ID (token ID)"
+                  description: "**Required.** Unique card ID"
                   example: "12345"
                 Reason:
                   type: string
@@ -732,7 +732,7 @@ paths:
         - Card Information
       summary: Get Card Details by Card ID
       description: |
-        Retrieve comprehensive card information using the card ID (TokenId).
+        Retrieve comprehensive card information using the card ID.
         
       parameters:
         - $ref: '#/components/parameters/apiKey'
@@ -740,7 +740,7 @@ paths:
         - name: card_Id
           in: path
           required: true
-          description: Card ID (TokenId) to retrieve details for
+          description: Card ID to retrieve details for
           schema:
             type: string
             example: "12345"
@@ -897,7 +897,7 @@ paths:
                           properties:
                             cardId:
                               type: string
-                              description: Card token ID
+                              description: Card ID
                               example: "12345"
                             maskedPan:
                               type: string
@@ -994,7 +994,7 @@ paths:
               properties:
                 cardId:
                   type: string
-                  description: "**Required.** Card Token ID"
+                  description: "**Required.** Card ID"
                   example: "12345"
                 startDate:
                   type: string
@@ -1264,7 +1264,7 @@ paths:
                         example: "PERS12345"
                       cardId:
                         type: string
-                        description: Card token ID
+                        description: Card ID
                         example: "12345"
                       cardDetails:
                         type: object
