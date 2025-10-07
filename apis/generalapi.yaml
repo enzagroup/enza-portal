@@ -271,9 +271,6 @@ paths:
       description: |
         Update card status using the card reference number.
         
-        **Allowed Statuses:**
-        - **Active**: Enable card for transactions
-        - **Deactivated**: Temporarily deactivate the card
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -640,12 +637,6 @@ paths:
       description: |
         Update card status using the internal card ID (TokenId).
         
-        **Supported Statuses:**
-        - **Active**: Enable card for transactions
-        - **Deactivated**: Temporarily disable the card
-        - **Blocked**: Block card due to security concerns
-        
-        **Optional**: Provide a reason for the status change for audit purposes.
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
