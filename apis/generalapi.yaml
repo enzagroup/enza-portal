@@ -28,6 +28,8 @@ tags:
     description: "Operations for creating, activating, and managing card status"
   - name: "Card Information"
     description: "Retrieve card details and customer card information"
+  - name: "Customer Management"
+    description: "Retrieve and manage customer information"
   - name: "Transactions"
     description: "View and manage card transaction history"
   - name: "E-Commerce"
@@ -41,6 +43,190 @@ paths:
   ##Customer
   ##CARDS
   
+  /customers/details:
+    post:
+      operationId: getCustomerDetails
+      summary: Get Customer Details
+      description: |
+        Retrieve comprehensive customer details from TX by National ID or Passport.
+        
+        **Search By:**
+        - National ID number, OR
+        - Passport number
+        
+        **Process Flow:**
+        1. **SelectSubjects** - Finds the customer by document ID
+        2. **ReadSubject** - Retrieves full customer details using the SubjectRid
+        
+      tags:
+        - Customer Management
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                NationalId:
+                  type: string
+                  description: Either NationalId or Passport is required. Customer's national ID
+                  example: "NAT123456"
+                Passport:
+                  type: string
+                  description: Either NationalId or Passport is required. Customer's passport number
+                  example: "passport03"
+            example:
+              Passport: "passport03"
+      responses:
+        '200':
+          description: Customer details successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CUSTOMER_DETAILS_RETRIEVED
+                  params:
+                    type: object
+                    required:
+                      - SubjectRid
+                      - FirstName
+                      - LastName
+                      - BirthDate
+                      - Status
+                      - Email
+                      - MobilePhone
+                    properties:
+                      SubjectRid:
+                        type: string
+                        description: Customer ID
+                        example: "2763"
+                      FirstName:
+                        type: string
+                        description: Customer first name
+                        example: "omnia"
+                      MiddleName:
+                        type: string
+                        description: Customer middle name
+                        example: "API"
+                      LastName:
+                        type: string
+                        description: Customer last name
+                        example: "Testing"
+                      BirthDate:
+                        type: string
+                        format: date-time
+                        description: Date of birth
+                        example: "1989-12-31T19:00:00.000"
+                      Status:
+                        type: string
+                        description: Customer status (N=Normal)
+                        example: "N"
+                      Email:
+                        type: string
+                        format: email
+                        description: Primary email address
+                        example: "a@a.com"
+                      MobilePhone:
+                        type: string
+                        description: Primary mobile phone
+                        example: "01158900152"
+                      HomeAddress:
+                        type: object
+                        properties:
+                          StreetTitle:
+                            type: string
+                            description: Street address
+                            example: "asd"
+                          Zip:
+                            type: string
+                            description: Postal code
+                            example: "11728"
+                      Documents:
+                        type: array
+                        description: Array of customer documents
+                        items:
+                          type: object
+                          properties:
+                            DocumentId:
+                              type: string
+                              description: Document ID
+                              example: "1219"
+                            TypeRid:
+                              type: string
+                              description: Document type reference ID
+                              example: "1234"
+                            Rid:
+                              type: string
+                              description: Document reference ID
+                              example: "passport03"
+                            IsActive:
+                              type: boolean
+                              description: Document active status
+                              example: true
+              examples:
+                successResponse:
+                  summary: Customer details retrieved successfully
+                  value:
+                    code: SUCCESS_CUSTOMER_DETAILS_RETRIEVED
+                    params:
+                      SubjectRid: "2763"
+                      FirstName: "omnia"
+                      MiddleName: "API"
+                      LastName: "Testing"
+                      BirthDate: "1989-12-31T19:00:00.000"
+                      Status: "N"
+                      Email: "a@a.com"
+                      MobilePhone: "01158900152"
+                      HomeAddress:
+                        StreetTitle: "asd"
+                        Zip: "11728"
+                      Documents:
+                        - DocumentId: "1219"
+                          TypeRid: "1234"
+                          Rid: "passport03"
+                          IsActive: true
+        '400':
+          description: 'Bad request – validation failed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                badRequestExample:
+                  summary: Missing identification document
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "One of the following fields is required: NationalId, Passport"
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: 'Customer not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                customerNotFound:
+                  summary: Customer not found
+                  value:
+                    code: ERR_REQUEST_DECLINED
+                    params:
+                      message: Customer not found
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
   /instant-issuing:
     post:
       operationId: instantIssueCard
@@ -1195,9 +1381,9 @@ paths:
       operationId: createCardWithOnboarding
       tags:
         - Card Management
-      summary: Create Card
+      summary: Create Card (Without Activation)
       description: |
-        Complete end-to-end card issuance with customer onboarding.
+        Complete end-to-end card issuance with customer onboarding (card remains inactive).
         
         **Supports both New and Existing Customers:**
         - **New Customer**: Creates customer profile and issues card
@@ -1206,9 +1392,10 @@ paths:
         **Process Flow:**
         1. **Customer Verification**: Check if customer exists using document ID (NationalId or Passport)
         2. **Customer Creation**: Create new customer profile (if new) OR link to existing customer
-        3. **Card Activation**: Automatically activate the card (status = Active)
-        4. **Card Details**: Retrieve PAN and calculate CVV2
-        5. **Notifications**: Set up SMS/Email notifications (if enabled)
+        3. **Card Issuance**: Issue the card (status remains inactive)
+        4. **Notifications**: Set up SMS/Email notifications (if enabled)
+        
+        **Note:** Card is NOT automatically activated. Use separate activation endpoint if needed.
         
       parameters:
         - $ref: '#/components/parameters/apiKey'
@@ -1291,6 +1478,194 @@ paths:
               examples:
                 successResponse:
                   summary: Card created successfully
+                  value:
+                    code: SUCCESS_REQUEST_PROCESSED
+                    params:
+                      customerType: New
+                      personId: "PERS12345"
+                      cardId: "12345"
+                      cardDetails:
+                        pan: "1234567890123456"
+                        cvv2: "123"
+                      notificationEnabled: true
+        '400':
+          description: 'Bad request – validation failed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                badRequestExample:
+                  summary: Validation failed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid Email format
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: 'Conflict – operation declined'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                requestDeclined:
+                  summary: New customer request declined
+                  value:
+                    code: ERR_REQUEST_DECLINED
+                    params:
+                      message: New customer request declined
+                existingGroupDeclined:
+                  summary: Existing customer group declined
+                  value:
+                    code: ERR_EXISTING_GROUP_DECLINED
+                    params:
+                      message: Existing customer group declined
+                activateCardDeclined:
+                  summary: Card activation declined
+                  value:
+                    code: ERR_ACTIVATE_CARD_DECLINED
+                    params:
+                      message: Card activation declined
+                notificationDeclined:
+                  summary: Notification contract declined
+                  value:
+                    code: ERR_NOTIFICATION_DECLINED
+                    params:
+                      message: Notification contract declined
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_INTERNAL_SERVER_ERROR
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: An unexpected error occurred. Please try again later.
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred. Please try again later.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
+  /cards/create-card-with-activation:
+    post:
+      operationId: createCardWithActivation
+      tags:
+        - Card Management
+      summary: Create Card with Activation
+      description: |
+        Complete end-to-end card issuance with customer onboarding and automatic activation.
+        
+        **Supports both New and Existing Customers:**
+        - **New Customer**: Creates customer profile and issues card
+        - **Existing Customer**: Links card to existing customer profile
+        
+        **Process Flow:**
+        1. **Customer Verification**: Check if customer exists using document ID (NationalId or Passport)
+        2. **Customer Creation**: Create new customer profile (if new) OR link to existing customer
+        3. **Card Activation**: Automatically activate the card (status = Active)
+        4. **Card Details**: Retrieve PAN and calculate CVV2
+        5. **Notifications**: Set up SMS/Email notifications (if enabled)
+        
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCardStandard'
+            example:
+              FirstName: "John"
+              LastName: "Doe"
+              MiddleName: "William"
+              BirthDate: "1990-01-15"
+              NationalId: "1234567890"
+              Email: "john.doe@example.com"
+              MobilePhone: "1234567890"
+              StreetTitle: "123 Main Street"
+              Zip: "12345"
+              NotificationStatus: "enabled"
+      responses:
+        '200':
+          description: Card successfully created and activated
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_REQUEST_PROCESSED
+                  params:
+                    type: object
+                    required:
+                      - customerType
+                      - personId
+                      - cardId
+                      - cardDetails
+                      - notificationEnabled
+                    properties:
+                      customerType:
+                        type: string
+                        enum: [New, Existing]
+                        description: Whether customer is new or existing
+                        example: New
+                      personId:
+                        type: string
+                        description: Customer person ID
+                        example: "PERS12345"
+                      cardId:
+                        type: string
+                        description: Card ID
+                        example: "12345"
+                      cardDetails:
+                        type: object
+                        required:
+                          - pan
+                          - cvv2
+                        properties:
+                          pan:
+                            type: string
+                            description: Primary Account Number
+                            example: "1234567890123456"
+                          cvv2:
+                            type: string
+                            description: Card verification value
+                            example: "123"
+                      notificationEnabled:
+                        type: boolean
+                        description: Whether notifications are enabled
+                        example: true
+                      notificationStatus:
+                        type: string
+                        description: Notification status message (only if already existed)
+                        example: "Already Enabled"
+              examples:
+                successResponse:
+                  summary: Card created and activated successfully
                   value:
                     code: SUCCESS_REQUEST_PROCESSED
                     params:

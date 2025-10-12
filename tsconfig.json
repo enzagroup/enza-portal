@@ -27,10 +27,9 @@
     }
   },
   "include": [
+    "src",
     "zudoku.config.tsx",
-    "docs/**/*.ts",
-    "docs/**/*.tsx",
-    "docs/**/*.mdx"
+    "docs"
   ],
   "exclude": [
     "node_modules",
