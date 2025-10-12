@@ -56,6 +56,7 @@ paths:
         
       tags:
         - Customer Management
+      parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
       requestBody:
