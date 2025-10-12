@@ -48,15 +48,11 @@ paths:
       operationId: getCustomerDetails
       summary: Get Customer Details
       description: |
-        Retrieve comprehensive customer details from TX by National ID or Passport.
+        Retrieve comprehensive customer details by National ID or Passport.
         
         **Search By:**
         - National ID number, OR
         - Passport number
-        
-        **Process Flow:**
-        1. **SelectSubjects** - Finds the customer by document ID
-        2. **ReadSubject** - Retrieves full customer details using the SubjectRid
         
       tags:
         - Customer Management
@@ -67,8 +63,10 @@ paths:
         required: true
         content:
           application/json:
-            schema:
               type: object
+              required:
+                - NationalId
+                - Passport
               properties:
                 NationalId:
                   type: string
@@ -178,7 +176,6 @@ paths:
                   value:
                     code: SUCCESS_CUSTOMER_DETAILS_RETRIEVED
                     params:
-                      SubjectRid: "2763"
                       FirstName: "omnia"
                       MiddleName: "API"
                       LastName: "Testing"
@@ -189,11 +186,6 @@ paths:
                       HomeAddress:
                         StreetTitle: "asd"
                         Zip: "11728"
-                      Documents:
-                        - DocumentId: "1219"
-                          TypeRid: "1234"
-                          Rid: "passport03"
-                          IsActive: true
         '400':
           description: 'Bad request – validation failed'
           content:
@@ -206,7 +198,7 @@ paths:
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
-                      message: "One of the following fields is required: NationalId, Passport"
+                      message: "Both NationalId and Passport are required"
         '401':
           $ref: '#/components/responses/AuthenticationError'
         '409':
@@ -1381,7 +1373,7 @@ paths:
       operationId: createCardWithOnboarding
       tags:
         - Card Management
-      summary: Create Card (Without Activation)
+      summary: Create Card
       description: |
         Complete end-to-end card issuance with customer onboarding (card remains inactive).
         
