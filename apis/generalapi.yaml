@@ -66,19 +66,19 @@ paths:
             schema:
               type: object
               required:
-                - NationalId
-                - Passport
+                - nationalId
+                - passport
               properties:
-                NationalId:
+                nationalId:
                   type: string
-                  description: Either NationalId or Passport is required. Customer's national ID
+                  description: Either nationalId or passport is required. Customer's national ID
                   example: "NAT123456"
-                Passport:
+                passport:
                   type: string
-                  description: Either NationalId or Passport is required. Customer's passport number
+                  description: Either nationalId or passport is required. Customer's passport number
                   example: "passport03"
             example:
-              Passport: "passport03"
+              passport: "passport03"
       responses:
         '200':
           description: Customer details successfully retrieved
@@ -96,51 +96,51 @@ paths:
                   params:
                     type: object
                     required:
-                      - FirstName
-                      - LastName
-                      - BirthDate
-                      - Status
-                      - Email
-                      - MobilePhone
+                      - firstName
+                      - lastName
+                      - birthDate
+                      - status
+                      - email
+                      - mobilePhone
                     properties:
-                      FirstName:
+                      firstName:
                         type: string
                         description: Customer first name
                         example: "omnia"
-                      MiddleName:
+                      middleName:
                         type: string
                         description: Customer middle name
                         example: "API"
-                      LastName:
+                      lastName:
                         type: string
                         description: Customer last name
                         example: "Testing"
-                      BirthDate:
+                      birthDate:
                         type: string
                         format: date-time
                         description: Date of birth
                         example: "1989-12-31T19:00:00.000"
-                      Status:
+                      status:
                         type: string
                         description: Customer status (N=Normal)
                         example: "N"
-                      Email:
+                      email:
                         type: string
                         format: email
                         description: Primary email address
                         example: "a@a.com"
-                      MobilePhone:
+                      mobilePhone:
                         type: string
                         description: Primary mobile phone
                         example: "01158900152"
-                      HomeAddress:
+                      homeAddress:
                         type: object
                         properties:
-                          StreetTitle:
+                          streetTitle:
                             type: string
                             description: Street address
                             example: "asd"
-                          Zip:
+                          zip:
                             type: string
                             description: Postal code
                             example: "11728"
@@ -150,16 +150,16 @@ paths:
                   value:
                     code: SUCCESS_CUSTOMER_DETAILS_RETRIEVED
                     params:
-                      FirstName: "omnia"
-                      MiddleName: "API"
-                      LastName: "Testing"
-                      BirthDate: "1989-12-31T19:00:00.000"
-                      Status: "N"
-                      Email: "a@a.com"
-                      MobilePhone: "01158900152"
-                      HomeAddress:
-                        StreetTitle: "asd"
-                        Zip: "11728"
+                      firstName: "omnia"
+                      middleName: "API"
+                      lastName: "Testing"
+                      birthDate: "1989-12-31T19:00:00.000"
+                      status: "N"
+                      email: "a@a.com"
+                      mobilePhone: "01158900152"
+                      homeAddress:
+                        streetTitle: "asd"
+                        zip: "11728"
         '400':
           description: 'Bad request – validation failed'
           content:
@@ -172,7 +172,7 @@ paths:
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
-                      message: "Both NationalId and Passport are required"
+                      message: "Both nationalId and passport are required"
         '401':
           $ref: '#/components/responses/AuthenticationError'
         '409':
@@ -220,18 +220,18 @@ paths:
             schema:
               $ref: '#/components/schemas/Customer'
             example:
-              RequestType: NewAccountNewCustomer
-              LastName: EEE
-              FirstName: Cust02
-              BirthDate: 1990-01-20
-              Passport: "76238310075"
-              Email: test@test.com
-              MobilePhone: '9991234567'
-              StreetTitle: Baker's Str
-              Zip: WC1X 9NX
-              AccountNum: AAABBB150573
-              CardRefNum: '000515'
-              EmbossedName: Cust02 New
+              requestType: NewAccountNewCustomer
+              lastName: EEE
+              firstName: Cust02
+              birthDate: 1990-01-20
+              passport: "76238310075"
+              email: test@test.com
+              mobilePhone: '9991234567'
+              streetTitle: Baker's Str
+              zip: WC1X 9NX
+              accountNum: AAABBB150573
+              cardRefNum: '000515'
+              embossedName: Cust02 New
 
       responses:
         '200':
@@ -260,7 +260,7 @@ paths:
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
-                      missingProperty: RequestType
+                      missingProperty: requestType
         '401':
           $ref: '#/components/responses/AuthenticationError'
         '409':
@@ -314,14 +314,15 @@ paths:
           application/json:
             schema:
               type: object
-              required: [ECstatusEnable, CardRefNum]
+              required: [ecStatusEnable, cardRefNum]
               properties:
-                CardRefNum:
+                cardRefNum:
                   type: string
                   description: "**Required.** Card reference number"
-                ECstatusEnable:
+                ecStatusEnable:
                   type: string
                   description: '**Required.** EC status: `"1"` = Enrolled, `"0"` = Not enrolled'
+
       responses:
         '200':
           description: Successful response
@@ -371,14 +372,14 @@ paths:
                     properties:
                       missingProperty:
                         type: string
-                        example: CardRefNum
+                        example: cardRefNum
               examples:
                 badRequestExample:
                   summary: Missing required field
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
-                      missingProperty: CardRefNum
+                      missingProperty: cardRefNum
         '401':
           $ref: '#/components/responses/AuthenticationError'
         '409':
@@ -422,7 +423,7 @@ paths:
       summary: Update Card Status by Reference Number
       description: |
         Update card status using the card reference number.
-        
+
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -433,17 +434,18 @@ paths:
             schema:
               type: object
               required:
-                - CardStatus
-                - CardRefNum
+                - cardStatus
+                - cardRefNum
               properties:
-                CardStatus:
+                cardStatus:
                   type: string
                   description: "**Required.** Allowed values ⇒ **Active** | **Deactivated**"
                   enum: [Active, Deactivated]   # ← this drives the drop-down
                   example: Active
-                CardRefNum:
+                cardRefNum:
                   type: string
                   description: "**Required.** Unique card reference number"
+
       responses:
         '200':
           description: Successful response
@@ -485,7 +487,7 @@ paths:
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
-                      message: "Missing required field: CardRefNum"
+                      message: "Missing required field: cardRefNum"
         '401':
           $ref: '#/components/responses/AuthenticationError'
         '409':
@@ -525,8 +527,9 @@ paths:
             schema:
               $ref: '#/components/schemas/PinSetting'
             example:
-              Pan: "1234567890123456"
-              PinBlock: "ABC123DEF456"
+              pan: "1234567890123456"
+              pinBlock: "ABC123DEF456"
+
       responses:
         '200':
           description: PIN successfully set
@@ -570,14 +573,14 @@ paths:
                         example: Invalid PIN block format
                       missingProperty:
                         type: string
-                        example: Pan
+                        example: pan
               examples:
                 badRequestExample:
                   summary: Missing required field
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
-                      missingProperty: Pan
+                      missingProperty: pan
         '401':
           $ref: '#/components/responses/AuthenticationError'
         '409':
@@ -663,9 +666,10 @@ paths:
             schema:
               $ref: '#/components/schemas/PinChanging'
             example:
-              Pan: "1234567890123456"
+              pan: "1234567890123456"
               oldPinBlock: "OLD123PIN456"
               newPinBlock: "NEW789PIN012"
+
       responses:
         '200':
           description: PIN successfully changed
@@ -788,7 +792,7 @@ paths:
       summary: Update Card Status by Card ID
       description: |
         Update card status using the card ID.
-        
+
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -799,22 +803,23 @@ paths:
             schema:
               type: object
               required:
-                - CardStatus
-                - CardId
+                - cardStatus
+                - cardId
               properties:
-                CardStatus:
+                cardStatus:
                   type: string
                   description: "**Required.** Allowed values ⇒ **Active** | **Deactivated** | **Blocked**"
                   enum: [Active, Deactivated, Blocked]
                   example: Active
-                CardId:
+                cardId:
                   type: string
-                  description: "**Required.** Unique card ID"
+                  description: "**Required." Unique card ID"
                   example: "12345"
-                Reason:
+                reason:
                   type: string
                   description: Optional reason for status change
                   example: "Customer request"
+
       responses:
         '200':
           description: Card status successfully changed
@@ -856,7 +861,7 @@ paths:
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
-                      message: "Missing required field: CardId"
+                      message: "Missing required field: cardId"
         '401':
           $ref: '#/components/responses/AuthenticationError'
         '409':
@@ -885,7 +890,7 @@ paths:
       summary: Get Card Details by Card ID
       description: |
         Retrieve comprehensive card information using the card ID.
-        
+
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -896,6 +901,7 @@ paths:
           schema:
             type: string
             example: "12345"
+
       responses:
         '200':
           description: Card details successfully retrieved
@@ -992,7 +998,7 @@ paths:
       summary: List All Customer Cards
       description: |
         Retrieve all cards issued to a customer using their identification document.
-        
+
         **Search By:**
         - Passport number, OR National ID number
       parameters:
@@ -1005,19 +1011,20 @@ paths:
             schema:
               type: object
               required:
-                - NationalId
-                - Passport
+                - nationalId
+                - passport
               properties:
-                Passport:
+                passport:
                   type: string
-                  description: Either NationalId or Passport is required. Customer's passport number
+                  description: Either nationalId or passport is required. Customer's passport number
                   example: "76238310075"
-                NationalId:
+                nationalId:
                   type: string
-                  description: Either NationalId or Passport is required. Customer's national ID
+                  description: Either nationalId or passport is required. Customer's national ID
                   example: "1234567890"
             example:
-              Passport: "76238310075"
+              passport: "76238310075"
+
       responses:
         '200':
           description: Cards successfully retrieved
@@ -1098,7 +1105,7 @@ paths:
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
-                      message: Either Passport or NationalId is required
+                      message: Either passport or nationalId is required
         '401':
           $ref: '#/components/responses/AuthenticationError'
         '409':
@@ -1832,7 +1839,7 @@ components:
           properties:
             missingProperty:
               type: string
-              example: RequestType
+              example: requestType
 
     CardAlreadyAssigned:
       type: object
@@ -1852,69 +1859,69 @@ components:
     Customer:
       type: object
       required:
-        [RequestType, AccountNum, CardRefNum, EmbossedName, NationalId, Passport, FirstName, LastName]
+        [requestType, accountNum, cardRefNum, embossedName, nationalId, passport, firstName, lastName]
       properties:
-        RequestType:
+        requestType:
           type: string
           description: |
             **Required.** Request type:
             - `NewAccountNewCustomer`: New customer  
             - `NewAccountExistingCustomer`: Existing customer
-        CardRefNum:
+        cardRefNum:
           type: string
           description: "**Required.** Card reference number"
-        EmbossedName:
+        embossedName:
           type: string
           description: "**Required.** Name to be embossed on the card"
-        AccountNum:
+        accountNum:
           type: string
           description: "**Required.** Account number to link to the card"
-        FirstName:
+        firstName:
           type: string
           description: "**Required for new customers.** Customer's first name"
-        MiddleName:
+        middleName:
           type: string
           description: Optional. Customer's middle name
-        LastName:
+        lastName:
           type: string
           description: "**Required for new customers.** Customer's last name"
-        NationalId:
+        nationalId:
           type: string
-          description: Either NationalId or Passport is required. Customer's national ID
-        Passport:
+          description: Either nationalId or passport is required. Customer's national ID
+        passport:
           type: string
-          description: Either NationalId or Passport is required. Customer's passport number
-        BirthDate:
+          description: Either nationalId or passport is required. Customer's passport number
+        birthDate:
           type: string
           format: date          
           pattern: '^\d{4}-\d{2}-\d{2}$'
           description: "Date of birth in YYYY-MM-DD format"
           example: '1990-01-01'       
-        Email:
+        email:
           type: string
           format: email
           description: "Customer's email address"
-        MobilePhone:
+        mobilePhone:
           type: string
           description: "Customer's mobile phone number"
-        StreetTitle:
+        streetTitle:
           type: string
           description: "Customer's street address"
-        Zip:
+        zip:
           type: string
           description: "Customer's postal code"
 
     PinSetting:
       type: object
       required:
-        - Pan
-        - PinBlock
+        - pan
+        - pinBlock
       properties:
-        Pan:
+        pan:
           type: string
           description: "**Required.** The Primary Account Number (PAN) of the card"
           example: "1234567890123456"
-        PinBlock:
+        pinBlock:
           type: string
           description: "**Required.** The encrypted PIN block containing the new PIN"
           example: "ABC123DEF456"
@@ -1922,11 +1929,11 @@ components:
     PinChanging:
       type: object
       required:
-        - Pan
+        - pan
         - oldPinBlock
         - newPinBlock
       properties:
-        Pan:
+        pan:
           type: string
           description: "**Required.** The Primary Account Number (PAN) of the card"
           example: "1234567890123456"
@@ -1955,7 +1962,7 @@ components:
             missingProperty:
               type: string
               description: The name of the missing or invalid property
-              example: CardRefNum
+              example: cardRefNum
     
     ConflictError:
       type: object
@@ -1990,61 +1997,61 @@ components:
     CreateCardStandard:
       type: object
       required:
-        - FirstName
-        - LastName
-        - BirthDate
-        - Email
-        - MobilePhone
-        - StreetTitle
-        - Zip
-        - NotificationStatus
-        - NationalId
-        - Passport
+        - firstName
+        - lastName
+        - birthDate
+        - email
+        - mobilePhone
+        - streetTitle
+        - zip
+        - notificationStatus
+        - nationalId
+        - passport
       properties:
-        FirstName:
+        firstName:
           type: string
           description: "**Required.** Customer's first name"
           example: "John"
-        LastName:
+        lastName:
           type: string
           description: "**Required.** Customer's last name"
           example: "Doe"
-        MiddleName:
+        middleName:
           type: string
           description: "Optional. Customer's middle name"
           example: "William"
-        BirthDate:
+        birthDate:
           type: string
           format: date
           pattern: '^\d{4}-\d{2}-\d{2}$'
           description: "**Required.** Birth date in YYYY-MM-DD format"
           example: "1990-01-15"
-        NationalId:
+        nationalId:
           type: string
-          description: "Either NationalId or Passport is required. Customer's national ID"
+          description: "Either nationalId or passport is required. Customer's national ID"
           example: "1234567890"
-        Passport:
+        passport:
           type: string
-          description: "Either NationalId or Passport is required. Customer's passport number"
+          description: "Either nationalId or passport is required. Customer's passport number"
           example: "AB1234567"
-        Email:
+        email:
           type: string
           format: email
           description: "**Required.** Customer's email address"
           example: "john.doe@example.com"
-        MobilePhone:
+        mobilePhone:
           type: string
           description: "**Required.** Customer's mobile phone number"
           example: "1234567890"
-        StreetTitle:
+        streetTitle:
           type: string
           description: "**Required.** Customer's street address"
           example: "123 Main Street"
-        Zip:
+        zip:
           type: string
           description: "**Required.** Customer's postal code"
           example: "12345"
-        NotificationStatus:
+        notificationStatus:
           type: string
           enum: [enabled, disabled]
           description: "**Required.** Notification preference - enabled or disabled"
