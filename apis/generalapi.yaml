@@ -813,7 +813,7 @@ paths:
                   example: Active
                 cardId:
                   type: string
-                  description: "**Required." Unique card ID"
+                  description: "**Required.** Unique card ID"
                   example: "12345"
                 reason:
                   type: string
