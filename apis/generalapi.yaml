@@ -648,6 +648,130 @@ paths:
                     params:
                       message: Request timeout. Please try again later.
 
+  /pin/retrieve-block:
+    post:
+      operationId: retrievePinBlock
+      summary: Retrieve PIN Block for Card
+      description: |
+        Retrieve the encrypted PIN block for a card.
+        
+        **Note:** If the PIN block is not stored or restricted by policy, an error will be returned.
+      tags:
+        - PIN Management
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cardId
+              properties:
+                cardId:
+                  type: string
+                  description: "**Required.** Card ID (Token ID)"
+                  example: "12345"
+            example:
+              cardId: "12345"
+      responses:
+        '200':
+          description: PIN block successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_PIN_BLOCK_RETRIEVED
+                  params:
+                    type: object
+                    required:
+                      - cardId
+                      - pinBlock
+                    properties:
+                      cardId:
+                        type: string
+                        description: Card ID
+                        example: "12345"
+                      pinBlock:
+                        type: string
+                        description: Encrypted PIN block
+                        example: "ABC123DEF456"
+              examples:
+                successResponse:
+                  summary: PIN block retrieved successfully
+                  value:
+                    code: SUCCESS_PIN_BLOCK_RETRIEVED
+                    params:
+                      cardId: "12345"
+                      pinBlock: "ABC123DEF456"
+        '400':
+          description: 'Bad request – validation failed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                badRequestExample:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Missing required field: cardId
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: 'Conflict – request declined'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_PIN_BLOCK_NOT_AVAILABLE
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: PIN block is not available
+              examples:
+                pinBlockNotAvailable:
+                  summary: PIN block not available
+                  value:
+                    code: ERR_PIN_BLOCK_NOT_AVAILABLE
+                    params:
+                      message: "PIN block is not available. Either the value isn't stored or your response is restricted by policy"
+                pinBlockNotFound:
+                  summary: PIN block not found
+                  value:
+                    code: ERR_PIN_BLOCK_NOT_FOUND
+                    params:
+                      message: PIN block not found for this card
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card #12345 not found
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
   /pin/change:
     post:
       operationId: changeCardPin
