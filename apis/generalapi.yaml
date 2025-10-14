@@ -648,7 +648,7 @@ paths:
                     params:
                       message: Request timeout. Please try again later.
 
-  /pin/retrieve-block:
+  /cards/retrieve-pin-block:
     post:
       operationId: retrievePinBlock
       summary: Retrieve PIN Block for Card
@@ -657,7 +657,7 @@ paths:
         
         **Note:** If the PIN block is not stored or restricted by policy, an error will be returned.
       tags:
-        - PIN Management
+        - Card Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -1244,6 +1244,109 @@ paths:
                     code: ERR_CUSTOMER_NOT_FOUND
                     params:
                       message: Customer doesn't exist
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
+  /cards/delete-card:
+    post:
+      operationId: deleteCard
+      summary: Delete Card
+      description: |
+        Permanently delete a card using either its card ID or external RID.
+        
+        **Warning:** This operation is irreversible. The card will be permanently removed from the system.
+      tags:
+        - Card Management
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: "Either cardId or extRid is required. Card ID to delete"
+                  example: "3255"
+                extRid:
+                  type: string
+                  description: "Either cardId or extRid is required. External RID to delete card"
+                  example: "TestVenCorporate1"
+            examples:
+              deleteByCardId:
+                summary: Delete by Card ID
+                value:
+                  cardId: "3255"
+              deleteByExtRid:
+                summary: Delete by External RID
+                value:
+                  extRid: "TestVenCorporate1"
+      responses:
+        '200':
+          description: Card successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CARD_DELETED
+              examples:
+                successResponse:
+                  summary: Card deleted successfully
+                  value:
+                    code: SUCCESS_CARD_DELETED
+        '400':
+          description: 'Bad request – validation failed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                badRequestExample:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "One of the following fields is required: cardId, extRid"
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: 'Conflict – card not found or cannot be deleted'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CARD_NOT_FOUND
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card not found
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card #3255 not found
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
