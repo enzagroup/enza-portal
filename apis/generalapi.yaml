@@ -1263,25 +1263,20 @@ paths:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
       requestBody:
-        required: true
+        required: [cardId, extRid]
         content:
           application/json:
             schema:
-              oneOf:
-                - type: object
-                  required: [cardId]
-                  properties:
-                    cardId:
-                      type: string
-                      description: "Card ID to delete"
-                      example: "3255"
-                - type: object
-                  required: [extRid]
-                  properties:
-                    extRid:
-                      type: string
-                      description: "External RID to delete card"
-                      example: "TestVenCorporate1"
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: "Either cardId or extRid is required. Card ID to delete"
+                  example: "3255"
+                extRid:
+                  type: string
+                  description: "Either cardId or extRid is required. External RID to delete card"
+                  example: "TestVenCorporate1"
             examples:
               deleteByCardId:
                 summary: Delete by Card ID
