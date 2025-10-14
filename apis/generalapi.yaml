@@ -672,7 +672,7 @@ paths:
               properties:
                 cardId:
                   type: string
-                  description: "**Required.** Card ID (Token ID)"
+                  description: "**Required.** Card ID"
                   example: "12345"
             example:
               cardId: "12345"
