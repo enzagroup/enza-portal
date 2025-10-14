@@ -691,7 +691,6 @@ paths:
                   summary: PIN Changed Successfully
                   value:
                     code: SUCCESS_PIN_CHANGED
-                    params: {}
         '400':
           description: 'Bad request – validation failed'
           content:
@@ -1167,10 +1166,17 @@ paths:
                   pattern: '^\d{4}-\d{2}-\d{2}$'
                   description: "**Required.** End date in YYYY-MM-DD format"
                   example: "2025-01-31"
+                transactionCount:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  description: "Optional. Maximum number of transactions to return (1-100)"
+                  example: 2
             example:
               cardId: "12345"
               startDate: "2025-01-01"
               endDate: "2025-01-31"
+              transactionCount: 2
       responses:
         '200':
           description: Transactions successfully retrieved
@@ -1380,16 +1386,16 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateCardStandard'
             example:
-              FirstName: "John"
-              LastName: "Doe"
-              MiddleName: "William"
-              BirthDate: "1990-01-15"
-              NationalId: "1234567890"
-              Email: "john.doe@example.com"
-              MobilePhone: "1234567890"
-              StreetTitle: "123 Main Street"
-              Zip: "12345"
-              NotificationStatus: "enabled"
+              firstName: "John"
+              lastName: "Doe"
+              middleName: "William"
+              birthDate: "1990-01-15"
+              nationalId: "1234567890"
+              email: "john.doe@example.com"
+              mobilePhone: "1234567890"
+              streetTitle: "123 Main Street"
+              zip: "12345"
+              notificationStatus: "enabled"
       responses:
         '200':
           description: Card successfully created
@@ -1568,16 +1574,16 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateCardStandard'
             example:
-              FirstName: "John"
-              LastName: "Doe"
-              MiddleName: "William"
-              BirthDate: "1990-01-15"
-              NationalId: "1234567890"
-              Email: "john.doe@example.com"
-              MobilePhone: "1234567890"
-              StreetTitle: "123 Main Street"
-              Zip: "12345"
-              NotificationStatus: "enabled"
+              firstName: "John"
+              lastName: "Doe"
+              middleName: "William"
+              birthDate: "1990-01-15"
+              nationalId: "1234567890"
+              email: "john.doe@example.com"
+              mobilePhone: "1234567890"
+              streetTitle: "123 Main Street"
+              zip: "12345"
+              notificationStatus: "enabled"
       responses:
         '200':
           description: Card successfully created and activated
