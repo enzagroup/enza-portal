@@ -724,7 +724,7 @@ paths:
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
-                      message: Missing required field: cardId
+                      message: "Missing required field: cardId"
         '401':
           $ref: '#/components/responses/AuthenticationError'
         '409':
