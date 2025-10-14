@@ -1479,6 +1479,119 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
+  /cards/get-cvv2:
+    post:
+      operationId: getCardCvv2
+      summary: Get CVV2 for Card
+      description: |
+        Retrieve the CVV2 (Card Verification Value) for a card using its PAN (Primary Account Number).
+        
+        **Note:** This operation calculates and returns the CVV2 value for the specified card.
+      tags:
+        - Card Management
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pan
+              properties:
+                pan:
+                  type: string
+                  pattern: '^[0-9]{13,19}$'
+                  description: "**Required.** Primary Account Number (13-19 digits)"
+                  example: "4373580001009606"
+            example:
+              pan: "4373580001009606"
+      responses:
+        '200':
+          description: CVV2 successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CVV2_RETRIEVED
+                  params:
+                    type: object
+                    required:
+                      - cvv2
+                    properties:
+                      cvv2:
+                        type: string
+                        description: Card Verification Value 2
+                        example: "123"
+              examples:
+                successResponse:
+                  summary: CVV2 retrieved successfully
+                  value:
+                    code: SUCCESS_CVV2_RETRIEVED
+                    params:
+                      cvv2: "123"
+        '400':
+          description: 'Bad request – validation failed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                badRequestExample:
+                  summary: Invalid PAN format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "Invalid pan format"
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: 'Conflict – request declined'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CARD_NOT_FOUND
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card not found
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card with PAN ending 9606 not found
+                cvv2NotAvailable:
+                  summary: CVV2 not available
+                  value:
+                    code: ERR_CVV2_NOT_AVAILABLE
+                    params:
+                      message: CVV2 is not available for this card
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
   /cards/create-card:
     post:
       operationId: createCardWithOnboarding
