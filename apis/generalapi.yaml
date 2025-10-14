@@ -1263,7 +1263,9 @@ paths:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
       requestBody:
-        required: true
+        required:
+          - cardId
+          - extRid
         content:
           application/json:
             schema:
