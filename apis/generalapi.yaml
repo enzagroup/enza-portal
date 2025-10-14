@@ -1479,6 +1479,118 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
+  /cards/get-pan:
+    post:
+      operationId: getCardPan
+      summary: Get PAN for Card
+      description: |
+        Retrieve the unmasked PAN (Primary Account Number) for a card using its card ID.
+        
+        **Note:** This operation returns the full, unmasked PAN. Handle with appropriate security measures.
+      tags:
+        - Card Management
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cardId
+              properties:
+                cardId:
+                  type: string
+                  description: "**Required.** Card ID"
+                  example: "12345"
+            example:
+              cardId: "12345"
+      responses:
+        '200':
+          description: PAN successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_PAN_RETRIEVED
+                  params:
+                    type: object
+                    required:
+                      - pan
+                    properties:
+                      pan:
+                        type: string
+                        description: Primary Account Number (unmasked)
+                        example: "4373580001009606"
+              examples:
+                successResponse:
+                  summary: PAN retrieved successfully
+                  value:
+                    code: SUCCESS_PAN_RETRIEVED
+                    params:
+                      pan: "4373580001009606"
+        '400':
+          description: 'Bad request – validation failed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                badRequestExample:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "Missing required field: cardId"
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: 'Conflict – request declined'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CARD_NOT_FOUND
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card not found
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card #12345 not found
+                panNotAvailable:
+                  summary: PAN not available
+                  value:
+                    code: ERR_PAN_NOT_AVAILABLE
+                    params:
+                      message: PAN is not available for this card
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
   /cards/get-cvv2:
     post:
       operationId: getCardCvv2
