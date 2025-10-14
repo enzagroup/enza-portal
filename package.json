@@ -1,5 +1,5 @@
 {
-  "name": "enza-openapi-dev-portal",
+  "name": "enza-portal",
   "version": "0.1.0",
   "type": "module",
   "private": false,
@@ -9,7 +9,7 @@
     "deploy": "npm run build && gh-pages -d dist",
     "lint": "eslint"
   },
-  "homepage": "https://enzagroup.github.io/enza-openapi-dev-portal/",
+  "homepage": "https://enzagroup.github.io/enza-portal/",
   "dependencies": {
     "lucide-react": "^0.469.0",
     "react": ">18.0.0",
