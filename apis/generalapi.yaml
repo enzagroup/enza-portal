@@ -1456,7 +1456,7 @@ paths:
                             - transactionKind
                             - transactionLabel
                             - transactionType
-                            - settlementStatus
+                            - transactionStatus
                             - amount
                             - currency
                             - date
@@ -1481,7 +1481,7 @@ paths:
                               enum: [Debit, Credit, Neutral, Unknown]
                               description: "Transaction type based on TranSignum: -1 = Debit, 1 = Credit, 0 = Neutral"
                               example: "Debit"
-                            settlementStatus:
+                            transactionStatus:
                               type: string
                               enum: [Hold, Presentment]
                               description: "Settlement status: Hold (TranPostings empty) or Presentment (TranPostings has data)"
@@ -1514,7 +1514,7 @@ paths:
                               example: "Pos"
                             posting:
                               type: object
-                              description: "Posting details with RegRole='Current' (only present when settlementStatus is Presentment)"
+                              description: "Posting details with RegRole='Current' (only present when transactionStatus is Presentment)"
                               properties:
                                 sign:
                                   type: string
@@ -1540,7 +1540,7 @@ paths:
                           transactionKind: "Goods"
                           transactionLabel: "Purchase"
                           transactionType: "Debit"
-                          settlementStatus: "Presentment"
+                          transactionStatus: "Presentment"
                           amount: 45
                           currency: "USD"
                           date: "2025-10-02"
@@ -1554,7 +1554,7 @@ paths:
                           transactionKind: "Goods"
                           transactionLabel: "Purchase"
                           transactionType: "Debit"
-                          settlementStatus: "Hold"
+                          transactionStatus: "Hold"
                           amount: 21
                           currency: "USD"
                           date: "2025-09-25"
