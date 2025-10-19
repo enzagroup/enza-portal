@@ -165,8 +165,13 @@ paths:
                   params:
                     type: object
                     required:
+                      - exists
                       - message
                     properties:
+                      exists:
+                        type: boolean
+                        description: Whether the customer exists in the system
+                        example: false
                       message:
                         type: string
                         example: "Customer not found"
@@ -176,6 +181,7 @@ paths:
                   value:
                     code: ERR_CUSTOMER_NOT_FOUND
                     params:
+                      exists: false
                       message: "Customer not found"
         '500':
           description: Internal server error
@@ -1844,8 +1850,13 @@ paths:
                   params:
                     type: object
                     required:
+                      - exists
                       - message
                     properties:
+                      exists:
+                        type: boolean
+                        description: Whether the card exists in the system
+                        example: false
                       message:
                         type: string
                         example: Card not found
@@ -1855,6 +1866,7 @@ paths:
                   value:
                     code: ERR_CARD_NOT_FOUND
                     params:
+                      exists: false
                       message: Card #12345 not found
                 panNotAvailable:
                   summary: PAN not available
