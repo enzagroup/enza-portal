@@ -1456,6 +1456,7 @@ paths:
                             - transactionKind
                             - transactionLabel
                             - transactionType
+                            - settlementStatus
                             - amount
                             - currency
                             - date
@@ -1477,8 +1478,14 @@ paths:
                               example: "Purchase"
                             transactionType:
                               type: string
-                              description: Transaction type (Debit/Credit)
+                              enum: [Debit, Credit, Neutral, Unknown]
+                              description: "Transaction type based on TranSignum: -1 = Debit, 1 = Credit, 0 = Neutral"
                               example: "Debit"
+                            settlementStatus:
+                              type: string
+                              enum: [Hold, Presentment]
+                              description: "Settlement status: Hold (TranPostings empty) or Presentment (TranPostings has data)"
+                              example: "Presentment"
                             amount:
                               type: number
                               description: Transaction amount
@@ -1505,6 +1512,19 @@ paths:
                               type: string
                               description: Type of terminal
                               example: "Pos"
+                            posting:
+                              type: object
+                              description: "Posting details with RegRole='Current' (only present when settlementStatus is Presentment)"
+                              properties:
+                                sign:
+                                  type: string
+                                  enum: [Debit, Credit, Unknown]
+                                  description: "Posting type: Debit (money out) or Credit (money in)"
+                                  example: "Debit"
+                                amount:
+                                  type: number
+                                  description: Posting amount
+                                  example: 409.2
               examples:
                 successResponse:
                   summary: Successful transactions retrieval
@@ -1520,16 +1540,21 @@ paths:
                           transactionKind: "Goods"
                           transactionLabel: "Purchase"
                           transactionType: "Debit"
+                          settlementStatus: "Presentment"
                           amount: 45
                           currency: "USD"
                           date: "2025-10-02"
                           timestamp: "2025-10-02T14:12:22.000"
                           terminalOwnerTitle: "ACQUIRER NAME"
                           terminalType: "Pos"
+                          posting:
+                            sign: "Debit"
+                            amount: 409.2
                         - transactionId: "250925476227641819"
                           transactionKind: "Goods"
                           transactionLabel: "Purchase"
                           transactionType: "Debit"
+                          settlementStatus: "Hold"
                           amount: 21
                           currency: "USD"
                           date: "2025-09-25"
