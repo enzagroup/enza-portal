@@ -43,6 +43,147 @@ paths:
   ##Customer
   ##CARDS
   
+  /customers/check:
+    post:
+      operationId: checkCustomerExistence
+      summary: Check Customer Existence
+      description: |
+        Check if a customer exists in the system using their document ID.
+        
+        **Search By:**
+        - National ID number, OR
+        - Passport number, OR
+        - ID number
+        
+        Returns a boolean indicating whether the customer exists, and if they do, returns basic customer information.
+        
+      tags:
+        - Customer Management
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nationalId:
+                  type: string
+                  description: "Either nationalId, passport, or id is required. Customer's national ID"
+                  example: "1234567890"
+                passport:
+                  type: string
+                  description: "Either nationalId, passport, or id is required. Customer's passport number"
+                  example: "AB1234567"
+                id:
+                  type: string
+                  description: "Either nationalId, passport, or id is required. Customer's ID"
+                  example: "ID123456"
+            examples:
+              withNationalId:
+                summary: Check by National ID
+                value:
+                  nationalId: "1234567890"
+              withPassport:
+                summary: Check by Passport
+                value:
+                  passport: "AB1234567"
+              withId:
+                summary: Check by ID
+                value:
+                  id: "ID123456"
+      responses:
+        '200':
+          description: Customer exists in the system
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CUSTOMER_CHECK
+                  params:
+                    type: object
+                    required:
+                      - exists
+                      - message
+                    properties:
+                      exists:
+                        type: boolean
+                        description: Whether the customer exists in the system
+                        example: true
+                      message:
+                        type: string
+                        description: Success message
+                        example: "Customer exists"
+              examples:
+                customerExists:
+                  summary: Customer exists in system
+                  value:
+                    code: SUCCESS_CUSTOMER_CHECK
+                    params:
+                      exists: true
+                      message: "Customer exists"
+        '400':
+          description: 'Bad request – validation failed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingDocumentId:
+                  summary: Missing document ID
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "One of the following fields is required: nationalId, passport, id"
+        '401':
+          description: Unauthorized – Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '409':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CUSTOMER_NOT_FOUND
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: "Customer not found"
+              examples:
+                customerNotFound:
+                  summary: Customer does not exist
+                  value:
+                    code: ERR_CUSTOMER_NOT_FOUND
+                    params:
+                      message: "Customer not found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  
   /customers/details:
     post:
       operationId: getCustomerDetails
