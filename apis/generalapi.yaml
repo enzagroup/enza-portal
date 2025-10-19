@@ -1525,6 +1525,10 @@ paths:
                                   type: number
                                   description: Posting amount
                                   example: 409.2
+                                currency:
+                                  type: string
+                                  description: "Currency title (e.g., Egyptian Pound, US Dollar) retrieved from account contract"
+                                  example: "Egyptian Pound"
               examples:
                 successResponse:
                   summary: Successful transactions retrieval
@@ -1550,6 +1554,7 @@ paths:
                           posting:
                             sign: "Debit"
                             amount: 409.2
+                            currency: "Egyptian Pound"
                         - transactionId: "250925476227641819"
                           transactionKind: "Goods"
                           transactionLabel: "Purchase"
