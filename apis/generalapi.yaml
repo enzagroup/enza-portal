@@ -2023,8 +2023,7 @@ paths:
         1. **Customer Verification**: Check if customer exists using document ID (NationalId or Passport)
         2. **Customer Creation**: Create new customer profile (if new) OR link to existing customer
         3. **Card Activation**: Automatically activate the card (status = Active)
-        4. **Card Details**: Retrieve PAN and calculate CVV2
-        5. **Notifications**: Set up SMS/Email notifications (if enabled)
+        4. **Notifications**: Set up SMS/Email notifications (if enabled)
         
       parameters:
         - $ref: '#/components/parameters/apiKey'
@@ -2534,18 +2533,6 @@ components:
           enum: [enabled, disabled]
           description: "Notification preference - enabled or disabled"
           example: "enabled"
-      anyOf:
-        - required: [nationalId]
-        - required: [passport]
-        - required: [id]
-      allOf:
-        - if:
-            properties:
-              requestType:
-                const: NewAccountNewCustomer
-          then:
-            required: [firstName, lastName, mobilePhone]
-
   parameters:
     apiKey:
       name: x-api-key
