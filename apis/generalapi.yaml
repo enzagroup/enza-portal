@@ -1820,11 +1820,11 @@ paths:
         
         **Supports both New and Existing Customers:**
         - **New Customer**: Creates customer profile and issues card
-        - **Existing Customer**: Links card to existing customer profile
+        - **Existing Customer**: Creates card for existing customer profile
         
         **Process Flow:**
         1. **Customer Verification**: Check if customer exists using document ID (NationalId or Passport)
-        2. **Customer Creation**: Create new customer profile (if new) OR link to existing customer
+        2. **Customer Creation**: Create new customer profile (if new) OR create card for existing customer
         3. **Card Issuance**: Issue the card (status remains inactive)
         4. **Notifications**: Set up SMS/Email notifications (if enabled)
         
@@ -1840,17 +1840,17 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateCardStandard'
             example:
-              requestType: "NewAccountNewCustomer"
-              firstName: "John"
-              lastName: "Doe"
-              middleName: "William"
-              birthDate: "1990-01-15"
+              requestType: NewAccountNewCustomer
+              firstName: John
+              lastName: Doe
+              middleName: William
+              birthDate: 1990-01-15
               nationalId: "1234567890"
-              email: "john.doe@example.com"
-              mobilePhone: "1234567890"
-              streetTitle: "123 Main Street"
-              zip: "12345"
-              notificationStatus: "enabled"
+              email: john.doe@example.com
+              mobilePhone: '1234567890'
+              streetTitle: 123 Main Street
+              zip: '12345'
+              notificationStatus: enabled
       responses:
         '200':
           description: Card successfully created
@@ -1922,12 +1922,12 @@ paths:
                     code: SUCCESS_REQUEST_PROCESSED
                     params:
                       customerType: New
-                      personId: "PERS12345"
-                      cardId: "12345"
+                      personId: PERS12345
+                      cardId: '12345'
                       cardDetails:
-                        pan: "1234567890123456"
-                        expirationDate: "2027-12-31"
-                        cvv2: "123"
+                        pan: '1234567890123456'
+                        expirationDate: 2027-12-31
+                        cvv2: '123'
                       notificationEnabled: true
         '400':
           description: 'Bad request – validation failed'
@@ -2036,17 +2036,17 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateCardStandard'
             example:
-              requestType: "NewAccountNewCustomer"
-              firstName: "John"
-              lastName: "Doe"
-              middleName: "William"
-              birthDate: "1990-01-15"
+              requestType: NewAccountNewCustomer
+              firstName: John
+              lastName: Doe
+              middleName: William
+              birthDate: 1990-01-15
               nationalId: "1234567890"
-              email: "john.doe@example.com"
-              mobilePhone: "1234567890"
-              streetTitle: "123 Main Street"
-              zip: "12345"
-              notificationStatus: "enabled"
+              email: john.doe@example.com
+              mobilePhone: '1234567890'
+              streetTitle: 123 Main Street
+              zip: '12345'
+              notificationStatus: enabled
       responses:
         '200':
           description: Card successfully created and activated
@@ -2118,12 +2118,12 @@ paths:
                     code: SUCCESS_REQUEST_PROCESSED
                     params:
                       customerType: New
-                      personId: "PERS12345"
-                      cardId: "12345"
+                      personId: PERS12345
+                      cardId: '12345'
                       cardDetails:
-                        pan: "1234567890123456"
-                        expirationDate: "2027-12-31"
-                        cvv2: "123"
+                        pan: '1234567890123456'
+                        expirationDate: 2027-12-31
+                        cvv2: '123'
                       notificationEnabled: true
                       
         '400':
