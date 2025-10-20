@@ -472,6 +472,9 @@ paths:
                 ecStatusEnable:
                   type: string
                   description: '**Required.** EC status: `"1"` = Enrolled, `"0"` = Not enrolled'
+            example:
+              cardRefNum: "000515"
+              ecStatusEnable: "1"
 
       responses:
         '200':
@@ -595,6 +598,9 @@ paths:
                 cardRefNum:
                   type: string
                   description: "**Required.** Unique card reference number"
+            example:
+              cardStatus: Active
+              cardRefNum: "000515"
 
       responses:
         '200':
@@ -1092,6 +1098,9 @@ paths:
                   type: string
                   description: Optional reason for status change
                   example: "Customer request"
+            example:
+              cardStatus: Active
+              cardId: "12345"
 
       responses:
         '200':
@@ -1443,6 +1452,8 @@ paths:
                   type: string
                   description: "Either cardId or extRid is required. External RID to delete card"
                   example: "TestVenCorporate1"
+            example:
+              cardId: "3255"
             examples:
               deleteByCardId:
                 summary: Delete by Card ID
@@ -2014,7 +2025,7 @@ paths:
       operationId: createCardWithOnboarding
       tags:
         - Card Management
-      summary: Create Card
+      summary: Create Virtual Prepaid Card
       description: |
         Complete end-to-end card issuance with customer onboarding (card remains inactive).
         
@@ -2211,7 +2222,7 @@ paths:
       operationId: createCardWithActivation
       tags:
         - Card Management
-      summary: Create Card with Activation
+      summary: Create Virtual Prepaid Card with Activation
       description: |
         Complete end-to-end card issuance with customer onboarding and automatic activation.
         
