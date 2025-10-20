@@ -22,5 +22,8 @@
     "@types/react-dom": "^18",
     "gh-pages": "^6.3.0",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@radix-ui/react-focus-guards": "^1.1.3"
   }
 }
