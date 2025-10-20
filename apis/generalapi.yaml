@@ -180,11 +180,7 @@ paths:
                       exists: false
                       message: "Customer not found"
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InternalServerError'
+          $ref: '#/components/responses/InternalServerError'
   
   /customers/details:
     post:
