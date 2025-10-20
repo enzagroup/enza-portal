@@ -1523,7 +1523,7 @@ paths:
                   value:
                     code: ERR_CARD_NOT_FOUND
                     params:
-                      message: Card #3255 not found
+                      message: "Card #3255 not found"
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
