@@ -48,14 +48,12 @@ paths:
       operationId: checkCustomerExistence
       summary: Check Customer Existence
       description: |
-        Check if a customer exists in the system using their document ID.
+        Check if a customer exists in the system or not.
         
         **Search By:**
         - National ID number, OR
         - Passport number, OR
         - ID number
-        
-        Returns a boolean indicating whether the customer exists, and if they do, returns basic customer information.
         
       tags:
         - Customer Management
@@ -187,11 +185,12 @@ paths:
       operationId: getCustomerDetails
       summary: Get Customer Details
       description: |
-        Retrieve comprehensive customer details by National ID or Passport.
+        Retrieve comprehensive customer details by National ID, Passport, or ID.
         
         **Search By:**
         - National ID number, OR
-        - Passport number
+        - Passport number, OR
+        - ID number
         
       tags:
         - Customer Management
@@ -204,20 +203,32 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-                - nationalId
-                - passport
               properties:
                 nationalId:
                   type: string
-                  description: Either nationalId or passport is required. Customer's national ID
+                  description: "Either nationalId, passport, or id is required. Customer's national ID"
                   example: "NAT123456"
                 passport:
                   type: string
-                  description: Either nationalId or passport is required. Customer's passport number
+                  description: "Either nationalId, passport, or id is required. Customer's passport number"
                   example: "passport03"
-            example:
-              passport: "passport03"
+                id:
+                  type: string
+                  description: "Either nationalId, passport, or id is required. Customer's ID"
+                  example: "ID123456"
+            examples:
+              withPassport:
+                summary: Search by Passport
+                value:
+                  passport: "passport03"
+              withNationalId:
+                summary: Search by National ID
+                value:
+                  nationalId: "NAT123456"
+              withId:
+                summary: Search by ID
+                value:
+                  id: "ID123456"
       responses:
         '200':
           description: Customer details successfully retrieved
@@ -1262,7 +1273,9 @@ paths:
         Retrieve all cards issued to a customer using their identification document.
 
         **Search By:**
-        - Passport number, OR National ID number
+        - Passport number, OR
+        - National ID number, OR
+        - ID number
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -1272,20 +1285,32 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-                - nationalId
-                - passport
               properties:
                 passport:
                   type: string
-                  description: Either nationalId or passport is required. Customer's passport number
+                  description: "Either nationalId, passport, or id is required. Customer's passport number"
                   example: "76238310075"
                 nationalId:
                   type: string
-                  description: Either nationalId or passport is required. Customer's national ID
+                  description: "Either nationalId, passport, or id is required. Customer's national ID"
                   example: "1234567890"
-            example:
-              passport: "76238310075"
+                id:
+                  type: string
+                  description: "Either nationalId, passport, or id is required. Customer's ID"
+                  example: "ID123456"
+            examples:
+              withPassport:
+                summary: Search by Passport
+                value:
+                  passport: "76238310075"
+              withNationalId:
+                summary: Search by National ID
+                value:
+                  nationalId: "1234567890"
+              withId:
+                summary: Search by ID
+                value:
+                  id: "ID123456"
 
       responses:
         '200':
