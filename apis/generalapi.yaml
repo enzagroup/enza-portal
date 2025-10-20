@@ -1704,6 +1704,27 @@ paths:
                                   type: string
                                   description: "Currency title (e.g., Egyptian Pound, US Dollar) retrieved from account contract"
                                   example: "Egyptian Pound"
+                            hold:
+                              type: object
+                              description: "Hold details from TranHoldActions (only present when transactionStatus is Hold)"
+                              properties:
+                                sign:
+                                  type: string
+                                  enum: [Debit, Credit, Unknown]
+                                  description: "Hold type based on HoldSign from Auth action: -1 = Debit, 1 = Credit"
+                                  example: "Debit"
+                                amount:
+                                  type: number
+                                  description: "Authorization hold amount (AmtDelta from Auth action)"
+                                  example: 162.56
+                                fees:
+                                  type: number
+                                  description: "Authorization fee amount (AmtDelta from AuthFee action, if present)"
+                                  example: 15
+                                currency:
+                                  type: string
+                                  description: "Currency title (e.g., Egyptian Pound, US Dollar) retrieved from account contract"
+                                  example: "Egyptian Pound"
               examples:
                 successResponse:
                   summary: Successful transactions retrieval
@@ -1741,6 +1762,11 @@ paths:
                           timestamp: "2025-09-25T13:13:42.000"
                           terminalOwnerTitle: "ACQUIRER NAME"
                           terminalType: "Pos"
+                          hold:
+                            sign: "Debit"
+                            amount: 162.56
+                            fees: 15
+                            currency: "Egyptian Pound"
         '400':
           description: 'Bad request – validation failed'
           content:
