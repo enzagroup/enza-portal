@@ -1717,7 +1717,7 @@ paths:
                                   type: number
                                   description: "Authorization hold amount (AmtDelta from Auth action)"
                                   example: 162.56
-                                fees:
+                                authFees:
                                   type: number
                                   description: "Authorization fee amount (AmtDelta from AuthFee action, if present)"
                                   example: 15
@@ -1765,7 +1765,7 @@ paths:
                           hold:
                             sign: "Debit"
                             amount: 162.56
-                            fees: 15
+                            authFees: 15
                             currency: "Egyptian Pound"
         '400':
           description: 'Bad request – validation failed'
