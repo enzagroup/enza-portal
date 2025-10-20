@@ -144,11 +144,7 @@ paths:
                     params:
                       message: "One of the following fields is required: nationalId, passport, id"
         '401':
-          description: Unauthorized – Invalid or missing API key
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UnauthorizedError'
+          $ref: '#/components/responses/AuthenticationError'
         '409':
           description: Customer not found
           content:
