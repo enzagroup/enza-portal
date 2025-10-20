@@ -1700,6 +1700,10 @@ paths:
                                   type: number
                                   description: Posting amount
                                   example: 409.2
+                                fees:
+                                  type: number
+                                  description: "Sum of transaction fees from postings"
+                                  example: 15
                                 currency:
                                   type: string
                                   description: "Currency title (e.g., Egyptian Pound, US Dollar) retrieved from account contract"
@@ -1717,7 +1721,7 @@ paths:
                                   type: number
                                   description: "Authorization hold amount (AmtDelta from Auth action)"
                                   example: 162.56
-                                authFees:
+                                fees:
                                   type: number
                                   description: "Authorization fee amount (AmtDelta from AuthFee action, if present)"
                                   example: 15
@@ -1750,6 +1754,7 @@ paths:
                           posting:
                             sign: "Debit"
                             amount: 409.2
+                            fees: 15
                             currency: "Egyptian Pound"
                         - transactionId: "250925476227641819"
                           transactionKind: "Goods"
@@ -1765,7 +1770,7 @@ paths:
                           hold:
                             sign: "Debit"
                             amount: 162.56
-                            authFees: 15
+                            fees: 15
                             currency: "Egyptian Pound"
         '400':
           description: 'Bad request – validation failed'
