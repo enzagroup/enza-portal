@@ -219,7 +219,7 @@ paths:
                   example: "AB1234567"
                 id:
                   type: string
-                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's ID"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. External ID number provided by the bank (use this if customer is not working with nationalId or passport)"
                   example: "ID123456"
             examples:
               withNationalId:
@@ -360,7 +360,7 @@ paths:
                   example: "passport03"
                 id:
                   type: string
-                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's ID"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. External ID number provided by the bank (use this if customer is not working with nationalId or passport)"
                   example: "ID123456"
             examples:
               withPassport:
@@ -1461,7 +1461,7 @@ paths:
                   example: "1234567890"
                 id:
                   type: string
-                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's ID"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. External ID number provided by the bank (use this if customer is not working with nationalId or passport)"
                   example: "ID123456"
             examples:
               withPassport:
@@ -2918,6 +2918,8 @@ components:
         - streetTitle
         - zip
         - birthDate
+        - middleName
+        - notificationStatus
       properties:
         requestType:
           type: string
@@ -2952,7 +2954,7 @@ components:
           example: "AB1234567"
         id:
           type: string
-          description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's ID"
+          description: "**Conditionally Required:** One of nationalId, passport, or id is required. External ID number provided by the bank (use this if customer is not working with nationalId or passport)"
           example: "ID123456"
         email:
           type: string
