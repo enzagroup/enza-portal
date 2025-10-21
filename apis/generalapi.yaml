@@ -4,8 +4,6 @@ info:
   description: |
     # Enza Developer Portal Quick Start Guide
     
-    **Time to complete: 30 minutes**
-    
     ## Overview
     
     Welcome to the Enza REST API Developer Portal. Our API provides seamless integration for instant issuing services across Africa. This portal offers all the necessary tools, detailed documentation, and API endpoints required to empower your financial operations with real-time card issuance capabilities.
@@ -178,6 +176,54 @@ tags:
     description: "Instant card issuance for new and existing customers"
 
 paths:
+  /overview:
+    get:
+      operationId: getOverview
+      summary: 📖 Getting Started Guide
+      description: |
+        # Welcome to Enza Developer Portal
+        
+        This is your starting point for integrating with the Enza API. Please refer to the main API description above for the complete Quick Start Guide.
+        
+        ## Quick Links
+        
+        - **Step 1**: Generate API Credentials and understand security requirements
+        - **Step 2**: Learn the API workflow for creating cards
+        - **Step 3**: Make your first API call
+        - **Step 4**: Use the Postman collection for testing
+        
+        ## Key Requirements
+        
+        ✅ API Key authentication  
+        ✅ IP Whitelisting  
+        ✅ HTTPS protocol  
+        
+        ---
+        
+        **Ready to start?** Check out the Customer Management and Card Management sections below!
+        
+      tags:
+        - Overview
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+      responses:
+        '200':
+          description: Overview information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Welcome to Enza Developer Portal"
+                  version:
+                    type: string
+                    example: "2025-02-16"
+                  documentation:
+                    type: string
+                    example: "https://developer.enza.cloud"
+  
   ##Customer
   ##CARDS
   
