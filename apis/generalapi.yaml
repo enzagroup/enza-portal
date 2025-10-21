@@ -592,15 +592,19 @@ paths:
               properties:
                 cardStatus:
                   type: string
-                  description: "**Required.** Allowed values ⇒ **Active** | **Deactivated**"
-                  enum: [Active, Deactivated]   # ← this drives the drop-down
+                  description: "**Required.** Allowed values ⇒ **Active** | **Deactivated** | **Blocked**"
+                  enum: [Active, Deactivated,Blocked]   # ← this drives the drop-down
                   example: Active
                 cardRefNum:
                   type: string
                   description: "**Required.** Unique card reference number"
+                reason:
+                  type: string
+                  description: "Optional reason for the status change (e.g., 'deactivated by customer', 'blocked by bank')"
             example:
               cardStatus: Active
               cardRefNum: "000515"
+              reason: "Customer request"
 
       responses:
         '200':
@@ -2716,6 +2720,12 @@ components:
       type: object
       required:
         - requestType
+        - firstName
+        - lastName
+        - mobilePhone
+        - nationalId
+        - passport
+        - id
       properties:
         requestType:
           type: string
