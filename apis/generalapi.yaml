@@ -66,6 +66,10 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - nationalId
+                - passport
+                - id
               properties:
                 nationalId:
                   type: string
@@ -203,6 +207,10 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - nationalId
+                - passport
+                - id
               properties:
                 nationalId:
                   type: string
@@ -589,6 +597,7 @@ paths:
               required:
                 - cardStatus
                 - cardRefNum
+                - reason
               properties:
                 cardStatus:
                   type: string
@@ -826,6 +835,8 @@ paths:
         content:
           application/json:
             schema:
+              required:
+                - cardId
               type: object
               properties:
                 cardId:
@@ -1086,6 +1097,7 @@ paths:
               required:
                 - cardStatus
                 - cardId
+                - reason
               properties:
                 cardStatus:
                   type: string
@@ -1296,6 +1308,10 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - passport
+                - nationalId
+                - id
               properties:
                 passport:
                   type: string
@@ -1555,6 +1571,7 @@ paths:
                 - cardId
                 - startDate
                 - endDate
+                - transactionCount
               properties:
                 cardId:
                   type: string
@@ -2731,6 +2748,10 @@ components:
         - nationalId
         - passport
         - id
+        - email
+        - streetTitle
+        - zip
+        - birthDate
       properties:
         requestType:
           type: string
