@@ -4,7 +4,7 @@ info:
   description: |
     ## Overview
     
-    Welcome to the Enza REST API Developer Portal. Our API provides seamless integration for instant issuing services across Africa. This portal offers all the necessary tools, detailed documentation, and API endpoints required to empower your financial operations with real-time card issuance capabilities.
+    Welcome to the Enza REST API Developer Portal. Our API provides seamless integration . This portal offers all the necessary tools, detailed documentation, and API endpoints required to empower your financial operations with real-time card issuance capabilities.
     
     Follow this guide to:
     - Understand API authentication and security requirements
@@ -26,8 +26,7 @@ info:
     
     ### Development vs Production Keys
     
-    - **Development/UAT API Key**: Available through this developer portal for testing and integration
-    - **Production API Key**: Will be shared securely through encrypted channels once your integration is approved
+    - **Both Development/UAT and Production API Keys will be shared securely through encrypted channels upon agreement and approval.
     
     ### Security Requirements
     
@@ -49,61 +48,7 @@ info:
     
     **UAT Environment**: `https://uat-api.enza.cloud/TX/v1`
     
-    **Production Environment**: Will be provided upon approval
-    
-    ### Common API Workflows
-    
-    #### Workflow 1: Create Card for New Customer
-    
-    1. **Check Customer Existence** (`POST /customers/search`)
-       - Search by nationalId, passport, or id
-       - Determine if customer exists in the system
-    
-    2. **Create Card** (`POST /cards/create-card` or `/cards/create-card-with-activation`)
-       - If customer **does not exist**: Use `requestType: "NewAccountNewCustomer"`
-       - If customer **exists**: Use `requestType: "NewAccountExistingCustomer"`
-    
-    #### Workflow 2: Create Card for Existing Customer
-    
-    1. **Get Customer Details** (`POST /customers/details`)
-       - Retrieve existing customer information
-    
-    2. **Create Card** with `requestType: "NewAccountExistingCustomer"`
-    
-    ---
-    
-    ## Step 3: Make Your First API Call
-    
-    ### Example: Check Customer Existence
-    
-    ```bash
-    curl -X POST https://uat-api.enza.cloud/TX/v1/customers/search \
-      -H "x-api-key: YOUR_API_KEY" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "nationalId": "1234567890"
-      }'
-    ```
-    
-    ### Example: Create Card for New Customer
-    
-    ```bash
-    curl -X POST https://uat-api.enza.cloud/TX/v1/cards/create-card \
-      -H "x-api-key: YOUR_API_KEY" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "requestType": "NewAccountNewCustomer",
-        "firstName": "John",
-        "lastName": "Doe",
-        "nationalId": "1234567890",
-        "mobilePhone": "1234567890",
-        "email": "john.doe@example.com"
-      }'
-    ```
-    
-    ---
-    
-    ## Step 4: Use Postman Collection
+    ## Step 3: Use Postman Collection
     
     Download our Postman collection to quickly test all API endpoints:
     
@@ -138,7 +83,6 @@ info:
     
     Need help? Contact our developer support team:
     - Email: api-support@enza.cloud
-    - Documentation: Available in this portal
     
   version: 2025-02-16T14:26:47Z
 
@@ -321,7 +265,7 @@ paths:
   /customers/details:
     post:
       operationId: getCustomerDetails
-      summary: Get Customer Details
+      summary: Show Customer Details
       description: |
         Retrieve comprehensive customer details by National ID, Passport, or ID.
         
@@ -1317,7 +1261,7 @@ paths:
       operationId: getCardDetails
       tags:
         - Card Information
-      summary: Get Card Details by Card ID
+      summary: Show Card Details by Card ID
       description: |
         Retrieve comprehensive card information using the card ID.
 
@@ -1686,7 +1630,7 @@ paths:
       operationId: getTransactionHistory
       tags:
         - Transactions
-      summary: Get Transaction History
+      summary: Show Transactions History
       description: |
         Retrieve detailed transaction history for a card within a specified date range.
         
@@ -1976,7 +1920,7 @@ paths:
   /cards/get-pan:
     post:
       operationId: getCardPan
-      summary: Get PAN for Card
+      summary: Show PAN for Card
       description: |
         Retrieve the unmasked PAN (Primary Account Number) for a card using its card ID.
         
@@ -2094,7 +2038,7 @@ paths:
   /cards/get-cvv2:
     post:
       operationId: getCardCvv2
-      summary: Get CVV2 for Card
+      summary: Show CVV2 for Card
       description: |
         Retrieve the CVV2 (Card Verification Value) for a card using its PAN (Primary Account Number).
         
@@ -2217,9 +2161,9 @@ paths:
         
         **If you don't know the customer's status**, follow this workflow:
         
-        1. **First, Check Customer Existence** using `POST /customers/search`
-           - Search by nationalId, passport, or id
-           - This will tell you if the customer already exists in the system
+        1. **First, Check Customer Existence** using `POST /customers/search` (see Customer Management → Check Customer Existence in the sidebar)
+          - Search by nationalId, passport, or id
+          - This will tell you if the customer already exists in the system
         
         2. **Then, Choose the Correct Request Type:**
            - If customer **does NOT exist** → Use `requestType: "NewAccountNewCustomer"`
@@ -2428,9 +2372,9 @@ paths:
         
         **If you don't know the customer's status**, follow this workflow:
         
-        1. **First, Check Customer Existence** using `POST /customers/search`
-           - Search by nationalId, passport, or id
-           - This will tell you if the customer already exists in the system
+        1. **First, Check Customer Existence** using `POST /customers/search` (see Customer Management → Check Customer Existence in the sidebar)
+          - Search by nationalId, passport, or id
+          - This will tell you if the customer already exists in the system
         
         2. **Then, Choose the Correct Request Type:**
            - If customer **does NOT exist** → Use `requestType: "NewAccountNewCustomer"`
