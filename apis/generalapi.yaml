@@ -69,15 +69,15 @@ paths:
               properties:
                 nationalId:
                   type: string
-                  description: "Either nationalId, passport, or id is required. Customer's national ID"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's national ID"
                   example: "1234567890"
                 passport:
                   type: string
-                  description: "Either nationalId, passport, or id is required. Customer's passport number"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's passport number"
                   example: "AB1234567"
                 id:
                   type: string
-                  description: "Either nationalId, passport, or id is required. Customer's ID"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's ID"
                   example: "ID123456"
             examples:
               withNationalId:
@@ -206,15 +206,15 @@ paths:
               properties:
                 nationalId:
                   type: string
-                  description: "Either nationalId, passport, or id is required. Customer's national ID"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's national ID"
                   example: "NAT123456"
                 passport:
                   type: string
-                  description: "Either nationalId, passport, or id is required. Customer's passport number"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's passport number"
                   example: "passport03"
                 id:
                   type: string
-                  description: "Either nationalId, passport, or id is required. Customer's ID"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's ID"
                   example: "ID123456"
             examples:
               withPassport:
@@ -600,7 +600,7 @@ paths:
                   description: "**Required.** Unique card reference number"
                 reason:
                   type: string
-                  description: "Optional reason for the status change (e.g., 'deactivated by customer', 'blocked by bank')"
+                  description: "**Optional.** Reason for the status change (e.g., 'deactivated by customer', 'blocked by bank')"
             example:
               cardStatus: Active
               cardRefNum: "000515"
@@ -827,8 +827,6 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-                - cardId
               properties:
                 cardId:
                   type: string
@@ -1100,7 +1098,7 @@ paths:
                   example: "12345"
                 reason:
                   type: string
-                  description: Optional reason for status change
+                  description: "**Optional.** Reason for status change"
                   example: "Customer request"
             example:
               cardStatus: Active
@@ -1301,15 +1299,15 @@ paths:
               properties:
                 passport:
                   type: string
-                  description: "Either nationalId, passport, or id is required. Customer's passport number"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's passport number"
                   example: "76238310075"
                 nationalId:
                   type: string
-                  description: "Either nationalId, passport, or id is required. Customer's national ID"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's national ID"
                   example: "1234567890"
                 id:
                   type: string
-                  description: "Either nationalId, passport, or id is required. Customer's ID"
+                  description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's ID"
                   example: "ID123456"
             examples:
               withPassport:
@@ -1450,11 +1448,11 @@ paths:
               properties:
                 cardId:
                   type: string
-                  description: "Either cardId or extRid is required. Card ID to delete"
+                  description: "**Conditionally Required:** One of cardId or extRid is required. Card ID to delete"
                   example: "3255"
                 extRid:
                   type: string
-                  description: "Either cardId or extRid is required. External RID to delete card"
+                  description: "**Conditionally Required:** One of cardId or extRid is required. External RID to delete card"
                   example: "TestVenCorporate1"
             example:
               cardId: "3255"
@@ -1578,7 +1576,7 @@ paths:
                   type: integer
                   minimum: 1
                   maximum: 100
-                  description: "Optional. Maximum number of transactions to return (1-100)"
+                  description: "**Optional.** Maximum number of transactions to return (1-100)"
                   example: 2
             example:
               cardId: "12345"
@@ -2610,7 +2608,7 @@ components:
           description: "**Conditionally Required:** Required when requestType is 'NewAccountNewCustomer'. Customer's first name"
         middleName:
           type: string
-          description: Optional. Customer's middle name
+          description: "**Optional.** Customer's middle name"
         lastName:
           type: string
           description: "**Conditionally Required:** Required when requestType is 'NewAccountNewCustomer'. Customer's last name"
@@ -2624,21 +2622,21 @@ components:
           type: string
           format: date          
           pattern: '^\d{4}-\d{2}-\d{2}$'
-          description: "Date of birth in YYYY-MM-DD format"
+          description: "**Optional.** Date of birth in YYYY-MM-DD format"
           example: '1990-01-01'       
         email:
           type: string
           format: email
-          description: "Customer's email address"
+          description: "**Optional.** Customer's email address"
         mobilePhone:
           type: string
-          description: "Customer's mobile phone number"
+          description: "**Optional.** Customer's mobile phone number"
         streetTitle:
           type: string
-          description: "Customer's street address"
+          description: "**Optional.** Customer's street address"
         zip:
           type: string
-          description: "Customer's postal code"
+          description: "**Optional.** Customer's postal code"
 
     PinSetting:
       type: object
@@ -2749,13 +2747,13 @@ components:
           example: "Doe"
         middleName:
           type: string
-          description: "Optional. Customer's middle name"
+          description: "**Optional.** Customer's middle name"
           example: "William"
         birthDate:
           type: string
           format: date
           pattern: '^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$'
-          description: "Birth date in YYYY-MM-DD format"
+          description: "**Optional.** Birth date in YYYY-MM-DD format"
           example: "1990-01-15"
         nationalId:
           type: string
@@ -2773,7 +2771,7 @@ components:
           type: string
           format: email
           pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-          description: "Customer's email address"
+          description: "**Optional.** Customer's email address"
           example: "john.doe@example.com"
         mobilePhone:
           type: string
@@ -2781,16 +2779,16 @@ components:
           example: "1234567890"
         streetTitle:
           type: string
-          description: "Customer's street address"
+          description: "**Optional.** Customer's street address"
           example: "123 Main Street"
         zip:
           type: string
-          description: "Customer's postal code"
+          description: "**Optional.** Customer's postal code"
           example: "12345"
         notificationStatus:
           type: string
           enum: [enabled, disabled]
-          description: "Notification preference - enabled or disabled"
+          description: "**Optional.** Notification preference - enabled or disabled"
           example: "enabled"
   parameters:
     apiKey:
