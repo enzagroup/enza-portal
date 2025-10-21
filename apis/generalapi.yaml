@@ -2581,7 +2581,14 @@ components:
     Customer:
       type: object
       required:
-        [requestType, accountNum, cardRefNum, embossedName, nationalId, passport, firstName, lastName]
+        - requestType
+        - accountNum
+        - cardRefNum
+        - embossedName
+        - firstName
+        - lastName
+        - nationalId
+        - passport
       properties:
         requestType:
           type: string
@@ -2600,19 +2607,19 @@ components:
           description: "**Required.** Account number to link to the card"
         firstName:
           type: string
-          description: "**Required for new customers.** Customer's first name"
+          description: "**Conditionally Required:** Required when requestType is 'NewAccountNewCustomer'. Customer's first name"
         middleName:
           type: string
           description: Optional. Customer's middle name
         lastName:
           type: string
-          description: "**Required for new customers.** Customer's last name"
+          description: "**Conditionally Required:** Required when requestType is 'NewAccountNewCustomer'. Customer's last name"
         nationalId:
           type: string
-          description: Either nationalId or passport is required. Customer's national ID
+          description: "**Conditionally Required:** One of nationalId or passport is required. Customer's national ID"
         passport:
           type: string
-          description: Either nationalId or passport is required. Customer's passport number
+          description: "**Conditionally Required:** One of nationalId or passport is required. Customer's passport number"
         birthDate:
           type: string
           format: date          
@@ -2734,11 +2741,11 @@ components:
           example: "NewAccountNewCustomer"
         firstName:
           type: string
-          description: "**Required for NewAccountNewCustomer.** Customer's first name"
+          description: "**Conditionally Required:** Required when requestType is 'NewAccountNewCustomer'. Customer's first name"
           example: "John"
         lastName:
           type: string
-          description: "**Required for NewAccountNewCustomer.** Customer's last name"
+          description: "**Conditionally Required:** Required when requestType is 'NewAccountNewCustomer'. Customer's last name"
           example: "Doe"
         middleName:
           type: string
@@ -2752,15 +2759,15 @@ components:
           example: "1990-01-15"
         nationalId:
           type: string
-          description: "Either nationalId or passport or id is required. Customer's national ID"
+          description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's national ID"
           example: "1234567890"
         passport:
           type: string
-          description: "Either nationalId or passport or id is required. Customer's passport number"
+          description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's passport number"
           example: "AB1234567"
         id:
           type: string
-          description: "Either nationalId or passport or id is required. Customer's ID"
+          description: "**Conditionally Required:** One of nationalId, passport, or id is required. Customer's ID"
           example: "ID123456"
         email:
           type: string
@@ -2770,7 +2777,7 @@ components:
           example: "john.doe@example.com"
         mobilePhone:
           type: string
-          description: "**Required for NewAccountNewCustomer.** Customer's mobile phone number"
+          description: "**Conditionally Required:** Required when requestType is 'NewAccountNewCustomer'. Customer's mobile phone number"
           example: "1234567890"
         streetTitle:
           type: string
