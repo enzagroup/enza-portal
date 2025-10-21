@@ -26,7 +26,7 @@ info:
     
     ### Development vs Production Keys
     
-    - **Both Development/UAT and Production API Keys will be shared securely through encrypted channels upon agreement and approval.
+    - Both Development/UAT and Production API Keys will be shared securely through encrypted channels upon agreement and approval.
     
     ### Security Requirements
     
@@ -41,14 +41,7 @@ info:
     3. **HTTPS Only**: All API requests must use HTTPS protocol
     
     ---
-    
-    ## Step 2: Understand the API Workflow
-    
-    ### Base URL
-    
-    **UAT Environment**: `https://uat-api.enza.cloud/TX/v1`
-    
-    ## Step 3: Use Postman Collection
+    ## Step 2: Use Postman Collection
     
     Download our Postman collection to quickly test all API endpoints:
     
