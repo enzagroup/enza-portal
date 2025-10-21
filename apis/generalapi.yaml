@@ -2,145 +2,9 @@ openapi: 3.0.1
 info:
   title: Enza REST API Documentation
   description: |
-    # Enza Developer Portal Quick Start Guide
+    Welcome to the Enza REST API Developer Portal. Our API provides seamless integration for instant issuing services across Africa.
     
-    ## Overview
-    
-    Welcome to the Enza REST API Developer Portal. Our API provides seamless integration for instant issuing services across Africa. This portal offers all the necessary tools, detailed documentation, and API endpoints required to empower your financial operations with real-time card issuance capabilities.
-    
-    Follow this guide to:
-    - Understand API authentication and security requirements
-    - Generate and configure the credentials required to access the Enza Developers API
-    - Use the API endpoints to create cards and manage customer accounts
-    - Learn best practices for integrating with our platform
-    
-    ---
-    
-    ## Step 1: Generate API Credentials
-    
-    ### API Key Authentication
-    
-    All API requests require an **API Key** for authentication. The API key must be included in the request header:
-    
-    ```
-    x-api-key: YOUR_API_KEY_HERE
-    ```
-    
-    ### Development vs Production Keys
-    
-    - **Development/UAT API Key**: Available through this developer portal for testing and integration
-    - **Production API Key**: Will be shared securely through encrypted channels once your integration is approved
-    
-    ### Security Requirements
-    
-    ⚠️ **Important Security Measures:**
-    
-    1. **IP Whitelisting**: Your server IP addresses must be whitelisted before you can access the APIs
-       - Contact our support team to whitelist your IPs
-       - Provide both development and production IP addresses
-    
-    2. **Secure Key Storage**: Never expose your API keys in client-side code or public repositories
-    
-    3. **HTTPS Only**: All API requests must use HTTPS protocol
-    
-    ---
-    
-    ## Step 2: Understand the API Workflow
-    
-    ### Base URL
-    
-    **UAT Environment**: `https://uat-api.enza.cloud/TX/v1`
-    
-    **Production Environment**: Will be provided upon approval
-    
-    ### Common API Workflows
-    
-    #### Workflow 1: Create Card for New Customer
-    
-    1. **Check Customer Existence** (`POST /customers/search`)
-       - Search by nationalId, passport, or id
-       - Determine if customer exists in the system
-    
-    2. **Create Card** (`POST /cards/create-card` or `/cards/create-card-with-activation`)
-       - If customer **does not exist**: Use `requestType: "NewAccountNewCustomer"`
-       - If customer **exists**: Use `requestType: "NewAccountExistingCustomer"`
-    
-    #### Workflow 2: Create Card for Existing Customer
-    
-    1. **Get Customer Details** (`POST /customers/details`)
-       - Retrieve existing customer information
-    
-    2. **Create Card** with `requestType: "NewAccountExistingCustomer"`
-    
-    ---
-    
-    ## Step 3: Make Your First API Call
-    
-    ### Example: Check Customer Existence
-    
-    ```bash
-    curl -X POST https://uat-api.enza.cloud/TX/v1/customers/search \
-      -H "x-api-key: YOUR_API_KEY" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "nationalId": "1234567890"
-      }'
-    ```
-    
-    ### Example: Create Card for New Customer
-    
-    ```bash
-    curl -X POST https://uat-api.enza.cloud/TX/v1/cards/create-card \
-      -H "x-api-key: YOUR_API_KEY" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "requestType": "NewAccountNewCustomer",
-        "firstName": "John",
-        "lastName": "Doe",
-        "nationalId": "1234567890",
-        "mobilePhone": "1234567890",
-        "email": "john.doe@example.com"
-      }'
-    ```
-    
-    ---
-    
-    ## Step 4: Use Postman Collection
-    
-    Download our Postman collection to quickly test all API endpoints:
-    
-    1. Import the Enza API collection into Postman
-    2. Set up your environment variables:
-       - `base_url`: `https://uat-api.enza.cloud/TX/v1`
-       - `api_key`: Your API key
-    3. Start testing endpoints
-    
-    ---
-    
-    ## Key Features
-    
-    - 💳 **Instant Card Issuance**: Issue physical and virtual cards in real-time
-    - 🛠️ **Card Management**: Complete lifecycle management from creation to closure
-    - 📊 **Transaction Monitoring**: Real-time transaction tracking and reporting
-    - 🔐 **PIN Management**: Secure PIN operations for enhanced security
-    - 🛍️ **E-Commerce Controls**: Manage online transaction capabilities
-    
-    ---
-    
-    ## Next Steps
-    
-    1. **Review Use Cases**: Explore the different API endpoints and understand the scenarios for each
-    2. **Integration Testing**: Test your integration in the UAT environment
-    3. **Request Production Access**: Contact our team when ready to go live
-    4. **Monitor & Optimize**: Use our transaction APIs to monitor card usage and optimize your integration
-    
-    ---
-    
-    ## Support
-    
-    Need help? Contact our developer support team:
-    - Email: api-support@enza.cloud
-    - Documentation: Available in this portal
+    **👉 To get started, please check the "Getting Started" section in the left sidebar.**
     
   version: 2025-02-16T14:26:47Z
 
@@ -149,17 +13,145 @@ servers:
 
 tags:
   - name: "Overview"
+    x-displayName: "Getting Started"
     description: |
-      # Quick Start Guide
+      ## Overview
       
-      Welcome to the Enza Developer Portal. Follow the steps in the API description above to get started with your integration.
+      Welcome to the Enza REST API Developer Portal. Our API provides seamless integration for instant issuing services across Africa. This portal offers all the necessary tools, detailed documentation, and API endpoints required to empower your financial operations with real-time card issuance capabilities.
       
-      **Key Requirements:**
-      - API Key authentication
-      - IP Whitelisting
-      - HTTPS protocol
+      Follow this guide to:
+      - Understand API authentication and security requirements
+      - Generate and configure the credentials required to access the Enza Developers API
+      - Use the API endpoints to create cards and manage customer accounts
+      - Learn best practices for integrating with our platform
       
-      **Time to Complete:** 30 minutes
+      ---
+      
+      ## Step 1: Generate API Credentials
+      
+      ### API Key Authentication
+      
+      All API requests require an **API Key** for authentication. The API key must be included in the request header:
+      
+      ```
+      x-api-key: YOUR_API_KEY_HERE
+      ```
+      
+      ### Development vs Production Keys
+      
+      - **Development/UAT API Key**: Available through this developer portal for testing and integration
+      - **Production API Key**: Will be shared securely through encrypted channels once your integration is approved
+      
+      ### Security Requirements
+      
+      ⚠️ **Important Security Measures:**
+      
+      1. **IP Whitelisting**: Your server IP addresses must be whitelisted before you can access the APIs
+         - Contact our support team to whitelist your IPs
+         - Provide both development and production IP addresses
+      
+      2. **Secure Key Storage**: Never expose your API keys in client-side code or public repositories
+      
+      3. **HTTPS Only**: All API requests must use HTTPS protocol
+      
+      ---
+      
+      ## Step 2: Understand the API Workflow
+      
+      ### Base URL
+      
+      **UAT Environment**: `https://uat-api.enza.cloud/TX/v1`
+      
+      **Production Environment**: Will be provided upon approval
+      
+      ### Common API Workflows
+      
+      #### Workflow 1: Create Card for New Customer
+      
+      1. **Check Customer Existence** (`POST /customers/search`)
+         - Search by nationalId, passport, or id
+         - Determine if customer exists in the system
+      
+      2. **Create Card** (`POST /cards/create-card` or `/cards/create-card-with-activation`)
+         - If customer **does not exist**: Use `requestType: "NewAccountNewCustomer"`
+         - If customer **exists**: Use `requestType: "NewAccountExistingCustomer"`
+      
+      #### Workflow 2: Create Card for Existing Customer
+      
+      1. **Get Customer Details** (`POST /customers/details`)
+         - Retrieve existing customer information
+      
+      2. **Create Card** with `requestType: "NewAccountExistingCustomer"`
+      
+      ---
+      
+      ## Step 3: Make Your First API Call
+      
+      ### Example: Check Customer Existence
+      
+      ```bash
+      curl -X POST https://uat-api.enza.cloud/TX/v1/customers/search \
+        -H "x-api-key: YOUR_API_KEY" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "nationalId": "1234567890"
+        }'
+      ```
+      
+      ### Example: Create Card for New Customer
+      
+      ```bash
+      curl -X POST https://uat-api.enza.cloud/TX/v1/cards/create-card \
+        -H "x-api-key: YOUR_API_KEY" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "requestType": "NewAccountNewCustomer",
+          "firstName": "John",
+          "lastName": "Doe",
+          "nationalId": "1234567890",
+          "mobilePhone": "1234567890",
+          "email": "john.doe@example.com"
+        }'
+      ```
+      
+      ---
+      
+      ## Step 4: Use Postman Collection
+      
+      Download our Postman collection to quickly test all API endpoints:
+      
+      1. Import the Enza API collection into Postman
+      2. Set up your environment variables:
+         - `base_url`: `https://uat-api.enza.cloud/TX/v1`
+         - `api_key`: Your API key
+      3. Start testing endpoints
+      
+      ---
+      
+      ## Key Features
+      
+      - 💳 **Instant Card Issuance**: Issue physical and virtual cards in real-time
+      - 🛠️ **Card Management**: Complete lifecycle management from creation to closure
+      - 📊 **Transaction Monitoring**: Real-time transaction tracking and reporting
+      - 🔐 **PIN Management**: Secure PIN operations for enhanced security
+      - 🛍️ **E-Commerce Controls**: Manage online transaction capabilities
+      
+      ---
+      
+      ## Next Steps
+      
+      1. **Review Use Cases**: Explore the different API endpoints and understand the scenarios for each
+      2. **Integration Testing**: Test your integration in the UAT environment
+      3. **Request Production Access**: Contact our team when ready to go live
+      4. **Monitor & Optimize**: Use our transaction APIs to monitor card usage and optimize your integration
+      
+      ---
+      
+      ## Support
+      
+      Need help? Contact our developer support team:
+      - Email: api-support@enza.cloud
+      - Documentation: Available in this portal
   - name: "Card Management"
     description: "Operations for creating, activating, and managing card status"
   - name: "Card Information"
@@ -179,26 +171,35 @@ paths:
   /overview:
     get:
       operationId: getOverview
-      summary: 📖 Getting Started Guide
+      summary: Quick Start Guide
       description: |
-        # Welcome to Enza Developer Portal
+        # 🚀 Welcome to Enza Developer Portal
         
-        This is your starting point for integrating with the Enza API. Please refer to the main API description above for the complete Quick Start Guide.
+        This endpoint provides an overview of the Enza API and helps you get started with integration.
         
-        ## Quick Links
+        ## 📋 What You'll Learn
         
-        - **Step 1**: Generate API Credentials and understand security requirements
-        - **Step 2**: Learn the API workflow for creating cards
-        - **Step 3**: Make your first API call
+        - **Step 1**: Generate API Credentials and understand security requirements (API Key, IP Whitelisting)
+        - **Step 2**: Learn the API workflow for creating cards (New vs Existing customers)
+        - **Step 3**: Make your first API call with cURL examples
         - **Step 4**: Use the Postman collection for testing
         
-        ## Key Requirements
+        ## ✅ Key Requirements
         
-        ✅ API Key authentication  
-        ✅ IP Whitelisting  
-        ✅ HTTPS protocol  
+        Before you start, ensure you have:
+        
+        - **API Key**: Required for all API requests (header: `x-api-key`)
+        - **IP Whitelisting**: Your server IPs must be whitelisted
+        - **HTTPS**: All requests must use HTTPS protocol
+        
+        ## 🔗 Base URLs
+        
+        - **UAT**: `https://uat-api.enza.cloud/TX/v1`
+        - **Production**: Will be provided upon approval
         
         ---
+        
+        **📖 For the complete Quick Start Guide**, please refer to the **Overview** section in the left sidebar.
         
         **Ready to start?** Check out the Customer Management and Card Management sections below!
         
@@ -208,7 +209,7 @@ paths:
         - $ref: '#/components/parameters/apiKey'
       responses:
         '200':
-          description: Overview information
+          description: Overview information and getting started guide
           content:
             application/json:
               schema:
@@ -216,13 +217,39 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Welcome to Enza Developer Portal"
+                    example: "Welcome to Enza Developer Portal - Your gateway to instant card issuance across Africa"
                   version:
                     type: string
                     example: "2025-02-16"
+                  apiVersion:
+                    type: string
+                    example: "v1"
+                  baseUrl:
+                    type: object
+                    properties:
+                      uat:
+                        type: string
+                        example: "https://uat-api.enza.cloud/TX/v1"
+                      production:
+                        type: string
+                        example: "Contact support for production URL"
                   documentation:
                     type: string
                     example: "https://developer.enza.cloud"
+                  support:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        example: "api-support@enza.cloud"
+                  requirements:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                      - "API Key authentication"
+                      - "IP Whitelisting"
+                      - "HTTPS protocol"
   
   ##Customer
   ##CARDS
