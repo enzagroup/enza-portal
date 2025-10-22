@@ -2018,26 +2018,45 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
-  /cards/get-cvv2/{pan}:
-    get:
+  /get-cvv2:
+    post:
       operationId: getCardCvv2
       summary: Show CVV2 for Card
       description: |
         Retrieve the CVV2 (Card Verification Value) for a card using its PAN (Primary Account Number).
         
+        **PCI DSS Compliance:**
+        - This endpoint uses POST method to prevent sensitive card data (PAN) from appearing in URL logs
+        - PAN is transmitted in the encrypted request body, not in URL parameters
+        - Follows PCI DSS requirement 3.4 for protecting cardholder data during transmission
+        
+        **Security Notes:**
+        - All requests must use HTTPS/TLS encryption
+        - PAN should never be logged or stored in plain text
+        - CVV2 values must be handled according to PCI DSS requirements
+        
         **Note:** This operation calculates and returns the CVV2 value for the specified card.
       tags:
-        - Card Management
+        - Card Information
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - name: pan
-          in: path
-          required: true
-          schema:
-            type: string
-            pattern: '^[0-9]{13,19}$'
-          description: "**Required.** Primary Account Number (13-19 digits)"
-          example: "4373580001009606"
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pan
+              properties:
+                pan:
+                  type: string
+                  pattern: '^[0-9]{13,19}$'
+                  description: "**Required.** Primary Account Number (13-19 digits)"
+                  example: "4373580001009606"
+            example:
+              pan: "4373580001009606"
       responses:
         '200':
           description: CVV2 successfully retrieved
@@ -2075,14 +2094,60 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
               examples:
-                badRequestExample:
+                invalidPanFormat:
                   summary: Invalid PAN format
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
                       message: "Invalid pan format"
+                missingPan:
+                  summary: Missing PAN parameter
+                  value:
+                    code: ERR_MISSING_PARAMETER
+                    params:
+                      message: "Missing required parameter: pan"
+                emptyBody:
+                  summary: Empty request body
+                  value:
+                    code: ERR_BODY_EMPTY
+                    params:
+                      message: "Request body is required"
+                invalidJson:
+                  summary: Invalid JSON format
+                  value:
+                    code: ERR_INVALID_JSON
+                    params:
+                      message: "Invalid JSON format in request body"
         '401':
           $ref: '#/components/responses/AuthenticationError'
+        '405':
+          description: 'Method Not Allowed – Only POST is supported'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_METHOD_NOT_ALLOWED
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: Only POST method is allowed
+              examples:
+                methodNotAllowed:
+                  summary: Method not allowed
+                  value:
+                    code: ERR_METHOD_NOT_ALLOWED
+                    params:
+                      message: Only POST method is allowed
         '409':
           description: 'Conflict – request declined'
           content:
