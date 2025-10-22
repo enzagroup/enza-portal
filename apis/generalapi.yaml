@@ -2027,14 +2027,6 @@ paths:
         
         **PCI DSS Compliance:**
         - This endpoint uses POST method to prevent sensitive card data (PAN) from appearing in URL logs
-        - PAN is transmitted in the encrypted request body, not in URL parameters
-        - Follows PCI DSS requirement 3.4 for protecting cardholder data during transmission
-        
-        **Security Notes:**
-        - All requests must use HTTPS/TLS encryption
-        - PAN should never be logged or stored in plain text
-        - CVV2 values must be handled according to PCI DSS requirements
-        
         **Note:** This operation calculates and returns the CVV2 value for the specified card.
       tags:
         - Card Information
