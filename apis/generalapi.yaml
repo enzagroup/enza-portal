@@ -461,18 +461,18 @@ paths:
                   type: string
                   description: "**Conditionally Required:** One of nationalId, passport, or identityId is required. External ID number"
                   example: "ID123456"
-                documentTypeRid:
+                firstName:
                   type: string
-                  description: "**Optional:** Document type RID. If not provided, automatically determined based on identifier type (nationalId/passport/identityId)"
-                  example: "1234"
-                documentRid:
-                  type: string
-                  description: "**Optional:** Document RID to update (e.g., new passport number)"
-                  example: "passport03"
+                  description: "**Optional:** Customer's first name"
+                  example: "John"
                 lastName:
                   type: string
                   description: "**Optional:** Customer's last name"
                   example: "Emboss"
+                middleName:
+                  type: string
+                  description: "**Optional:** Customer's middle name"
+                  example: "William"
                 birthDate:
                   type: string
                   format: date
@@ -500,9 +500,9 @@ paths:
                 summary: Update all fields using passport
                 value:
                   passport: "passport03"
-                  documentTypeRid: "1234"
-                  documentRid: "passport03"
+                  firstName: "John"
                   lastName: "Emboss"
+                  middleName: "William"
                   birthDate: "1990-01-01"
                   email: "Test@test.com"
                   mobilePhone: "9991234567"
@@ -538,16 +538,11 @@ paths:
                     type: object
                     required:
                       - message
-                      - customerId
                     properties:
                       message:
                         type: string
                         description: Success message
                         example: "Customer details updated successfully"
-                      customerId:
-                        type: string
-                        description: Customer ID that was updated
-                        example: "011022"
               examples:
                 successResponse:
                   summary: Customer updated successfully
@@ -555,7 +550,6 @@ paths:
                     code: SUCCESS_CUSTOMER_UPDATED
                     params:
                       message: "Customer details updated successfully"
-                      customerId: "011022"
         '400':
           description: 'Bad request – validation failed'
           content:
