@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "zudoku dev",
     "build": "zudoku build",
-    "deploy": "npm run build && gh-pages -d dist",
+    "deploy": "npm run build && gh-pages -d dist -b gh-pages",
     "lint": "eslint"
   },
   "homepage": "https://enzagroup.github.io/enza-portal/",
