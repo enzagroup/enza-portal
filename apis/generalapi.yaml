@@ -41,15 +41,7 @@ info:
     3. **HTTPS Only**: All API requests must use HTTPS protocol
     
     ---
-    ## Step 2: Use Postman Collection
-    
-    Download our Postman collection to quickly test all API endpoints:
-    
-    1. Import the Enza API collection into Postman
-    2. Set up your environment variables:
-       - `base_url`: `https://uat-api.enza.cloud/TX/v1`
-       - `api_key`: Your API key
-    3. Start testing endpoints
+  
     
     ---
     
@@ -95,9 +87,7 @@ tags:
       
       **Time to Complete:** 30 minutes
   - name: "Card Management"
-    description: "Operations for creating, activating, and managing card status"
-  - name: "Card Information"
-    description: "Retrieve card details and customer card information"
+    description: "Operations for creating, activating, managing card status, and retrieving card details"
   - name: "Customer Management"
     description: "Retrieve and manage customer information"
   - name: "Transactions"
@@ -1057,10 +1047,10 @@ paths:
 
   /cards/retrieve-pin-block:
     post:
-      operationId: retrievePinBlock
-      summary: Retrieve PIN Block for Card
+      operationId: showPinForCard
+      summary: Show PIN for Card
       description: |
-        Retrieve the encrypted PIN block for a card.
+        Display the encrypted PIN block for a card.
         
         **Note:** If the PIN block is not stored or restricted by policy, an error will be returned.
       tags:
@@ -1085,7 +1075,7 @@ paths:
               cardId: "12345"
       responses:
         '200':
-          description: PIN block successfully retrieved
+          description: PIN successfully displayed
           content:
             application/json:
               schema:
@@ -1113,7 +1103,7 @@ paths:
                         example: "ABC123DEF456"
               examples:
                 successResponse:
-                  summary: PIN block retrieved successfully
+                  summary: PIN displayed successfully
                   value:
                     code: SUCCESS_PIN_BLOCK_RETRIEVED
                     params:
@@ -1416,11 +1406,381 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
+  /cards/top-ups:
+    post:
+      operationId: topUpCard
+      summary: Top Up Card
+      description: |
+        Load funds instantly onto a card. This operation credits the specified amount to the card's available balance, enabling immediate use for transactions.
+        
+        **Transaction Flow:**
+        1. Validate card existence and status
+        2. Verify source account balance
+        3. Execute real-time fund transfer
+        4. Update card balance immediately
+        5. Return transaction confirmation with approval code
+        
+      tags:
+        - Card Management
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cardId
+                - ccy
+                - amount
+              properties:
+                cardId:
+                  type: string
+                  pattern: '^[0-9]+$'
+                  description: "**Required.** Card ID (numeric only)"
+                  example: "3280"
+                ccy:
+                  type: string
+                  pattern: '^[0-9]+$'
+                  description: "**Required.** Currency code (numeric only, e.g., 936 for GHS)"
+                  example: "936"
+                amount:
+                  type: string
+                  pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                  description: "**Required.** Amount to top up (decimal with up to 2 decimal places)"
+                  example: "100.12"
+            example:
+              cardId: "3280"
+              ccy: "936"
+              amount: "100.12"
+      responses:
+        '200':
+          description: Top-up successfully completed
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_TOPUP_COMPLETED
+                  params:
+                    type: object
+                    required:
+                      - transactionId
+                      - approvalCode
+                      - amount
+                      - currency
+                    properties:
+                      transactionId:
+                        type: string
+                        description: Transaction ID
+                        example: "251026743389956338"
+                      approvalCode:
+                        type: string
+                        description: Transaction approval code
+                        example: "6Q212F"
+                      amount:
+                        type: string
+                        description: Top-up amount
+                        example: "100.12"
+                      currency:
+                        type: string
+                        description: Currency code
+                        example: "936"
+              examples:
+                successResponse:
+                  summary: Top-up completed successfully
+                  value:
+                    code: SUCCESS_TOPUP_COMPLETED
+                    params:
+                      transactionId: "251026743389956338"
+                      approvalCode: "6Q212F"
+                      amount: "100.12"
+                      currency: "936"
+        '400':
+          description: 'Bad request – validation failed'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_VALIDATION_FAILED
+                  params:
+                    type: object
+                    required:
+                      - field
+                      - message
+                    properties:
+                      field:
+                        type: string
+                        description: Field name that failed validation
+                        example: cardId
+                      message:
+                        type: string
+                        description: Validation error message
+                        example: Card ID must contain only numbers
+              examples:
+                invalidCardId:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: cardId
+                      message: Card ID must contain only numbers
+                invalidCurrency:
+                  summary: Invalid currency code format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: ccy
+                      message: Currency code must contain only numbers
+                invalidAmount:
+                  summary: Invalid amount format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: amount
+                      message: Amount must be a valid number with up to 2 decimal places
+                missingField:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: cardId
+                      message: Card ID is required
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: 'Conflict – top-up declined'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CARD_NOT_FOUND
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card not found
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                insufficientBalance:
+                  summary: Insufficient balance
+                  value:
+                    code: ERR_INSUFFICIENT_BALANCE
+                    params:
+                      message: Insufficient balance
+                accountNotFound:
+                  summary: Account not found
+                  value:
+                    code: ERR_ACCOUNT_NOT_FOUND
+                    params:
+                      message: Account not found
+                paymentFailed:
+                  summary: Payment failed
+                  value:
+                    code: ERR_PAYMENT_FAILED
+                    params:
+                      message: Payment declined
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
+  /cards/convert-virtual-to-physical:
+    post:
+      operationId: convertVirtualToPhysical
+      summary: Convert Virtual Card to Physical
+      description: |
+        Convert a virtual card to physical by updating its lifecycle phase to "ordered" status, ready for printing and delivery.
+        
+        **Requirements:**
+        - Card must be in active status
+        - Card must be virtual type
+        - Card must be eligible for physical conversion
+        
+        **Process:**
+        1. Validate card existence
+        2. Check card is active
+        3. Verify card is virtual type
+        4. Update lifecycle phase to "ordered"
+        5. Queue card for physical production
+        
+      tags:
+        - Card Management
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cardId
+              properties:
+                cardId:
+                  type: string
+                  pattern: '^[0-9]+$'
+                  description: "**Required.** Card ID (numeric only)"
+                  example: "4092"
+            example:
+              cardId: "4092"
+      responses:
+        '200':
+          description: Card successfully converted to physical
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_VIRTUAL_TO_ORDERED
+                  params:
+                    type: object
+                    required:
+                      - message
+                      - cardId
+                    properties:
+                      message:
+                        type: string
+                        description: Success message
+                        example: "Card phase changed from virtual to ordered successfully"
+                      cardId:
+                        type: string
+                        description: Card ID
+                        example: "4092"
+              examples:
+                successResponse:
+                  summary: Conversion successful
+                  value:
+                    code: SUCCESS_VIRTUAL_TO_ORDERED
+                    params:
+                      message: "Card phase changed from virtual to ordered successfully"
+                      cardId: "4092"
+        '400':
+          description: 'Bad request – validation failed'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_VALIDATION_FAILED
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: "Missing required field: cardId"
+              examples:
+                missingCardId:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "Missing required field: cardId"
+                invalidCardId:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: cardId
+                      message: Card ID must contain only numbers
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: 'Conflict – conversion declined'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CARD_NOT_ACTIVE
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: "Card is not active. Current status: Unknown"
+              examples:
+                cardNotActive:
+                  summary: Card not active
+                  value:
+                    code: ERR_CARD_NOT_ACTIVE
+                    params:
+                      message: "Card is not active. Current status: Unknown"
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                cardNotVirtual:
+                  summary: Card is not virtual
+                  value:
+                    code: ERR_CARD_NOT_VIRTUAL
+                    params:
+                      message: "Card is not virtual type"
+                alreadyOrdered:
+                  summary: Card already ordered
+                  value:
+                    code: ERR_ALREADY_PHYSICAL
+                    params:
+                      message: "Card is already in physical or ordered status"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
   /cards/card-details/{card_Id}:
     get:
       operationId: getCardDetails
       tags:
-        - Card Information
+        - Card Management
       summary: Show Card Details by Card ID
       description: |
         Retrieve comprehensive card information using the card ID.
@@ -1528,7 +1888,7 @@ paths:
     post:
       operationId: listCustomerCards
       tags:
-        - Card Information
+        - Card Management
       summary: List All Customer Cards
       description: |
         Retrieve all cards issued to a customer using their identification document.
@@ -2197,7 +2557,7 @@ paths:
         - This endpoint uses POST method to prevent sensitive card data (PAN) from appearing in URL logs
         **Note:** This operation calculates and returns the CVV2 value for the specified card.
       tags:
-        - Card Information
+        - Card Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
