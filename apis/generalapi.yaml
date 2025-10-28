@@ -105,6 +105,202 @@ paths:
   ##Customer
   ##CARDS
   
+  /customers/create:
+    post:
+      operationId: createCustomer
+      summary: Create New Customer
+      description: |
+        Create a new customer (subject) in the system.
+        
+        **Required Fields:**
+        - Last name
+        - Birth date (YYYY-MM-DD)
+        - One of: National ID, Passport, or Identity ID
+        
+        **Process:**
+        1. Check if customer already exists
+        2. Create customer with provided details
+        3. Return success confirmation
+        
+      tags:
+        - Customer Management
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - lastName
+                - birthDate
+                - nationalId
+                - passport
+                - identityId
+              properties:
+                lastName:
+                  type: string
+                  description: "**Required.** Customer's last name"
+                  example: "Doe"
+                firstName:
+                  type: string
+                  description: "**Optional.** Customer's first name"
+                  example: "John"
+                middleName:
+                  type: string
+                  description: "**Optional.** Customer's middle name"
+                  example: "Michael"
+                birthDate:
+                  type: string
+                  format: date
+                  pattern: '^\d{4}-\d{2}-\d{2}$'
+                  description: "**Required.** Customer's birth date in YYYY-MM-DD format"
+                  example: "1990-01-01"
+                nationalId:
+                  type: string
+                  description: "**Conditionally Required:** National ID (required if passport and identityId not provided)"
+                  example: "7623835006"
+                passport:
+                  type: string
+                  description: "**Conditionally Required:** Passport number (required if nationalId and identityId not provided)"
+                  example: "AB1234567"
+                identityId:
+                  type: string
+                  description: "**Conditionally Required:** Identity ID (required if nationalId and passport not provided)"
+                  example: "ID123456"
+                email:
+                  type: string
+                  format: email
+                  description: "**Optional.** Customer's email address"
+                  example: "john.doe@example.com"
+                mobilePhone:
+                  type: string
+                  description: "**Optional.** Customer's mobile phone number"
+                  example: "9991234567"
+                streetTitle:
+                  type: string
+                  description: "**Optional.** Customer's street address"
+                  example: "Baker's Str"
+                zip:
+                  type: string
+                  description: "**Optional.** Customer's postal code"
+                  example: "WC1X 9NX"
+            examples:
+              withNationalId:
+                summary: Create customer with National ID
+                value:
+                  lastName: "Doe"
+                  firstName: "John"
+                  birthDate: "1990-01-01"
+                  nationalId: "7623835006"
+                  email: "john.doe@example.com"
+                  mobilePhone: "9991234567"
+                  streetTitle: "Baker's Str"
+                  zip: "WC1X 9NX"
+              withPassport:
+                summary: Create customer with Passport
+                value:
+                  lastName: "Smith"
+                  firstName: "Jane"
+                  birthDate: "1985-05-15"
+                  passport: "AB1234567"
+                  email: "jane.smith@example.com"
+      responses:
+        '200':
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CUSTOMER_CREATED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Customer created successfully"
+              examples:
+                success:
+                  summary: Customer created
+                  value:
+                    code: SUCCESS_CUSTOMER_CREATED
+                    params:
+                      message: "Customer created successfully"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                missingField:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "Missing required field: lastName"
+                invalidBirthDate:
+                  summary: Invalid birth date format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "Invalid birthDate format. Expected YYYY-MM-DD"
+                invalidData:
+                  summary: Invalid customer data
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "Invalid customer data"
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: Customer already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CUSTOMER_ALREADY_EXISTS
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Customer already exists"
+              examples:
+                customerExists:
+                  summary: Customer already exists
+                  value:
+                    code: ERR_CUSTOMER_ALREADY_EXISTS
+                    params:
+                      message: "Customer already exists"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /customers/search:
     post:
       operationId: checkCustomerExistence
