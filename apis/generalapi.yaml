@@ -98,6 +98,8 @@ tags:
     description: "Set and change card PINs securely"
   - name: "Preproduced Card"
     description: "Instant card issuance for new and existing customers"
+  - name: "Combined Sections"
+    description: "Combined sections APIs"
 
 paths:
   ##Customer
@@ -594,7 +596,7 @@ paths:
         | Existing customer       | `NewAccountExistingCustomer`|
 
       tags:
-        - Preproduced Card
+        - Combined Sections
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -1614,10 +1616,10 @@ paths:
 
   /preproduced/prepaid/new-customer:
     post:
-      operationId: createPrepaidNewCustomer
-      summary: Preproduced Prepaid Card for New Customer
+      operationId: linkPrepaidNewCustomer
+      summary: Link Prepaid Card for New Customer
       description: |
-        Preproduced prepaid card for a new customer.
+        Link prepaid card for a new customer.
         
       tags:
         - Preproduced Card
@@ -1751,10 +1753,10 @@ paths:
 
   /preproduced/prepaid/existing-customer:
     post:
-      operationId: createPrepaidExistingCustomer
-      summary: Preproduced Prepaid Card for Existing Customer
+      operationId: linkPrepaidExistingCustomer
+      summary: Link Prepaid Card for Existing Customer
       description: |
-        Preproduced prepaid card for an existing customer identified by their ID.
+        Link prepaid card for an existing customer identified by their ID.
 
       tags:
         - Preproduced Card
@@ -1853,10 +1855,10 @@ paths:
 
   /preproduced/prepaid/dummy-customer:
     post:
-      operationId: createPrepaidDummyCustomer
-      summary: Preproduced Prepaid Card for Dummy Customer
+      operationId: linkPrepaidDummyCustomer
+      summary: Link Prepaid Card for Dummy Customer
       description: |
-        Preproduced prepaid card for a dummy customer .
+        Link prepaid card for a dummy customer .
       tags:
         - Preproduced Card
       parameters:
@@ -1937,10 +1939,10 @@ paths:
 
   /preproduced/debit/new-account-new-customer:
     post:
-      operationId: createDebitNewCustomer
-      summary: Preproduced Debit Card for New Customer with New Account
+      operationId: linkDebitNewCustomer
+      summary: Link Debit Card for New Customer with New Account
       description: |
-        Preproduced debit card for a new customer with a new account.
+        Link debit card for a new customer with a new account.
       tags:
         - Preproduced Card
       parameters:
@@ -2092,10 +2094,10 @@ paths:
 
   /preproduced/debit/new-account-existing-customer:
     post:
-      operationId: createDebitExistingCustomer
-      summary: Preproduced Debit Card for Existing Customer with New Account
+      operationId: linkDebitExistingCustomer
+      summary: Link Debit Card for Existing Customer with New Account
       description: |
-        Preproduced debit card for an existing customer with a new account.
+        Link debit card for an existing customer with a new account.
   
         
       tags:
