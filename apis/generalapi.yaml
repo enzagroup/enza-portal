@@ -96,7 +96,7 @@ tags:
     description: "Manage e-commerce and online transaction settings"
   - name: "PIN Management"
     description: "Set and change card PINs securely"
-  - name: "Instant Issuing"
+  - name: "Preproduced Card"
     description: "Instant card issuance for new and existing customers"
 
 paths:
@@ -594,7 +594,7 @@ paths:
         | Existing customer       | `NewAccountExistingCustomer`|
 
       tags:
-        - Instant Issuing
+        - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -683,15 +683,15 @@ paths:
                   value:
                     errorMessage: Task timed out after 1.10 seconds
 
-  /instant-issuing-prepaid/new-customer:
+  /preproduced/prepaid/new-customer:
     post:
-      operationId: instantIssuePrepaidCardNewCustomer
-      summary: Instant Issue Prepaid Card - New Customer
+      operationId: PreproducedPrepaidCardNewCustomer
+      summary: Preproduced Prepaid Card - New Customer
       description: |
-        Instantly issue a prepaid card for a new customer.
+        Preproduced prepaid card for a new customer.
         
       tags:
-        - Instant Issuing
+        - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -800,7 +800,7 @@ paths:
         Instantly issue a prepaid card for an existing customer.
         
       tags:
-        - Instant Issuing
+        - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -874,7 +874,7 @@ paths:
         Instantly issue a prepaid card for the dummy customer.
         
       tags:
-        - Instant Issuing
+        - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -1856,22 +1856,12 @@ paths:
   /preproduced/prepaid/new-customer:
     post:
       operationId: createPrepaidNewCustomer
-      summary: Issue Prepaid Card for New Customer
+      summary: Preproduced Prepaid Card for New Customer
       description: |
-        Create a new customer and issue a prepaid card in one transaction.
-        
-        **Process:**
-        1. Validate pre-produced card exists
-        2. Check customer doesn't already exist
-        3. Create customer profile
-        4. Create prepaid contract (AccountPrepaid)
-        5. Link card to prepaid contract
-        6. Update card lifecycle to GivenToCustomer
-        
-        **Note:** Prepaid cards don't require a separate account - the prepaid contract serves as both account and card contract.
+        Preproduced prepaid card for a new customer.
         
       tags:
-        - Card Management
+        - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -2004,20 +1994,12 @@ paths:
   /preproduced/prepaid/existing-customer:
     post:
       operationId: createPrepaidExistingCustomer
-      summary: Issue Prepaid Card for Existing Customer
+      summary: Preproduced Prepaid Card for Existing Customer
       description: |
-        Issue a prepaid card to an existing customer identified by their document ID.
-        
-        **Process:**
-        1. Validate pre-produced card exists
-        2. Find existing customer by document ID (nationalId or passport)
-        3. Create prepaid contract (AccountPrepaid)
-        4. Link card to prepaid contract
-        
-        **Note:** Customer must already exist in the system with the provided document ID.
-        
+        Preproduced prepaid card for an existing customer identified by their ID.
+
       tags:
-        - Card Management
+        - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -2115,11 +2097,11 @@ paths:
   /preproduced/prepaid/dummy-customer:
     post:
       operationId: createPrepaidDummyCustomer
-      summary: Issue Prepaid Card for Dummy Customer
+      summary: Preproduced Prepaid Card for Dummy Customer
       description: |
-        Issue a prepaid card under a dummy customer .
+        Preproduced prepaid card for a dummy customer .
       tags:
-        - Card Management
+        - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -2199,9 +2181,9 @@ paths:
   /preproduced/debit/new-account-new-customer:
     post:
       operationId: createDebitNewCustomer
-      summary: Issue Debit Card for New Customer with New Account
+      summary: Preproduced Debit Card for New Customer with New Account
       description: |
-        Issue a debit card to a new customer with a new account.
+        Preproduced debit card for a new customer with a new account.
         
         **Process:**
         1. Validate pre-produced card exists
@@ -2213,7 +2195,7 @@ paths:
         7. Update card lifecycle to GivenToCustomer
         
       tags:
-        - Instant Issuing
+        - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
@@ -2365,9 +2347,9 @@ paths:
   /preproduced/debit/new-account-existing-customer:
     post:
       operationId: createDebitExistingCustomer
-      summary: Issue Debit Card for Existing Customer with New Account
+      summary: Preproduced Debit Card for Existing Customer with New Account
       description: |
-        Issue a debit card to an existing customer with a new account.
+        Preproduced debit card for an existing customer with a new account.
         
         **Process:**
         1. Validate pre-produced card exists
@@ -2379,7 +2361,7 @@ paths:
         **Note:** Customer must already exist in the system with the provided document ID.
         
       tags:
-        - Instant Issuing
+        - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
