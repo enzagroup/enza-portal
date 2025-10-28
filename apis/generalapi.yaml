@@ -3646,6 +3646,20 @@ components:
               type: string
               example: NewAccountNewCustomer
 
+    ErrorEnvelope:
+      type: object
+      required: [code, params]
+      properties:
+        code:
+          type: string
+          example: ERR_REQUEST_DECLINED
+        params:
+          type: object
+          properties:
+            message:
+              type: string
+              example: An error occurred processing the request
+
     BadRequest:
       type: object
       required: [code, params]
