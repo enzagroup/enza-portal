@@ -3535,7 +3535,22 @@ components:
               summary: Lambda execution timed out
               value:
                 errorMessage: Task timed out after 1.10 seconds
-    
+
+    ValidationError:
+      description: 'Validation failed'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          examples:
+            validationError:
+              summary: Validation failed
+              value:
+                code: ERR_VALIDATION_FAILED
+                params:
+                  message: Missing required field or invalid field format
+                  missingProperty: cardRefNum
+
     AuthenticationError:
       description: 'Authentication context is missing or invalid'
       content:
