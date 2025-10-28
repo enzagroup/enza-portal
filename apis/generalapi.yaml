@@ -1640,6 +1640,8 @@ paths:
                 - mobilePhone
                 - streetTitle
                 - zip
+                - nationalId
+                - passport
               properties:
                 cardRefNum:
                   type: string
@@ -1684,15 +1686,12 @@ paths:
                   example: "00233"
                 nationalId:
                   type: string
-                  description: "National ID (required if passport not provided)"
+                  description: "**Conditionally Required:** National ID (required if passport not provided)"
                   example: "GHA-123456789-0"
                 passport:
                   type: string
-                  description: "Passport number (required if nationalId not provided)"
+                  description: "**Conditionally Required:** Passport number (required if nationalId not provided)"
                   example: "G1234567"
-              anyOf:
-                - required: [nationalId]
-                - required: [passport]
             example:
               cardRefNum: "PREP001234"
               embossedName: "JOHN DOE"
@@ -1771,6 +1770,8 @@ paths:
               required:
                 - cardRefNum
                 - embossedName
+                - nationalId
+                - passport
               properties:
                 cardRefNum:
                   type: string
@@ -1782,15 +1783,12 @@ paths:
                   example: "JOHN DOE"
                 nationalId:
                   type: string
-                  description: "National ID (required if passport not provided)"
+                  description: "**Conditionally Required:** National ID (required if passport not provided)"
                   example: "GHA-123456789-0"
                 passport:
                   type: string
-                  description: "Passport number (required if nationalId not provided)"
+                  description: "**Conditionally Required:** Passport number (required if nationalId not provided)"
                   example: "G1234567"
-              anyOf:
-                - required: [nationalId]
-                - required: [passport]
             example:
               cardRefNum: "PREP001234"
               embossedName: "JOHN DOE"
@@ -1943,16 +1941,6 @@ paths:
       summary: Preproduced Debit Card for New Customer with New Account
       description: |
         Preproduced debit card for a new customer with a new account.
-        
-        **Process:**
-        1. Validate pre-produced card exists
-        2. Check customer doesn't already exist
-        3. Create new customer (subject)
-        4. Create debit account with specified account number
-        5. Create issuing contract linked to the account
-        6. Link card to issuing contract
-        7. Update card lifecycle to GivenToCustomer
-        
       tags:
         - Preproduced Card
       parameters:
@@ -1975,6 +1963,8 @@ paths:
                 - mobilePhone
                 - streetTitle
                 - zip
+                - nationalId
+                - passport
               properties:
                 cardRefNum:
                   type: string
@@ -2024,15 +2014,12 @@ paths:
                   example: "12345"
                 nationalId:
                   type: string
-                  description: "National ID (required if passport not provided)"
+                  description: "**Conditionally Required:** National ID (required if passport not provided)"
                   example: "GHA-123456789-0"
                 passport:
                   type: string
-                  description: "Passport number (required if nationalId not provided)"
+                  description: "**Conditionally Required:** Passport number (required if nationalId not provided)"
                   example: "G1234567"
-              anyOf:
-                - required: [nationalId]
-                - required: [passport]
             example:
               cardRefNum: "PREP001234"
               embossedName: "JOHN DOE"
@@ -2109,15 +2096,7 @@ paths:
       summary: Preproduced Debit Card for Existing Customer with New Account
       description: |
         Preproduced debit card for an existing customer with a new account.
-        
-        **Process:**
-        1. Validate pre-produced card exists
-        2. Find existing customer by document ID (nationalId or passport)
-        3. Create debit account with specified account number
-        4. Create issuing contract linked to the account
-        5. Link card to issuing contract
-        
-        **Note:** Customer must already exist in the system with the provided document ID.
+  
         
       tags:
         - Preproduced Card
@@ -2134,6 +2113,8 @@ paths:
                 - cardRefNum
                 - embossedName
                 - accountNum
+                - nationalId
+                - passport
               properties:
                 cardRefNum:
                   type: string
@@ -2149,15 +2130,12 @@ paths:
                   example: "1234567890"
                 nationalId:
                   type: string
-                  description: "National ID (required if passport not provided)"
+                  description: "**Conditionally Required:** National ID (required if passport not provided)"
                   example: "GHA-123456789-0"
                 passport:
                   type: string
-                  description: "Passport number (required if nationalId not provided)"
+                  description: "**Conditionally Required:** Passport number (required if nationalId not provided)"
                   example: "G1234567"
-              anyOf:
-                - required: [nationalId]
-                - required: [passport]
             example:
               cardRefNum: "PREP001234"
               embossedName: "JOHN DOE"
