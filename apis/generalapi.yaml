@@ -3551,6 +3551,20 @@ components:
                   message: Missing required field or invalid field format
                   missingProperty: cardRefNum
 
+    BadRequest:
+      description: 'Bad Request - validation failed'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequest'
+          examples:
+            badRequest:
+              summary: Missing required field
+              value:
+                code: ERR_VALIDATION_FAILED
+                params:
+                  missingProperty: requestType
+
     AuthenticationError:
       description: 'Authentication context is missing or invalid'
       content:
