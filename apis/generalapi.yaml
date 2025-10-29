@@ -3723,6 +3723,239 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
+  /cards/create-debit:
+    post:
+      operationId: createDebitCard
+      tags:
+        - Card Management
+      summary: Create Physical Debit Card for Existing Customer
+      description: |
+        Create a physical debit card for an **existing customer only**.
+        
+        ## ⚠️ Important: Customer Must Exist First
+        
+        **This API only works for existing customers.** If the customer doesn't exist, you will receive an error.
+        
+        **Workflow:**
+        
+        1. **Check if Customer Exists** using `POST /customers/search`
+           - Search by nationalId, passport, or identityId
+           - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first
+           - If customer **exists** → Proceed to step 2
+        
+        2. **Create Debit Card** using this API (`POST /cards/create-debit`)
+           - Provide the customer's document ID (nationalId, passport, or identityId)
+           - Provide the external account number (DHI reference)
+           - Optionally enable notifications
+        
+        ---
+        
+        **Process Flow:**
+        1. **Customer Verification**: Check if customer exists using document ID
+        2. **Financial Contract**: Create financial contract with external account number reference
+        3. **Card Issuance**: Create issuing contract - Physical MC Debit card created automatically
+        4. **Link Contracts**: Link issuing contract to financial contract
+        5. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)
+        6. **Notifications** (Optional): Set `notificationStatus: "enabled"` to enable SMS/Email notifications
+
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - accountNumber
+                - nationalId
+                - passport
+                - identityId
+              properties:
+                nationalId:
+                  type: string
+                  description: "**Conditionally Required:** National ID (required if passport and identityId not provided)"
+                  example: "1234567890"
+                passport:
+                  type: string
+                  description: "**Conditionally Required:** Passport number (required if nationalId and identityId not provided)"
+                  example: "AB1234567"
+                identityId:
+                  type: string
+                  description: "**Conditionally Required:** Identity ID (required if nationalId and passport not provided)"
+                  example: "ID123456"
+                accountNumber:
+                  type: string
+                  description: "**Required.** External account number (DHI reference) to link with the financial contract"
+                  example: "DHI123456789"
+                notificationStatus:
+                  type: string
+                  enum: [enabled, disabled]
+                  description: "**Optional.** Enable or disable notifications (default: disabled)"
+                  example: "enabled"
+                autoActivate:
+                  type: boolean
+                  description: "**Optional.** Automatically activate card after creation (default: false)"
+                  example: false
+                  default: false
+            examples:
+              withNationalId:
+                summary: Create debit card with National ID
+                value:
+                  nationalId: "1234567890"
+                  accountNumber: "DHI123456789"
+                  notificationStatus: "enabled"
+                  autoActivate: false
+              withPassport:
+                summary: Create debit card with Passport and auto-activation
+                value:
+                  passport: "AB1234567"
+                  accountNumber: "DHI987654321"
+                  autoActivate: true
+      responses:
+        '200':
+          description: Debit card successfully created (and activated if autoActivate was true)
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_REQUEST_PROCESSED
+                  params:
+                    type: object
+                    required:
+                      - personId
+                      - cardId
+                      - cardDetails
+                      - notificationEnabled
+                    properties:
+                      personId:
+                        type: string
+                        description: Customer person ID
+                        example: "PERS12345"
+                      cardId:
+                        type: string
+                        description: Card ID
+                        example: "12345"
+                      cardDetails:
+                        type: object
+                        required:
+                          - pan
+                          - expirationDate
+                        properties:
+                          pan:
+                            type: string
+                            description: Primary Account Number
+                            example: "1234567890123456"
+                          expirationDate:
+                            type: string
+                            format: date
+                            description: Card expiration date in YYYY-MM-DD format
+                            example: "2027-12-31"
+                      notificationEnabled:
+                        type: boolean
+                        description: Whether notifications are enabled
+                        example: true
+                      notificationStatus:
+                        type: string
+                        description: Notification status message (only if already existed)
+                        example: "Already Enabled"
+              examples:
+                successResponse:
+                  summary: Debit card created successfully
+                  value:
+                    code: SUCCESS_REQUEST_PROCESSED
+                    params:
+                      personId: PERS12345
+                      cardId: '12345'
+                      cardDetails:
+                        pan: '1234567890123456'
+                        expirationDate: 2027-12-31
+                      notificationEnabled: true
+                      
+        '400':
+          description: 'Bad request – validation failed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingExternalAccount:
+                  summary: Missing external account number
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "Missing required field: accountNumber"
+                missingDocumentId:
+                  summary: Missing document ID
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "One of the following fields is required: nationalId, passport, identityId"
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: 'Conflict – customer not found or operation declined'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                customerNotFound:
+                  summary: Customer not found
+                  value:
+                    code: ERR_CUSTOMER_NOT_FOUND
+                    params:
+                      message: "Customer not found. Please create the customer first using the /customers/create API."
+                cardCreationDeclined:
+                  summary: Card creation declined
+                  value:
+                    code: ERR_CARD_CREATION_DECLINED
+                    params:
+                      message: Card creation declined
+                activateCardDeclined:
+                  summary: Card activation declined
+                  value:
+                    code: ERR_ACTIVATE_CARD_DECLINED
+                    params:
+                      message: Card activation declined
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_INTERNAL_SERVER_ERROR
+                  params:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: An unexpected error occurred. Please try again later.
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred. Please try again later.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
 components:
   responses:
     LambdaTimeout:
