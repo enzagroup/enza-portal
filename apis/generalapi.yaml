@@ -3728,9 +3728,9 @@ paths:
       operationId: createDebitCard
       tags:
         - Card Management
-      summary: Create Physical Debit Card for Existing Customer
+      summary: Create Debit Card for Existing Customer
       description: |
-        Create a physical debit card for an **existing customer only**.
+        Create a debit card for an **existing customer only**.
         
         ## ⚠️ Important: Customer Must Exist First
         
@@ -3744,20 +3744,12 @@ paths:
            - If customer **exists** → Proceed to step 2
         
         2. **Create Debit Card** using this API (`POST /cards/create-debit`)
-           - Provide the customer's document ID (nationalId, passport, or identityId)
-           - Provide the external account number (DHI reference)
+           - Provide the customer's ID (nationalId, passport, or identityId)
+           - Provide the account number
            - Optionally enable notifications
+           - Optionally activate the card
         
         ---
-        
-        **Process Flow:**
-        1. **Customer Verification**: Check if customer exists using document ID
-        2. **Financial Contract**: Create financial contract with external account number reference
-        3. **Card Issuance**: Create issuing contract - Physical MC Debit card created automatically
-        4. **Link Contracts**: Link issuing contract to financial contract
-        5. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)
-        6. **Notifications** (Optional): Set `notificationStatus: "enabled"` to enable SMS/Email notifications
-
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
