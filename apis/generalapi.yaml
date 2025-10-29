@@ -3600,7 +3600,7 @@ paths:
                       - personId
                       - cardId
                       - cardDetails
-                      - notificationEnabled
+                      - notificationStatus
                     properties:
                       personId:
                         type: string
@@ -3630,7 +3630,7 @@ paths:
                             type: string
                             description: Card verification value
                             example: "123"
-                      notificationEnabled:
+                      notificationStatus:
                         type: boolean
                         description: Whether notifications are enabled
                         example: true
@@ -3650,7 +3650,7 @@ paths:
                         pan: '1234567890123456'
                         expirationDate: 2027-12-31
                         cvv2: '123'
-                      notificationEnabled: true
+                      notificationStatus: true
                       
         '400':
           description: 'Bad request – validation failed'
@@ -3692,6 +3692,12 @@ paths:
                     code: ERR_ACTIVATE_CARD_DECLINED
                     params:
                       message: Card activation declined
+                notificationServiceUnavailable:
+                  summary: Notification service unavailable
+                  value:
+                    code: ERR_NOTIFICATION_SERVICE_UNAVAILABLE
+                    params:
+                      message: Notification service is not available for your account at this time. Please contact support.
         '500':
           description: Internal server error
           content:
@@ -3825,7 +3831,7 @@ paths:
                       - personId
                       - cardId
                       - cardDetails
-                      - notificationEnabled
+                      - notificationStatus
                     properties:
                       personId:
                         type: string
@@ -3844,13 +3850,13 @@ paths:
                           pan:
                             type: string
                             description: Primary Account Number
-                            example: "1234567890123456"
+                            example: "526916******0106"
                           expirationDate:
                             type: string
                             format: date
                             description: Card expiration date in YYYY-MM-DD format
                             example: "2027-12-31"
-                      notificationEnabled:
+                      notificationStatus:
                         type: boolean
                         description: Whether notifications are enabled
                         example: true
@@ -3867,9 +3873,9 @@ paths:
                       personId: PERS12345
                       cardId: '12345'
                       cardDetails:
-                        pan: '1234567890123456'
+                        pan: '526916******0106'
                         expirationDate: 2027-12-31
-                      notificationEnabled: true
+                      notificationStatus: true
                       
         '400':
           description: 'Bad request – validation failed'
@@ -3917,6 +3923,12 @@ paths:
                     code: ERR_ACTIVATE_CARD_DECLINED
                     params:
                       message: Card activation declined
+                notificationServiceUnavailable:
+                  summary: Notification service unavailable
+                  value:
+                    code: ERR_NOTIFICATION_SERVICE_UNAVAILABLE
+                    params:
+                      message: Notification service is not available for your account at this time. Please contact support.
         '500':
           description: Internal server error
           content:
