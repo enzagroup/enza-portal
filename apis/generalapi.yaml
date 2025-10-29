@@ -1884,12 +1884,16 @@ paths:
                   example: "00233"
                 nationalId:
                   type: string
-                  description: "**Conditionally Required:** National ID (required if passport not provided)"
+                  description: "**Conditionally Required:** National ID (required if passport and identityId not provided)"
                   example: "GHA-123456789-0"
                 passport:
                   type: string
-                  description: "**Conditionally Required:** Passport number (required if nationalId not provided)"
+                  description: "**Conditionally Required:** Passport number (required if nationalId and identityId not provided)"
                   example: "G1234567"
+                identityId:
+                  type: string
+                  description: "**Conditionally Required:** Identity ID (required if nationalId and passport not provided)"
+                  example: "ID-987654321"
             example:
               cardRefNum: "PREP001234"
               embossedName: "JOHN DOE"
@@ -1981,12 +1985,16 @@ paths:
                   example: "JOHN DOE"
                 nationalId:
                   type: string
-                  description: "**Conditionally Required:** National ID (required if passport not provided)"
+                  description: "**Conditionally Required:** National ID (required if passport and identityId not provided)"
                   example: "GHA-123456789-0"
                 passport:
                   type: string
-                  description: "**Conditionally Required:** Passport number (required if nationalId not provided)"
+                  description: "**Conditionally Required:** Passport number (required if nationalId and identityId not provided)"
                   example: "G1234567"
+                identityId:
+                  type: string
+                  description: "**Conditionally Required:** Identity ID (required if nationalId and passport not provided)"
+                  example: "ID-987654321"
             example:
               cardRefNum: "PREP001234"
               embossedName: "JOHN DOE"
@@ -2212,12 +2220,16 @@ paths:
                   example: "12345"
                 nationalId:
                   type: string
-                  description: "**Conditionally Required:** National ID (required if passport not provided)"
+                  description: "**Conditionally Required:** National ID (required if passport and identityId not provided)"
                   example: "GHA-123456789-0"
                 passport:
                   type: string
-                  description: "**Conditionally Required:** Passport number (required if nationalId not provided)"
+                  description: "**Conditionally Required:** Passport number (required if nationalId and identityId not provided)"
                   example: "G1234567"
+                identityId:
+                  type: string
+                  description: "**Conditionally Required:** Identity ID (required if nationalId and passport not provided)"
+                  example: "ID-987654321"
             example:
               cardRefNum: "PREP001234"
               embossedName: "JOHN DOE"
@@ -2328,12 +2340,16 @@ paths:
                   example: "1234567890"
                 nationalId:
                   type: string
-                  description: "**Conditionally Required:** National ID (required if passport not provided)"
+                  description: "**Conditionally Required:** National ID (required if passport and identityId not provided)"
                   example: "GHA-123456789-0"
                 passport:
                   type: string
-                  description: "**Conditionally Required:** Passport number (required if nationalId not provided)"
+                  description: "**Conditionally Required:** Passport number (required if nationalId and identityId not provided)"
                   example: "G1234567"
+                identityId:
+                  type: string
+                  description: "**Conditionally Required:** Identity ID (required if nationalId and passport not provided)"
+                  example: "ID-987654321"
             example:
               cardRefNum: "PREP001234"
               embossedName: "JOHN DOE"
@@ -2392,6 +2408,117 @@ paths:
                     code: ERR_ACCOUNT_EXISTS
                     params:
                       message: "This Account Already Exists!"
+                unsupportedProduct:
+                  summary: Unsupported card product
+                  value:
+                    code: ERR_UNSUPPORTED_PRODUCTID
+                    params:
+                      message: "Unsupported or invalid Card ProductId!"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
+  /preproduced/debit/existing-account-existing-customer:
+    post:
+      operationId: linkDebitExistingAccountExistingCustomer
+      summary: Link Debit Card for Existing Customer with Existing Account
+      description: |
+        Link a pre-produced debit card to an existing customer's existing account.
+      tags:
+        - Preproduced Card
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cardRefNum
+                - embossedName
+                - accountNum
+                - nationalId
+                - passport
+              properties:
+                cardRefNum:
+                  type: string
+                  description: "**Required.** Pre-produced card reference number"
+                  example: "PREP001234"
+                embossedName:
+                  type: string
+                  description: "**Required.** Name to emboss on card"
+                  example: "JOHN DOE"
+                accountNum:
+                  type: string
+                  description: "**Required.** Existing debit account number to link"
+                  example: "1234567890"
+                nationalId:
+                  type: string
+                  description: "**Conditionally Required:** National ID (required if passport and identityId not provided)"
+                  example: "GHA-123456789-0"
+                passport:
+                  type: string
+                  description: "**Conditionally Required:** Passport number (required if nationalId and identityId not provided)"
+                  example: "G1234567"
+                identityId:
+                  type: string
+                  description: "**Conditionally Required:** Identity ID (required if nationalId and passport not provided)"
+                  example: "ID-987654321"
+            example:
+              cardRefNum: "PREP001234"
+              embossedName: "JOHN DOE"
+              accountNum: "1234567890"
+              nationalId: "GHA-123456789-0"
+      responses:
+        '200':
+          description: Debit card successfully linked to existing account and customer
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_REQUEST_PROCESSED
+              examples:
+                success:
+                  summary: Card linked successfully
+                  value:
+                    code: SUCCESS_REQUEST_PROCESSED
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '409':
+          description: 'Conflict – customer or card issue'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                customerNotFound:
+                  summary: Customer not found
+                  value:
+                    code: ERR_CUSTOMER_NOT_FOUND
+                    params:
+                      message: "Customer doesn't exist!"
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_READTOKEN_DECLINED
+                    params:
+                      message: "Card not found"
+                cardAlreadyAssigned:
+                  summary: Card already assigned
+                  value:
+                    code: ERR_CARD_ALREADY_ASSIGNED
+                    params:
+                      message: "This Card Is Already Assigned To A Customer!"
                 unsupportedProduct:
                   summary: Unsupported card product
                   value:
