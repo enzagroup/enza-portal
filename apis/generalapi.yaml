@@ -98,8 +98,8 @@ tags:
     description: "Set and change card PINs securely"
   - name: "Preproduced Card"
     description: "Instant card issuance for new and existing customers"
-  - name: "Combined Sections"
-    description: "Combined sections APIs"
+  - name: "Combined Section"
+    description: "Combined section APIs"
 
 paths:
   ##Customer
