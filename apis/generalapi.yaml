@@ -3503,7 +3503,7 @@ paths:
       operationId: createPrepaidCard
       tags:
         - Card Management
-      summary: Create Virtual Prepaid Card for Existing Customer
+      summary: Create Virtual Prepaid Card
       description: |
         Create a virtual prepaid card for an **existing customer only**.
         
@@ -3728,7 +3728,7 @@ paths:
       operationId: createDebitCard
       tags:
         - Card Management
-      summary: Create Debit Card for Existing Customer
+      summary: Create Debit Card
       description: |
         Create a debit card for an **existing customer only**.
         
