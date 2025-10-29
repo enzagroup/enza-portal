@@ -3634,7 +3634,7 @@ paths:
                         type: boolean
                         description: Whether notifications are enabled
                         example: true
-                      notificationStatus:
+                      notificationStatusMessage:
                         type: string
                         description: Notification status message (only if already existed)
                         example: "Already Enabled"
@@ -3860,7 +3860,7 @@ paths:
                         type: boolean
                         description: Whether notifications are enabled
                         example: true
-                      notificationStatus:
+                      notificationStatusMessage:
                         type: string
                         description: Notification status message (only if already existed)
                         example: "Already Enabled"
