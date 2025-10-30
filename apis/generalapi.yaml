@@ -2507,6 +2507,12 @@ paths:
                     code: ERR_CUSTOMER_NOT_FOUND
                     params:
                       message: "Customer doesn't exist!"
+                accountNotFound:
+                  summary: Account not found
+                  value:
+                    code: ERR_ACCOUNT_NOT_FOUND
+                    params:
+                      message: "Account number does not exist in the system"
                 cardNotFound:
                   summary: Card not found
                   value:
