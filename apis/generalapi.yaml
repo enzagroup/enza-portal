@@ -133,12 +133,12 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-                - lastName
-                - birthDate
-                - nationalId
-                - passport
-                - identityId
+              # required:
+              #   - lastName
+              #   - birthDate
+              #   - nationalId
+              #   - passport
+              #   - identityId
               properties:
                 lastName:
                   type: string
