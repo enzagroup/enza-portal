@@ -1015,7 +1015,7 @@ paths:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
       requestBody:
-        required: true
+        # required: true
         content:
           application/json:
             schema:
@@ -1115,7 +1115,7 @@ paths:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/contentType'
       requestBody:
-        required: true
+        # required: true
         content:
           application/json:
             schema:
@@ -2545,13 +2545,6 @@ paths:
         - Card must be in active status
         - Card must be virtual type
         - Card must be eligible for physical conversion
-        
-        **Process:**
-        1. Validate card existence
-        2. Check card is active
-        3. Verify card is virtual type
-        4. Update lifecycle phase to "ordered"
-        5. Queue card for physical production
         
       tags:
         - Card Management
