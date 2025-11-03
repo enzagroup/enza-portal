@@ -1,0 +1,17 @@
+html, body {
+  height: 100%;
+}
+
+/* Global page background */
+body {
+  background-image: url('/assets/bg.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/* Keep content readable on top of image */
+#root, .zudoku-app {
+  background-color: transparent;
+}
