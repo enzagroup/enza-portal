@@ -1,4 +1,21 @@
-import type { ZudokuConfig } from "zudoku";
+import type { ZudokuConfig, ZudokuPlugin } from "zudoku";
+
+// Background image plugin: injects a global stylesheet
+const backgroundPlugin: ZudokuPlugin = {
+  getHead: () => (
+    <link rel="stylesheet" href="/assets/bg.css" />
+  ),
+};
+
+// Search trigger plugin: adds a floating button to open the built-in search
+const searchTriggerPlugin: ZudokuPlugin = {
+  getHead: () => (
+    <>
+      <link rel="stylesheet" href="/assets/search.css" />
+      <script defer src="/assets/search.js"></script>
+    </>
+  ),
+};
 
 const config: ZudokuConfig = {
   // Set the base path for GitHub Pages deployment
@@ -42,6 +59,7 @@ const config: ZudokuConfig = {
       width: "120px",
     },
   },
+  plugins: [backgroundPlugin, searchTriggerPlugin],
 };
 
 export default config;
