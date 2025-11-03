@@ -6,17 +6,17 @@ const config: ZudokuConfig = {
   
   // Redirect root to API page
   redirects: [
-    { from: "/", to: "/api/card-management" },
+    { from: "/", to: "/api" },
   ],
   
-  topNavigation: [
-    { id: "api", label: "API Reference" },
+  navigation: [
+    { type: "link", to: "api", label: "API Reference" },
   ],
   apis: [
     {
       type: "file",
       input: "./apis/generalapi.yaml",
-      navigationId: "api",
+      path: "/api",
     },
   ],
   metadata: {
@@ -31,9 +31,9 @@ const config: ZudokuConfig = {
     publisher: "enza Payments",
   },
   
-  // Custom branding
-  page: {
-    pageTitle: "APIs",
+  // Site branding
+  site: {
+    title: "APIs",
     logo: {
       src: {
         light: "/enza-portal/assets/logo.svg",
