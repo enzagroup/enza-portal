@@ -1023,7 +1023,6 @@ paths:
               required:
                 - cardStatus
                 - cardRefNum
-                - reason
               properties:
                 cardStatus:
                   type: string
@@ -1523,7 +1522,6 @@ paths:
               required:
                 - cardStatus
                 - cardId
-                - reason
               properties:
                 cardStatus:
                   type: string
@@ -4420,12 +4418,9 @@ components:
         - mobilePhone
         - nationalId
         - passport
-        - id
-        - email
+        - identityId
         - streetTitle
         - zip
-        - birthDate
-        - middleName
         - notificationStatus
       properties:
         requestType:
