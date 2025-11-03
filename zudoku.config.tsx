@@ -36,8 +36,8 @@ const config: ZudokuConfig = {
     title: "APIs",
     logo: {
       src: {
-        light: "/enza-portal/assets/logo.svg",
-        dark: "/enza-portal/assets/logo-dark.svg",
+        light: "/assets/logo.svg",
+        dark: "/assets/logo-dark.svg",
       },
       width: "120px",
     },
