@@ -4321,9 +4321,9 @@ components:
 
     PinSetting:
       type: object
-      required:
-        - pan
-        - pinBlock
+      # required:
+      #   - pan
+      #   - pinBlock
       properties:
         pan:
           type: string
@@ -4336,10 +4336,10 @@ components:
 
     PinChanging:
       type: object
-      required:
-        - pan
-        - oldPinBlock
-        - newPinBlock
+      # required:
+      #   - pan
+      #   - oldPinBlock
+      #   - newPinBlock
       properties:
         pan:
           type: string
