@@ -14,7 +14,7 @@
     "lucide-react": "^0.469.0",
     "react": ">18.0.0",
     "react-dom": ">18.0.0",
-    "zudoku": "0.32.5"
+    "zudoku": "^0.62.0"
   },
   "devDependencies": {
     "@types/node": "^20",
