@@ -4404,23 +4404,24 @@ components:
     
     CreateCardStandard:
       type: object
-      required:
-        - requestType
-        - firstName
-        - lastName
-        - mobilePhone
-        - nationalId
-        - passport
-        - identityId
-        - streetTitle
-        - zip
-        - notificationStatus
       properties:
         requestType:
           type: string
-          enum: [NewAccountNewCustomer, NewAccountExistingCustomer]
-          description: "**Required.** Type of request - NewAccountNewCustomer or NewAccountExistingCustomer"
+          enum: [NewAccountNewCustomer, NewAccountExistingCustomer, ExistingAccountExistingCustomer]
+          description: "**Required.** Type of request - NewAccountNewCustomer, NewAccountExistingCustomer, or ExistingAccountExistingCustomer"
           example: "NewAccountNewCustomer"
+        accountNum:
+          type: string
+          description: "**Required.** Account number to create or link to"
+          example: "ACC123456"
+        cardRefNum:
+          type: string
+          description: "**Required.** Card reference number (ExtRid) of pre-produced card"
+          example: "CARD789012"
+        embossedName:
+          type: string
+          description: "**Required.** Name to emboss on the card"
+          example: "JOHN DOE"
         firstName:
           type: string
           description: "**Conditionally Required:** Required when requestType is 'NewAccountNewCustomer'. Customer's first name"
