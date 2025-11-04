@@ -42,6 +42,11 @@ const config: ZudokuConfig = {
       width: "120px",
     },
   },
+  
+  // Enable Pagefind search (no API key required)
+  search: {
+    type: "pagefind",
+  },
 };
 
 export default config;
