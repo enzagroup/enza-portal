@@ -205,7 +205,6 @@ paths:
                   zip: "WC1X 9NX"
                   gender: "Male"
                   employer: "Tech Corp"
-                  mobilePhone: "9991234567"
               withPassport:
                 summary: Create customer with Passport
                 value:
