@@ -115,7 +115,6 @@ paths:
         **Required Fields:**
         - Last name
         - Birth date (YYYY-MM-DD)
-        - Registration address
         - One of: National ID, Passport, or Identity ID
         
         **Process:**
@@ -188,19 +187,15 @@ paths:
                   type: string
                   description: "**Optional.** Customer's postal code"
                   example: "WC1X 9NX"
-                registrationAddress:
-                  type: string
-                  description: "**Required.** Customer's registration address"
-                  example: "123 Main Street, City"
-                employer:
-                  type: string
-                  description: "**Optional.** Customer's employer name"
-                  example: "Tech Corp"
                 gender:
                   type: string
                   enum: [Male, Female]
                   description: "**Optional.** Customer's gender (Male/Female). Will be converted to M/F for RTP"
                   example: "Male"
+                employer:
+                  type: string
+                  description: "**Optional.** Customer's employer name"
+                  example: "Tech Corp"
             examples:
               withNationalId:
                 summary: Create customer with National ID
@@ -213,9 +208,8 @@ paths:
                   mobilePhone: "9991234567"
                   streetTitle: "Baker's Str"
                   zip: "WC1X 9NX"
-                  registrationAddress: "123 Main Street, City"
-                  employer: "Tech Corp"
                   gender: "Male"
+                  employer: "Tech Corp"
               withPassport:
                 summary: Create customer with Passport
                 value:
@@ -224,9 +218,8 @@ paths:
                   birthDate: "1985-05-15"
                   passport: "AB1234567"
                   email: "jane.smith@example.com"
-                  registrationAddress: "456 Oak Avenue, Town"
-                  employer: "Finance Inc"
                   gender: "Female"
+                  employer: "Finance Inc"
       responses:
         '200':
           description: Customer created successfully
@@ -247,6 +240,10 @@ paths:
                       message:
                         type: string
                         example: "Customer created successfully"
+                      customerId:
+                        type: string
+                        description: "The unique identifier for the created customer"
+                        example: "CUST123456789"
               examples:
                 success:
                   summary: Customer created
@@ -254,6 +251,7 @@ paths:
                     code: SUCCESS_CUSTOMER_CREATED
                     params:
                       message: "Customer created successfully"
+                      customerId: "CUST123456789"
         '400':
           description: Validation error
           content:
