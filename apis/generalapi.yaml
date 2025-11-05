@@ -112,11 +112,6 @@ paths:
       description: |
         Create a new customer (subject) in the system.
         
-        **Required Fields:**
-        - Last name
-        - Birth date (YYYY-MM-DD)
-        - One of: National ID, Passport, or Identity ID
-        
         **Process:**
         1. Check if customer already exists
         2. Create customer with provided details
