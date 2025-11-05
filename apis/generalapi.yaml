@@ -210,6 +210,7 @@ paths:
                   zip: "WC1X 9NX"
                   gender: "Male"
                   employer: "Tech Corp"
+                  mobilePhone: "9991234567"
               withPassport:
                 summary: Create customer with Passport
                 value:
@@ -220,6 +221,18 @@ paths:
                   email: "jane.smith@example.com"
                   gender: "Female"
                   employer: "Finance Inc"
+                  mobilePhone: "9991234567"
+              withIdentityId:
+                summary: Create customer with Identity ID
+                value:
+                  lastName: "Smith"
+                  firstName: "Jane"
+                  birthDate: "1985-05-15"
+                  identityId: "ID123456"
+                  email: "jane.smith@example.com"
+                  gender: "Female"
+                  employer: "Finance Inc"
+                  mobilePhone: "9991234567"    
       responses:
         '200':
           description: Customer created successfully
