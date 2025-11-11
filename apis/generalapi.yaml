@@ -2107,7 +2107,7 @@ paths:
                   example: "PREP001234"
                 embossedName:
                   type: string
-                  description: "**Required.** Name to emboss on card"
+                  description: "**Optional.** Name to emboss on card"
                   example: "TEST CARD"
             example:
               cardRefNum: "PREP001234"
@@ -4284,15 +4284,6 @@ components:
 
     Customer:
       type: object
-      # required:
-      #   - requestType
-      #   - accountNum
-      #   - cardRefNum
-      #   - embossedName
-      #   - firstName
-      #   - lastName
-      #   - nationalId
-      #   - passport
       properties:
         requestType:
           type: string
@@ -4305,7 +4296,7 @@ components:
           description: "**Required.** Card reference number"
         embossedName:
           type: string
-          description: "**Required.** Name to be embossed on the card"
+          description: "**Conditionally Required:** Required for NewCustomer/ExistingCustomer scenarios. Optional for DummyCustomer. Name to be embossed on the card"
         accountNum:
           type: string
           description: "**Required.** Account number to link to the card"
@@ -4320,10 +4311,13 @@ components:
           description: "**Conditionally Required:** Required when requestType is 'NewAccountNewCustomer'. Customer's last name"
         nationalId:
           type: string
-          description: "**Conditionally Required:** One of nationalId or passport is required. Customer's national ID"
+          description: "**Conditionally Required:** For NewCustomer/ExistingCustomer: one of nationalId, passport, or identityId is required. Optional for DummyCustomer. Customer's national ID"
         passport:
           type: string
-          description: "**Conditionally Required:** One of nationalId or passport is required. Customer's passport number"
+          description: "**Conditionally Required:** For NewCustomer/ExistingCustomer: one of nationalId, passport, or identityId is required. Optional for DummyCustomer. Customer's passport number"
+        identityId:
+          type: string
+          description: "**Conditionally Required:** For NewCustomer/ExistingCustomer: one of nationalId, passport, or identityId is required. Optional for DummyCustomer. Customer's identity ID"
         birthDate:
           type: string
           format: date          
