@@ -2978,112 +2978,112 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
-  /cards/delete-card:
-    post:
-      operationId: deleteCard
-      summary: Delete Card
-      description: |
-        Permanently delete a card using either its card ID or external RID.
+  # /cards/delete-card:
+  #   post:
+  #     operationId: deleteCard
+  #     summary: Delete Card
+  #     description: |
+  #       Permanently delete a card using either its card ID or external RID.
         
-        **Warning:** This operation is irreversible. The card will be permanently removed from the system.
-      tags:
-        - Card Management
-      parameters:
-        - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/contentType'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              # required:
-              #   - cardId
-              #   - extRid
-              properties:
-                cardId:
-                  type: string
-                  description: "**Conditionally Required:** One of cardId or extRid is required. Card ID to delete"
-                  example: "3255"
-                extRid:
-                  type: string
-                  description: "**Conditionally Required:** One of cardId or extRid is required. External RID to delete card"
-                  example: "TestVenCorporate1"
-            example:
-              cardId: "3255"
-            examples:
-              deleteByCardId:
-                summary: Delete by Card ID
-                value:
-                  cardId: "3255"
-              deleteByExtRid:
-                summary: Delete by External RID
-                value:
-                  extRid: "TestVenCorporate1"
-      responses:
-        '200':
-          description: Card successfully deleted
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - code
-                properties:
-                  code:
-                    type: string
-                    example: SUCCESS_CARD_DELETED
-              examples:
-                successResponse:
-                  summary: Card deleted successfully
-                  value:
-                    code: SUCCESS_CARD_DELETED
-        '400':
-          description: 'Bad request – validation failed'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationError'
-              examples:
-                badRequestExample:
-                  summary: Missing required field
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: "One of the following fields is required: cardId, extRid"
-        '401':
-          $ref: '#/components/responses/AuthenticationError'
-        '409':
-          description: 'Conflict – card not found or cannot be deleted'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - code
-                  - params
-                properties:
-                  code:
-                    type: string
-                    example: ERR_CARD_NOT_FOUND
-                  params:
-                    type: object
-                    required:
-                      - message
-                    properties:
-                      message:
-                        type: string
-                        example: Card not found
-              examples:
-                cardNotFound:
-                  summary: Card not found
-                  value:
-                    code: ERR_CARD_NOT_FOUND
-                    params:
-                      message: "Card #3255 not found"
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        '504':
-          $ref: '#/components/responses/LambdaTimeout'
+  #       **Warning:** This operation is irreversible. The card will be permanently removed from the system.
+  #     tags:
+  #       - Card Management
+  #     parameters:
+  #       - $ref: '#/components/parameters/apiKey'
+  #       - $ref: '#/components/parameters/contentType'
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             # required:
+  #             #   - cardId
+  #             #   - extRid
+  #             properties:
+  #               cardId:
+  #                 type: string
+  #                 description: "**Conditionally Required:** One of cardId or extRid is required. Card ID to delete"
+  #                 example: "3255"
+  #               extRid:
+  #                 type: string
+  #                 description: "**Conditionally Required:** One of cardId or extRid is required. External RID to delete card"
+  #                 example: "TestVenCorporate1"
+  #           example:
+  #             cardId: "3255"
+  #           examples:
+  #             deleteByCardId:
+  #               summary: Delete by Card ID
+  #               value:
+  #                 cardId: "3255"
+  #             deleteByExtRid:
+  #               summary: Delete by External RID
+  #               value:
+  #                 extRid: "TestVenCorporate1"
+  #     responses:
+  #       '200':
+  #         description: Card successfully deleted
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #                 - code
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: SUCCESS_CARD_DELETED
+  #             examples:
+  #               successResponse:
+  #                 summary: Card deleted successfully
+  #                 value:
+  #                   code: SUCCESS_CARD_DELETED
+  #       '400':
+  #         description: 'Bad request – validation failed'
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ValidationError'
+  #             examples:
+  #               badRequestExample:
+  #                 summary: Missing required field
+  #                 value:
+  #                   code: ERR_VALIDATION_FAILED
+  #                   params:
+  #                     message: "One of the following fields is required: cardId, extRid"
+  #       '401':
+  #         $ref: '#/components/responses/AuthenticationError'
+  #       '409':
+  #         description: 'Conflict – card not found or cannot be deleted'
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #                 - code
+  #                 - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: ERR_CARD_NOT_FOUND
+  #                 params:
+  #                   type: object
+  #                   required:
+  #                     - message
+  #                   properties:
+  #                     message:
+  #                       type: string
+  #                       example: Card not found
+  #             examples:
+  #               cardNotFound:
+  #                 summary: Card not found
+  #                 value:
+  #                   code: ERR_CARD_NOT_FOUND
+  #                   params:
+  #                     message: "Card #3255 not found"
+  #       '500':
+  #         $ref: '#/components/responses/InternalServerError'
+  #       '504':
+  #         $ref: '#/components/responses/LambdaTimeout'
 
   /cards/list-of-transactions:
     post:
@@ -3377,275 +3377,275 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
-  /cards/get-pan/{card_id}:
-    get:
-      operationId: getCardPan
-      summary: Show PAN for Card
-      description: |
-        Retrieve the unmasked PAN (Primary Account Number) for a card using its card ID.
+  # /cards/get-pan/{card_id}:
+  #   get:
+  #     operationId: getCardPan
+  #     summary: Show PAN for Card
+  #     description: |
+  #       Retrieve the unmasked PAN (Primary Account Number) for a card using its card ID.
         
-        **Note:** This operation returns the full, unmasked PAN. Handle with appropriate security measures.
-      tags:
-        - Card Management
-      parameters:
-        - $ref: '#/components/parameters/apiKey'
-        - name: card_id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: "**Required.** Card ID"
-          example: "12345"
-      responses:
-        '200':
-          description: PAN successfully retrieved
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - code
-                  - params
-                properties:
-                  code:
-                    type: string
-                    example: SUCCESS_PAN_RETRIEVED
-                  params:
-                    type: object
-                    required:
-                      - pan
-                    properties:
-                      pan:
-                        type: string
-                        description: Primary Account Number (unmasked)
-                        example: "4373580001009606"
-              examples:
-                successResponse:
-                  summary: PAN retrieved successfully
-                  value:
-                    code: SUCCESS_PAN_RETRIEVED
-                    params:
-                      pan: "4373580001009606"
-        '400':
-          description: 'Bad request – validation failed'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationError'
-              examples:
-                badRequestExample:
-                  summary: Missing required field
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: "Missing required field: cardId"
-        '401':
-          $ref: '#/components/responses/AuthenticationError'
-        '409':
-          description: 'Conflict – request declined'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - code
-                  - params
-                properties:
-                  code:
-                    type: string
-                    example: ERR_CARD_NOT_FOUND
-                  params:
-                    type: object
-                    required:
-                      - exists
-                      - message
-                    properties:
-                      exists:
-                        type: boolean
-                        description: Whether the card exists in the system
-                        example: false
-                      message:
-                        type: string
-                        example: Card not found
-              examples:
-                cardNotFound:
-                  summary: Card not found
-                  value:
-                    code: ERR_CARD_NOT_FOUND
-                    params:
-                      exists: false
-                      message: Card #12345 not found
-                panNotAvailable:
-                  summary: PAN not available
-                  value:
-                    code: ERR_PAN_NOT_AVAILABLE
-                    params:
-                      message: PAN is not available for this card
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        '504':
-          $ref: '#/components/responses/LambdaTimeout'
+  #       **Note:** This operation returns the full, unmasked PAN. Handle with appropriate security measures.
+  #     tags:
+  #       - Card Management
+  #     parameters:
+  #       - $ref: '#/components/parameters/apiKey'
+  #       - name: card_id
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: string
+  #         description: "**Required.** Card ID"
+  #         example: "12345"
+  #     responses:
+  #       '200':
+  #         description: PAN successfully retrieved
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #                 - code
+  #                 - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: SUCCESS_PAN_RETRIEVED
+  #                 params:
+  #                   type: object
+  #                   required:
+  #                     - pan
+  #                   properties:
+  #                     pan:
+  #                       type: string
+  #                       description: Primary Account Number (unmasked)
+  #                       example: "4373580001009606"
+  #             examples:
+  #               successResponse:
+  #                 summary: PAN retrieved successfully
+  #                 value:
+  #                   code: SUCCESS_PAN_RETRIEVED
+  #                   params:
+  #                     pan: "4373580001009606"
+  #       '400':
+  #         description: 'Bad request – validation failed'
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ValidationError'
+  #             examples:
+  #               badRequestExample:
+  #                 summary: Missing required field
+  #                 value:
+  #                   code: ERR_VALIDATION_FAILED
+  #                   params:
+  #                     message: "Missing required field: cardId"
+  #       '401':
+  #         $ref: '#/components/responses/AuthenticationError'
+  #       '409':
+  #         description: 'Conflict – request declined'
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #                 - code
+  #                 - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: ERR_CARD_NOT_FOUND
+  #                 params:
+  #                   type: object
+  #                   required:
+  #                     - exists
+  #                     - message
+  #                   properties:
+  #                     exists:
+  #                       type: boolean
+  #                       description: Whether the card exists in the system
+  #                       example: false
+  #                     message:
+  #                       type: string
+  #                       example: Card not found
+  #             examples:
+  #               cardNotFound:
+  #                 summary: Card not found
+  #                 value:
+  #                   code: ERR_CARD_NOT_FOUND
+  #                   params:
+  #                     exists: false
+  #                     message: Card #12345 not found
+  #               panNotAvailable:
+  #                 summary: PAN not available
+  #                 value:
+  #                   code: ERR_PAN_NOT_AVAILABLE
+  #                   params:
+  #                     message: PAN is not available for this card
+  #       '500':
+  #         $ref: '#/components/responses/InternalServerError'
+  #       '504':
+  #         $ref: '#/components/responses/LambdaTimeout'
 
-  /get-cvv2:
-    post:
-      operationId: getCardCvv2
-      summary: Show CVV2 for Card
-      description: |
-        Retrieve the CVV2 (Card Verification Value) for a card using its PAN (Primary Account Number).
+  # /get-cvv2:
+  #   post:
+  #     operationId: getCardCvv2
+  #     summary: Show CVV2 for Card
+  #     description: |
+  #       Retrieve the CVV2 (Card Verification Value) for a card using its PAN (Primary Account Number).
         
-        **PCI DSS Compliance:**
-        - This endpoint uses POST method to prevent sensitive card data (PAN) from appearing in URL logs
-        **Note:** This operation calculates and returns the CVV2 value for the specified card.
-      tags:
-        - Card Management
-      parameters:
-        - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/contentType'
-      requestBody:
-        # required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              # required:
-              #   - pan
-              properties:
-                pan:
-                  type: string
-                  pattern: '^[0-9]{13,19}$'
-                  description: "**Required.** Primary Account Number (13-19 digits)"
-                  example: "4373580001009606"
-            example:
-              pan: "4373580001009606"
-      responses:
-        '200':
-          description: CVV2 successfully retrieved
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - code
-                  - params
-                properties:
-                  code:
-                    type: string
-                    example: SUCCESS_CVV2_RETRIEVED
-                  params:
-                    type: object
-                    required:
-                      - cvv2
-                    properties:
-                      cvv2:
-                        type: string
-                        description: Card Verification Value 2
-                        example: "123"
-              examples:
-                successResponse:
-                  summary: CVV2 retrieved successfully
-                  value:
-                    code: SUCCESS_CVV2_RETRIEVED
-                    params:
-                      cvv2: "123"
-        '400':
-          description: 'Bad request – validation failed'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationError'
-              examples:
-                invalidPanFormat:
-                  summary: Invalid PAN format
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: "Invalid pan format"
-                missingPan:
-                  summary: Missing PAN parameter
-                  value:
-                    code: ERR_MISSING_PARAMETER
-                    params:
-                      message: "Missing required parameter: pan"
-                emptyBody:
-                  summary: Empty request body
-                  value:
-                    code: ERR_BODY_EMPTY
-                    params:
-                      message: "Request body is required"
-                invalidJson:
-                  summary: Invalid JSON format
-                  value:
-                    code: ERR_INVALID_JSON
-                    params:
-                      message: "Invalid JSON format in request body"
-        '401':
-          $ref: '#/components/responses/AuthenticationError'
-        '405':
-          description: 'Method Not Allowed – Only POST is supported'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - code
-                  - params
-                properties:
-                  code:
-                    type: string
-                    example: ERR_METHOD_NOT_ALLOWED
-                  params:
-                    type: object
-                    required:
-                      - message
-                    properties:
-                      message:
-                        type: string
-                        example: Only POST method is allowed
-              examples:
-                methodNotAllowed:
-                  summary: Method not allowed
-                  value:
-                    code: ERR_METHOD_NOT_ALLOWED
-                    params:
-                      message: Only POST method is allowed
-        '409':
-          description: 'Conflict – request declined'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - code
-                  - params
-                properties:
-                  code:
-                    type: string
-                    example: ERR_CARD_NOT_FOUND
-                  params:
-                    type: object
-                    required:
-                      - message
-                    properties:
-                      message:
-                        type: string
-                        example: Card not found
-              examples:
-                cardNotFound:
-                  summary: Card not found
-                  value:
-                    code: ERR_CARD_NOT_FOUND
-                    params:
-                      message: Card with PAN ending 9606 not found
-                cvv2NotAvailable:
-                  summary: CVV2 not available
-                  value:
-                    code: ERR_CVV2_NOT_AVAILABLE
-                    params:
-                      message: CVV2 is not available for this card
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        '504':
-          $ref: '#/components/responses/LambdaTimeout'
+  #       **PCI DSS Compliance:**
+  #       - This endpoint uses POST method to prevent sensitive card data (PAN) from appearing in URL logs
+  #       **Note:** This operation calculates and returns the CVV2 value for the specified card.
+  #     tags:
+  #       - Card Management
+  #     parameters:
+  #       - $ref: '#/components/parameters/apiKey'
+  #       - $ref: '#/components/parameters/contentType'
+  #     requestBody:
+  #       # required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             # required:
+  #             #   - pan
+  #             properties:
+  #               pan:
+  #                 type: string
+  #                 pattern: '^[0-9]{13,19}$'
+  #                 description: "**Required.** Primary Account Number (13-19 digits)"
+  #                 example: "4373580001009606"
+  #           example:
+  #             pan: "4373580001009606"
+  #     responses:
+  #       '200':
+  #         description: CVV2 successfully retrieved
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #                 - code
+  #                 - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: SUCCESS_CVV2_RETRIEVED
+  #                 params:
+  #                   type: object
+  #                   required:
+  #                     - cvv2
+  #                   properties:
+  #                     cvv2:
+  #                       type: string
+  #                       description: Card Verification Value 2
+  #                       example: "123"
+  #             examples:
+  #               successResponse:
+  #                 summary: CVV2 retrieved successfully
+  #                 value:
+  #                   code: SUCCESS_CVV2_RETRIEVED
+  #                   params:
+  #                     cvv2: "123"
+  #       '400':
+  #         description: 'Bad request – validation failed'
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ValidationError'
+  #             examples:
+  #               invalidPanFormat:
+  #                 summary: Invalid PAN format
+  #                 value:
+  #                   code: ERR_VALIDATION_FAILED
+  #                   params:
+  #                     message: "Invalid pan format"
+  #               missingPan:
+  #                 summary: Missing PAN parameter
+  #                 value:
+  #                   code: ERR_MISSING_PARAMETER
+  #                   params:
+  #                     message: "Missing required parameter: pan"
+  #               emptyBody:
+  #                 summary: Empty request body
+  #                 value:
+  #                   code: ERR_BODY_EMPTY
+  #                   params:
+  #                     message: "Request body is required"
+  #               invalidJson:
+  #                 summary: Invalid JSON format
+  #                 value:
+  #                   code: ERR_INVALID_JSON
+  #                   params:
+  #                     message: "Invalid JSON format in request body"
+  #       '401':
+  #         $ref: '#/components/responses/AuthenticationError'
+  #       '405':
+  #         description: 'Method Not Allowed – Only POST is supported'
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #                 - code
+  #                 - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: ERR_METHOD_NOT_ALLOWED
+  #                 params:
+  #                   type: object
+  #                   required:
+  #                     - message
+  #                   properties:
+  #                     message:
+  #                       type: string
+  #                       example: Only POST method is allowed
+  #             examples:
+  #               methodNotAllowed:
+  #                 summary: Method not allowed
+  #                 value:
+  #                   code: ERR_METHOD_NOT_ALLOWED
+  #                   params:
+  #                     message: Only POST method is allowed
+  #       '409':
+  #         description: 'Conflict – request declined'
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #                 - code
+  #                 - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: ERR_CARD_NOT_FOUND
+  #                 params:
+  #                   type: object
+  #                   required:
+  #                     - message
+  #                   properties:
+  #                     message:
+  #                       type: string
+  #                       example: Card not found
+  #             examples:
+  #               cardNotFound:
+  #                 summary: Card not found
+  #                 value:
+  #                   code: ERR_CARD_NOT_FOUND
+  #                   params:
+  #                     message: Card with PAN ending 9606 not found
+  #               cvv2NotAvailable:
+  #                 summary: CVV2 not available
+  #                 value:
+  #                   code: ERR_CVV2_NOT_AVAILABLE
+  #                   params:
+  #                     message: CVV2 is not available for this card
+  #       '500':
+  #         $ref: '#/components/responses/InternalServerError'
+  #       '504':
+  #         $ref: '#/components/responses/LambdaTimeout'
 
   /cards/create-prepaid:
     post:
