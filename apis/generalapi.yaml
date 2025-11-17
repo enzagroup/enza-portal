@@ -1,14 +1,14 @@
 openapi: 3.0.1
 info:
-  title: Enza REST API Documentation
+  title: enza REST API Documentation
   description: |
     ## Overview
     
-    Welcome to the Enza REST API Developer Portal. Our API provides seamless integration . This portal offers all the necessary tools, detailed documentation, and API endpoints required to empower your financial operations with real-time card issuance capabilities.
+    Welcome to the enza REST API Developer Portal. Our API provides seamless integration . This portal offers all the necessary tools, detailed documentation, and API endpoints required to empower your financial operations with real-time card issuance capabilities.
     
     Follow this guide to:
     - Understand API authentication and security requirements
-    - Generate and configure the credentials required to access the Enza Developers API
+    - Generate and configure the credentials required to access the enza Developers API
     - Use the API endpoints to create cards and manage customer accounts
     - Learn best practices for integrating with our platform
     
@@ -78,7 +78,7 @@ tags:
     description: |
       # Quick Start Guide
       
-      Welcome to the Enza Developer Portal. Follow the steps in the API description above to get started with your integration.
+      Welcome to the enza Developer Portal. Follow the steps in the API description above to get started with your integration.
       
       **Key Requirements:**
       - API Key authentication
