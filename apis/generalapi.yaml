@@ -4117,9 +4117,7 @@ paths:
       summary: Retrieve Card Limits
       description: |
         Retrieve the list of limits and restrictions configured on a card/token.
-        
-        **Purpose:** Access to the token's restriction set per card.
-        
+                
         **Pre-requisite:** The target CardID must exist.
       tags:
         - Limit Management
@@ -4132,8 +4130,8 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-                - cardId
+              # required:
+              #   - cardId
               properties:
                 cardId:
                   type: string
@@ -4301,9 +4299,7 @@ paths:
       summary: Update Card Limit Usage
       description: |
         Enable or disable a specific card limit/restriction.
-        
-        **Purpose:** Control whether a limit is checked during transactions.
-        
+
         **Pre-requisites:**
         - The target CardID must exist
         - Use Card Limit Retrieval API to get the limitRid first
@@ -4318,10 +4314,10 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-                - cardId
-                - limitRid
-                - inUse
+              # required:
+              #   - cardId
+              #   - limitRid
+              #   - inUse
               properties:
                 cardId:
                   type: string
@@ -4441,9 +4437,7 @@ paths:
       summary: Change Card Limit Value
       description: |
         Update the maximum value of a specific card limit/restriction.
-        
-        **Purpose:** Modify the MaxVal field of a limit (either count or amount).
-        
+
         **Pre-requisites:**
         - The target CardID must exist
         - Use Card Limit Retrieval API to get the limitRid first
@@ -4458,10 +4452,10 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-                - cardId
-                - limitRid
-                - maxVal
+              # required:
+              #   - cardId
+              #   - limitRid
+              #   - maxVal
               properties:
                 cardId:
                   type: string
