@@ -52,6 +52,7 @@ info:
     - 📊 **Transaction Monitoring**: Real-time transaction tracking and reporting
     - 🔐 **PIN Management**: Secure PIN operations for enhanced security
     - 🛍️ **E-Commerce Controls**: Manage online transaction capabilities
+    - 📏 **Limit Management**: Configure and monitor card spending limits and restrictions
     
     ---
     
@@ -85,7 +86,6 @@ tags:
       - IP Whitelisting
       - HTTPS protocol
       
-      **Time to Complete:** 30 minutes
   - name: "Card Management"
     description: "Operations for creating, activating, managing card status, and retrieving card details"
   - name: "Customer Management"
