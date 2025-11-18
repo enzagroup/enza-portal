@@ -4447,7 +4447,6 @@ paths:
         **Pre-requisites:**
         - The target CardID must exist
         - Use Card Limit Retrieval API to get the limitRid first
-        - The team will define the RID according to the business needs of the bank
       tags:
         - Limit Management
       parameters:
