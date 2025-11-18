@@ -4612,6 +4612,40 @@ components:
                 params:
                   missingProperty: requestType
 
+    Unauthorized:
+      description: 'Unauthorized - Missing or invalid API key'
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [message]
+            properties:
+              message:
+                type: string
+                example: 'Unauthorized'
+          examples:
+            missingApiKey:
+              summary: Missing API key
+              value:
+                message: 'Unauthorized'
+    
+    Forbidden:
+      description: 'Forbidden - Invalid API key or insufficient permissions'
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [Message]
+            properties:
+              Message:
+                type: string
+                example: 'User is not authorized to access this resource'
+          examples:
+            invalidApiKey:
+              summary: Invalid API key
+              value:
+                Message: 'User is not authorized to access this resource'
+    
     AuthenticationError:
       description: 'Authentication context is missing or invalid'
       content:
