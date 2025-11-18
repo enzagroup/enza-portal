@@ -4213,7 +4213,7 @@ paths:
                             resetPeriodType:
                               type: string
                               enum: [Day, Week, Month, Year, ""]
-                              description: Limit reset period: Day, Week, Month, Year, or empty string
+                              description: "Limit reset period: Day, Week, Month, Year, or empty string"
                               example: "Day"
                             accumulateCnt:
                               type: integer
