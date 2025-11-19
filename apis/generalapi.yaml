@@ -366,7 +366,7 @@ paths:
                     params:
                       message: 'One of the following fields is required: nationalId, passport, identityId'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Customer not found
           content:
@@ -404,26 +404,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: &id001
-            application/json:
-              schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: ERR_FORBIDDEN
-                  params:
-                    type: object
-                    required:
-                    - message
-                    properties:
-                      message:
-                        type: string
-                        example: Access denied. You do not have permission to access this resource.
+          $ref: '#/components/responses/Forbidden'
   /customers/details:
     post:
       operationId: getCustomerDetails
@@ -565,7 +546,7 @@ paths:
                     params:
                       message: Both nationalId and passport are required
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Customer not found
           content:
@@ -584,8 +565,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /customers/update:
     post:
       operationId: updateCustomerDetails
@@ -735,7 +715,7 @@ paths:
                     params:
                       message: Invalid birthDate format. Expected YYYY-MM-DD
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Customer not found
           content:
@@ -754,8 +734,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /instant-issuing:
     post:
       operationId: instantIssueCard
@@ -827,7 +806,7 @@ paths:
                     params:
                       missingProperty: requestType
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – card already assigned
           content:
@@ -862,8 +841,7 @@ paths:
                   value:
                     errorMessage: Task timed out after 1.10 seconds
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /cards/tds-enrollment:
     post:
       operationId: updateEcommerceStatus
@@ -950,7 +928,7 @@ paths:
                     params:
                       missingProperty: cardRefNum
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – card not found
           content:
@@ -984,8 +962,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /cards/update-status-by-ref:
     post:
       operationId: updateCardStatusByRefNum
@@ -1065,7 +1042,7 @@ paths:
                     params:
                       message: 'Missing required field: cardRefNum'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – card declined
           content:
@@ -1084,8 +1061,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /pin/set:
     post:
       operationId: setCardPin
@@ -1158,7 +1134,7 @@ paths:
                     params:
                       missingProperty: pan
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – PIN setting declined
           content:
@@ -1224,8 +1200,7 @@ paths:
                     params:
                       message: Request timeout. Please try again later.
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /pin/change:
     post:
       operationId: changeCardPin
@@ -1295,7 +1270,7 @@ paths:
                     params:
                       missingProperty: oldPinBlock
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – PIN change declined
           content:
@@ -1361,8 +1336,7 @@ paths:
                     params:
                       message: Request timeout. Please try again later.
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /cards/update-status-by-id:
     post:
       operationId: updateCardStatusById
@@ -1443,7 +1417,7 @@ paths:
                     params:
                       message: 'Missing required field: cardId'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – card status change declined
           content:
@@ -1462,8 +1436,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /cards/top-ups:
     post:
       operationId: topUpCard
@@ -1619,7 +1592,7 @@ paths:
                       field: cardId
                       message: Card ID is required
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – top-up declined
           content:
@@ -1671,8 +1644,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /preproduced/prepaid/new-customer:
     post:
       operationId: linkPrepaidNewCustomer
@@ -1776,7 +1748,7 @@ paths:
         '400':
           $ref: '#/components/responses/ValidationError'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – customer or card issue
           content:
@@ -1801,8 +1773,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /preproduced/prepaid/existing-customer:
     post:
       operationId: linkPrepaidExistingCustomer
@@ -1866,7 +1837,7 @@ paths:
         '400':
           $ref: '#/components/responses/ValidationError'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – customer or card issue
           content:
@@ -1903,8 +1874,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /preproduced/prepaid/dummy-customer:
     post:
       operationId: linkPrepaidDummyCustomer
@@ -1955,7 +1925,7 @@ paths:
         '400':
           $ref: '#/components/responses/ValidationError'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – card issue
           content:
@@ -1986,8 +1956,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /preproduced/debit/new-account-new-customer:
     post:
       operationId: linkDebitNewCustomer
@@ -2097,7 +2066,7 @@ paths:
         '400':
           $ref: '#/components/responses/ValidationError'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – customer or card issue
           content:
@@ -2134,8 +2103,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /preproduced/debit/new-account-existing-customer:
     post:
       operationId: linkDebitExistingCustomer
@@ -2204,7 +2172,7 @@ paths:
         '400':
           $ref: '#/components/responses/ValidationError'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – customer or card issue
           content:
@@ -2247,8 +2215,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /preproduced/debit/existing-account-existing-customer:
     post:
       operationId: linkDebitExistingAccountExistingCustomer
@@ -2317,7 +2284,7 @@ paths:
         '400':
           $ref: '#/components/responses/ValidationError'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – customer or card issue
           content:
@@ -2360,8 +2327,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /cards/convert-virtual-to-physical:
     post:
       operationId: convertVirtualToPhysical
@@ -2468,7 +2434,7 @@ paths:
                       field: cardId
                       message: Card ID must contain only numbers
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – conversion declined
           content:
@@ -2520,8 +2486,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /cards/card-details/{card_Id}:
     get:
       operationId: getCardDetails
@@ -2610,7 +2575,7 @@ paths:
                     params:
                       message: 'Missing required field: cardId'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – card not found
           content:
@@ -2629,8 +2594,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /customers/list-of-cards:
     post:
       operationId: listCustomerCards
@@ -2765,7 +2729,7 @@ paths:
                     params:
                       message: Either passport or nationalId is required
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Customer not found
           content:
@@ -2784,8 +2748,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /cards/list-of-transactions:
     post:
       operationId: getTransactionHistory
@@ -3051,7 +3014,7 @@ paths:
                     params:
                       message: Invalid startDate format
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – card not found
           content:
@@ -3085,8 +3048,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /cards/create-prepaid:
     post:
       operationId: createPrepaidCard
@@ -3225,7 +3187,7 @@ paths:
                     params:
                       message: Invalid Email format
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – customer not found or operation declined
           content:
@@ -3288,8 +3250,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /cards/create-debit:
     post:
       operationId: createDebitCard
@@ -3433,7 +3394,7 @@ paths:
                     params:
                       message: 'One of the following fields is required: nationalId, passport, identityId'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – customer not found or operation declined
           content:
@@ -3496,8 +3457,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /limits/retrieve:
     post:
       operationId: retrieveCardLimits
@@ -3649,7 +3609,7 @@ paths:
                     params:
                       message: 'Missing required field: cardId'
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – card not found
           content:
@@ -3683,8 +3643,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /limits/update-usage:
     post:
       operationId: updateCardLimitUsage
@@ -3783,7 +3742,7 @@ paths:
                     params:
                       message: Format Error please use Boolean value
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – card or limit not found
           content:
@@ -3823,8 +3782,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
   /limits/change-limit:
     post:
       operationId: changeCardLimit
@@ -3918,7 +3876,7 @@ paths:
                     params:
                       message: Please use a valid Value
         '401':
-          $ref: '#/components/responses/AuthenticationError'
+          $ref: '#/components/responses/Unauthorized'
         '409':
           description: Conflict – card or limit not found
           content:
@@ -3958,8 +3916,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
-          description: Forbidden - Invalid API key or insufficient permissions
-          content: *id001
+          $ref: '#/components/responses/Forbidden'
 components:
   responses:
     LambdaTimeout:
@@ -4026,14 +3983,14 @@ components:
                 properties:
                   message:
                     type: string
-                    example: Missing API key. Please provide a valid API key in the request header.
+                    example: Missing or invalid API key. Please provide a valid API key in the request header.
           examples:
             missingApiKey:
               summary: Missing API key
               value:
                 code: ERR_UNAUTHORIZED
                 params:
-                  message: Missing API key. Please provide a valid API key in the request header.
+                  message: Missing or invalid API key. Please provide a valid API key in the request header.
     Forbidden:
       description: Forbidden - Invalid API key or insufficient permissions
       content:
@@ -4054,7 +4011,7 @@ components:
                 properties:
                   message:
                     type: string
-                    example: Access denied. You do not have permission to access this resource.
+                    example: Invalid API key. The provided API key is not recognized or has been revoked.
           examples:
             invalidApiKey:
               summary: Invalid API key
@@ -4062,12 +4019,6 @@ components:
                 code: ERR_FORBIDDEN
                 params:
                   message: Invalid API key. The provided API key is not recognized or has been revoked.
-            insufficientPermissions:
-              summary: Insufficient permissions
-              value:
-                code: ERR_FORBIDDEN
-                params:
-                  message: Access denied. You do not have permission to access this resource.
     AuthenticationError:
       description: Authentication context is missing or invalid
       content:
@@ -4080,7 +4031,7 @@ components:
             properties:
               code:
                 type: string
-                example: ERR_AUTH_CONTEXT
+                example: ERR_UNAUTHORIZED
               params:
                 type: object
                 required:
@@ -4088,14 +4039,14 @@ components:
                 properties:
                   message:
                     type: string
-                    example: Authentication context is missing
+                    example: Missing or invalid API key. Please provide a valid API key in the request header.
           examples:
             authError:
               summary: Authentication error
               value:
-                code: ERR_AUTH_CONTEXT
+                code: ERR_UNAUTHORIZED
                 params:
-                  message: Authentication context is missing
+                  message: Missing or invalid API key. Please provide a valid API key in the request header.
     ConflictError:
       description: Conflict – operation declined
       content:
