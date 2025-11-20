@@ -3451,7 +3451,7 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
   /limits/retrieve:
-    post:
+    get:
       operationId: retrieveCardLimits
       summary: Retrieve Card Limits
       description: "Retrieve the list of limits and restrictions configured on a card/token.\n        \n**Pre-requisite:** The target CardID must exist.\n"
@@ -3459,20 +3459,13 @@ paths:
       - Limit Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
-      requestBody:
+      - name: cardId
+        in: query
         required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                cardId:
-                  type: string
-                  description: '**Required.** Card ID (numeric string)'
-                  example: '3657'
-            example:
-              cardId: '3657'
+        description: '**Required.** Card ID (numeric string)'
+        schema:
+          type: string
+        example: '3657'
       responses:
         '200':
           description: Card limits successfully retrieved
@@ -3647,7 +3640,7 @@ paths:
 
         - The target CardID must exist
 
-        - Use Card Limit Retrieval API to get the limitRid first
+        - Use Card Limit Retrieval API to get the limitRid first (see `GET /limits/retrieve`)
 
         '
       tags:
@@ -3786,7 +3779,7 @@ paths:
 
         - The target CardID must exist
 
-        - Use Card Limit Retrieval API to get the limitRid first
+        - Use Card Limit Retrieval API to get the limitRid first (see `GET /limits/retrieve`)
 
         '
       tags:
