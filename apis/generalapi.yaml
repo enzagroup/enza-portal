@@ -84,7 +84,6 @@ paths:
                 birthDate:
                   type: string
                   format: date
-                  pattern: ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$
                   description: '**Required.** Customer''s birth date in YYYY-MM-DD format'
                   example: '1990-01-01'
                 nationalId:
@@ -1470,17 +1469,14 @@ paths:
               properties:
                 cardId:
                   type: string
-                  pattern: ^[0-9]+$
                   description: '**Required.** Card ID (numeric only)'
                   example: '3280'
                 ccy:
                   type: string
-                  pattern: ^[0-9]+$
                   description: '**Required.** Currency code (numeric only, e.g., 936 for GHS)'
                   example: '936'
                 amount:
                   type: string
-                  pattern: ^[0-9]+(\\.[0-9]{1,2})?$
                   description: '**Required.** Amount to top up (decimal with up to 2 decimal places)'
                   example: '100.12'
             example:
@@ -1561,7 +1557,7 @@ paths:
                       message:
                         type: string
                         description: Validation error message
-                        example: Card ID must contain only numbers
+                        example: Invalid cardId format. Card ID must contain only numbers (0-9) and be up to 19 digits long
               examples:
                 invalidCardId:
                   summary: Invalid card ID format
@@ -1569,7 +1565,7 @@ paths:
                     code: ERR_VALIDATION_FAILED
                     params:
                       field: cardId
-                      message: Card ID must contain only numbers
+                      message: Invalid cardId format. Card ID must contain only numbers (0-9) and be up to 19 digits long
                 invalidCurrency:
                   summary: Invalid currency code format
                   value:
@@ -1685,7 +1681,6 @@ paths:
                   example: John
                 birthDate:
                   type: string
-                  pattern: ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$
                   description: '**Required.** Birth date (YYYY-MM-DD)'
                   example: '1990-05-15'
                 email:
@@ -2357,7 +2352,6 @@ paths:
               properties:
                 cardId:
                   type: string
-                  pattern: ^[0-9]+$
                   description: '**Required.** Card ID (numeric only)'
                   example: '4092'
             example:
@@ -2777,13 +2771,11 @@ paths:
                 startDate:
                   type: string
                   format: date
-                  pattern: ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$
                   description: '**Required.** Start date in YYYY-MM-DD format'
                   example: '2025-01-01'
                 endDate:
                   type: string
                   format: date
-                  pattern: ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$
                   description: '**Required.** End date in YYYY-MM-DD format'
                   example: '2025-01-31'
                 transactionCount:
@@ -4191,7 +4183,6 @@ components:
         birthDate:
           type: string
           format: date
-          pattern: ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$
           description: '**Optional.** Date of birth in YYYY-MM-DD format'
           example: '1990-01-01'
         email:
@@ -4327,7 +4318,6 @@ components:
         birthDate:
           type: string
           format: date
-          pattern: ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$
           description: '**Optional.** Birth date in YYYY-MM-DD format'
           example: '1990-01-15'
         nationalId:
@@ -4345,7 +4335,6 @@ components:
         email:
           type: string
           format: email
-          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           description: '**Optional.** Customer''s email address'
           example: john.doe@example.com
         mobilePhone:
