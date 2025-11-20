@@ -3450,7 +3450,7 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
-  /limits/retrieve:
+  /limits/retrieve/{card_Id}:
     get:
       operationId: retrieveCardLimits
       summary: Retrieve Card Limits
@@ -3459,8 +3459,8 @@ paths:
       - Limit Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - name: cardId
-        in: query
+      - name: card_Id
+        in: path
         required: true
         description: '**Required.** Card ID (numeric string)'
         schema:
@@ -3640,7 +3640,7 @@ paths:
 
         - The target CardID must exist
 
-        - Use Card Limit Retrieval API to get the limitRid first (see `GET /limits/retrieve`)
+        - Use Card Limit Retrieval API to get the limitRid first (see `GET /limits/retrieve/{card_Id}`)
 
         '
       tags:
@@ -3779,7 +3779,7 @@ paths:
 
         - The target CardID must exist
 
-        - Use Card Limit Retrieval API to get the limitRid first (see `GET /limits/retrieve`)
+        - Use Card Limit Retrieval API to get the limitRid first (see `GET /limits/retrieve/{card_Id}`)
 
         '
       tags:
