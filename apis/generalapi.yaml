@@ -262,6 +262,37 @@ paths:
                       message: Customer already exists
         '500':
           $ref: '#/components/responses/InternalServerError'
+        '405': &id003
+
+          description: Method not allowed
+
+          content:
+
+            application/json:
+
+              schema:
+
+                type: object
+
+                properties:
+
+                  code:
+
+                    type: string
+
+                    example: ERR_METHOD_NOT_ALLOWED
+
+                  params:
+
+                    type: object
+
+                    properties:
+
+                      message:
+
+                        type: string
+
+                        example: HTTP method not allowed for this endpoint
   /customers/search:
     post:
       operationId: checkCustomerExistence
@@ -404,6 +435,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /customers/details:
     post:
       operationId: getCustomerDetails
@@ -565,6 +598,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /customers/update:
     post:
       operationId: updateCustomerDetails
@@ -734,6 +769,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /instant-issuing:
     post:
       operationId: instantIssueCard
@@ -841,6 +878,8 @@ paths:
                     errorMessage: Task timed out after 1.10 seconds
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/tds-enrollment:
     post:
       operationId: updateEcommerceStatus
@@ -962,6 +1001,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/update-status-by-ref:
     post:
       operationId: updateCardStatusByRefNum
@@ -1061,6 +1102,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /pin/set:
     post:
       operationId: setCardPin
@@ -1200,6 +1243,8 @@ paths:
                       message: Request timeout. Please try again later.
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /pin/change:
     post:
       operationId: changeCardPin
@@ -1336,6 +1381,8 @@ paths:
                       message: Request timeout. Please try again later.
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/update-status-by-id:
     post:
       operationId: updateCardStatusById
@@ -1436,6 +1483,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/top-ups:
     post:
       operationId: topUpCard
@@ -1641,6 +1690,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /preproduced/prepaid/new-customer:
     post:
       operationId: linkPrepaidNewCustomer
@@ -1769,6 +1820,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /preproduced/prepaid/existing-customer:
     post:
       operationId: linkPrepaidExistingCustomer
@@ -1870,6 +1923,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /preproduced/prepaid/dummy-customer:
     post:
       operationId: linkPrepaidDummyCustomer
@@ -1952,6 +2007,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /preproduced/debit/new-account-new-customer:
     post:
       operationId: linkDebitNewCustomer
@@ -2099,6 +2156,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /preproduced/debit/new-account-existing-customer:
     post:
       operationId: linkDebitExistingCustomer
@@ -2211,6 +2270,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /preproduced/debit/existing-account-existing-customer:
     post:
       operationId: linkDebitExistingAccountExistingCustomer
@@ -2323,6 +2384,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/convert-virtual-to-physical:
     post:
       operationId: convertVirtualToPhysical
@@ -2481,6 +2544,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/card-details/{card_Id}:
     get:
       operationId: getCardDetails
@@ -2589,6 +2654,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /customers/list-of-cards:
     post:
       operationId: listCustomerCards
@@ -2743,6 +2810,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/list-of-transactions:
     post:
       operationId: getTransactionHistory
@@ -3041,6 +3110,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/create-prepaid:
     post:
       operationId: createPrepaidCard
@@ -3243,6 +3314,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/create-debit:
     post:
       operationId: createDebitCard
@@ -3450,6 +3523,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /limits/retrieve/{card_Id}:
     get:
       operationId: retrieveCardLimits
@@ -3629,6 +3704,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /limits/update-usage:
     post:
       operationId: updateCardLimitUsage
@@ -3768,6 +3845,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+                   $ref: '#/components/responses/MethodNotAllowed'
   /limits/change-limit:
     post:
       operationId: changeCardLimit
@@ -3902,6 +3981,8 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+                   $ref: '#/components/responses/MethodNotAllowed'
 components:
   responses:
     LambdaTimeout:
@@ -4004,6 +4085,29 @@ components:
                 code: ERR_FORBIDDEN
                 params:
                   message: Invalid API key. The provided API key is not recognized or has been revoked.
+    MethodNotAllowed:
+      description: Method not allowed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: ERR_METHOD_NOT_ALLOWED
+              params:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: HTTP method not allowed for this endpoint. Please check the API documentation for supported methods
+          examples:
+            methodNotAllowed:
+              summary: Method not allowed
+              value:
+                code: ERR_METHOD_NOT_ALLOWED
+                params:
+                  message: HTTP method not allowed for this endpoint. Please check the API documentation for supported methods
     AuthenticationError:
       description: Authentication context is missing or invalid
       content:
