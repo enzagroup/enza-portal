@@ -36,8 +36,8 @@ tags:
   description: Set and change card PINs securely
 - name: Preproduced Card
   description: Instant card issuance for new and existing customers
-# - name: Limit Management
-#   description: Manage card limits and restrictions
+- name: Limit Management
+  description: Manage card limits and restrictions
 - name: Combined Section
   description: Combined section APIs
 paths:
@@ -3450,465 +3450,465 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
-  # /limits/retrieve:
-  #   post:
-  #     operationId: retrieveCardLimits
-  #     summary: Retrieve Card Limits
-  #     description: "Retrieve the list of limits and restrictions configured on a card/token.\n        \n**Pre-requisite:** The target CardID must exist.\n"
-  #     tags:
-  #     - Limit Management
-  #     parameters:
-  #     - $ref: '#/components/parameters/apiKey'
-  #     - $ref: '#/components/parameters/contentType'
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             type: object
-  #             properties:
-  #               cardId:
-  #                 type: string
-  #                 description: '**Required.** Card ID (numeric string)'
-  #                 example: '3657'
-  #           example:
-  #             cardId: '3657'
-  #     responses:
-  #       '200':
-  #         description: Card limits successfully retrieved
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               required:
-  #               - code
-  #               - params
-  #               properties:
-  #                 code:
-  #                   type: string
-  #                   example: SUCCESS_LIMITS_RETRIEVED
-  #                 params:
-  #                   type: object
-  #                   required:
-  #                   - cardId
-  #                   - totalLimits
-  #                   - limits
-  #                   properties:
-  #                     cardId:
-  #                       type: string
-  #                       description: Card ID
-  #                       example: '3657'
-  #                     totalLimits:
-  #                       type: integer
-  #                       description: Total number of limits configured
-  #                       example: 3
-  #                     limits:
-  #                       type: array
-  #                       items:
-  #                         type: object
-  #                         required:
-  #                         - limitTitle
-  #                         - limitRid
-  #                         - inUse
-  #                         - maxVal
-  #                         - ccy
-  #                         - accumulatorValue
-  #                         - resetPeriodType
-  #                         - accumulateCnt
-  #                         - customerDescription
-  #                         - limitType
-  #                         properties:
-  #                           limitTitle:
-  #                             type: string
-  #                             description: Limit title in Enza system
-  #                             example: Daily ATM Withdrawal Limit
-  #                           limitRid:
-  #                             type: string
-  #                             description: Limit reference ID to be used by the bank in the next APIs like usage and change limit value
-  #                             example: ATM_DAILY_LIMIT
-  #                           inUse:
-  #                             type: boolean
-  #                             description: True if limit is active, false if not
-  #                             example: true
-  #                           maxVal:
-  #                             type: number
-  #                             description: Maximum limit value
-  #                             example: 5000
-  #                           ccy:
-  #                             type: string
-  #                             description: ISO currency code - Limit Currency (empty for count limits)
-  #                             example: EGP
-  #                           accumulatorValue:
-  #                             type: number
-  #                             description: Current usage amount
-  #                             example: 1200
-  #                           resetPeriodType:
-  #                             type: string
-  #                             enum:
-  #                             - Day
-  #                             - Week
-  #                             - Month
-  #                             - Year
-  #                             - ''
-  #                             description: 'Limit reset period: Day, Week, Month, Year, or empty string'
-  #                             example: Day
-  #                           accumulateCnt:
-  #                             type: integer
-  #                             description: If the limit type is count
-  #                             example: 0
-  #                           customerDescription:
-  #                             type: string
-  #                             description: Limit title bank can show it to the customer
-  #                             example: Daily ATM cash withdrawal limit
-  #                           limitType:
-  #                             type: string
-  #                             enum:
-  #                             - Amount
-  #                             - Count
-  #                             - Restriction
-  #                             description: Type of limit
-  #                             example: Amount
-  #             examples:
-  #               successResponse:
-  #                 summary: Limits retrieved successfully
-  #                 value:
-  #                   code: SUCCESS_LIMITS_RETRIEVED
-  #                   params:
-  #                     cardId: '3657'
-  #                     totalLimits: 3
-  #                     limits:
-  #                     - limitTitle: Daily ATM Withdrawal Limit
-  #                       limitRid: ATM_DAILY_LIMIT
-  #                       inUse: true
-  #                       maxVal: 5000
-  #                       ccy: EGP
-  #                       accumulatorValue: 1200
-  #                       resetPeriodType: Day
-  #                       accumulateCnt: 0
-  #                       customerDescription: Daily ATM cash withdrawal limit
-  #                       limitType: Amount
-  #       '400':
-  #         description: Bad request – validation failed
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ValidationError'
-  #             examples:
-  #               missingField:
-  #                 summary: Missing required field
-  #                 value:
-  #                   code: ERR_VALIDATION_FAILED
-  #                   params:
-  #                     message: 'Missing required field: cardId'
-  #       '401':
-  #         $ref: '#/components/responses/Unauthorized'
-  #       '409':
-  #         description: Conflict – card not found
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               required:
-  #               - code
-  #               - params
-  #               properties:
-  #                 code:
-  #                   type: string
-  #                   example: ERR_CARD_NOT_FOUND
-  #                 params:
-  #                   type: object
-  #                   required:
-  #                   - message
-  #                   properties:
-  #                     message:
-  #                       type: string
-  #                       example: Card not found
-  #             examples:
-  #               cardNotFound:
-  #                 summary: Card not found
-  #                 value:
-  #                   code: ERR_CARD_NOT_FOUND
-  #                   params:
-  #                     message: 'Card #3657 not found'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  #       '504':
-  #         $ref: '#/components/responses/LambdaTimeout'
-  #       '403':
-  #         $ref: '#/components/responses/Forbidden'
-  # /limits/update-usage:
-  #   post:
-  #     operationId: updateCardLimitUsage
-  #     summary: Update Card Limit Usage
-  #     description: 'Enable or disable a specific card limit/restriction.
+  /limits/retrieve:
+    post:
+      operationId: retrieveCardLimits
+      summary: Retrieve Card Limits
+      description: "Retrieve the list of limits and restrictions configured on a card/token.\n        \n**Pre-requisite:** The target CardID must exist.\n"
+      tags:
+      - Limit Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (numeric string)'
+                  example: '3657'
+            example:
+              cardId: '3657'
+      responses:
+        '200':
+          description: Card limits successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_LIMITS_RETRIEVED
+                  params:
+                    type: object
+                    required:
+                    - cardId
+                    - totalLimits
+                    - limits
+                    properties:
+                      cardId:
+                        type: string
+                        description: Card ID
+                        example: '3657'
+                      totalLimits:
+                        type: integer
+                        description: Total number of limits configured
+                        example: 3
+                      limits:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - limitTitle
+                          - limitRid
+                          - inUse
+                          - maxVal
+                          - ccy
+                          - accumulatorValue
+                          - resetPeriodType
+                          - accumulateCnt
+                          - customerDescription
+                          - limitType
+                          properties:
+                            limitTitle:
+                              type: string
+                              description: Limit title in Enza system
+                              example: Daily ATM Withdrawal Limit
+                            limitRid:
+                              type: string
+                              description: Limit reference ID to be used by the bank in the next APIs like usage and change limit value
+                              example: ATM_DAILY_LIMIT
+                            inUse:
+                              type: boolean
+                              description: True if limit is active, false if not
+                              example: true
+                            maxVal:
+                              type: number
+                              description: Maximum limit value
+                              example: 5000
+                            ccy:
+                              type: string
+                              description: ISO currency code - Limit Currency (empty for count limits)
+                              example: EGP
+                            accumulatorValue:
+                              type: number
+                              description: Current usage amount
+                              example: 1200
+                            resetPeriodType:
+                              type: string
+                              enum:
+                              - Day
+                              - Week
+                              - Month
+                              - Year
+                              - ''
+                              description: 'Limit reset period: Day, Week, Month, Year, or empty string'
+                              example: Day
+                            accumulateCnt:
+                              type: integer
+                              description: If the limit type is count
+                              example: 0
+                            customerDescription:
+                              type: string
+                              description: Limit title bank can show it to the customer
+                              example: Daily ATM cash withdrawal limit
+                            limitType:
+                              type: string
+                              enum:
+                              - Amount
+                              - Count
+                              - Restriction
+                              description: Type of limit
+                              example: Amount
+              examples:
+                successResponse:
+                  summary: Limits retrieved successfully
+                  value:
+                    code: SUCCESS_LIMITS_RETRIEVED
+                    params:
+                      cardId: '3657'
+                      totalLimits: 3
+                      limits:
+                      - limitTitle: Daily ATM Withdrawal Limit
+                        limitRid: ATM_DAILY_LIMIT
+                        inUse: true
+                        maxVal: 5000
+                        ccy: EGP
+                        accumulatorValue: 1200
+                        resetPeriodType: Day
+                        accumulateCnt: 0
+                        customerDescription: Daily ATM cash withdrawal limit
+                        limitType: Amount
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingField:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: cardId'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – card not found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CARD_NOT_FOUND
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card not found
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: 'Card #3657 not found'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /limits/update-usage:
+    post:
+      operationId: updateCardLimitUsage
+      summary: Update Card Limit Usage
+      description: 'Enable or disable a specific card limit/restriction.
 
 
-  #       **Pre-requisites:**
+        **Pre-requisites:**
 
-  #       - The target CardID must exist
+        - The target CardID must exist
 
-  #       - Use Card Limit Retrieval API to get the limitRid first
+        - Use Card Limit Retrieval API to get the limitRid first
 
-  #       '
-  #     tags:
-  #     - Limit Management
-  #     parameters:
-  #     - $ref: '#/components/parameters/apiKey'
-  #     - $ref: '#/components/parameters/contentType'
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             type: object
-  #             properties:
-  #               cardId:
-  #                 type: string
-  #                 description: '**Required.** Card ID (numeric string)'
-  #                 example: '3657'
-  #               limitRid:
-  #                 type: string
-  #                 description: '**Required.** Limit reference ID (from Card Limit Retrieval API)'
-  #                 example: PurchaseAmountLimit
-  #               inUse:
-  #                 type: boolean
-  #                 description: '**Required.** Enable (true) or disable (false) the limit'
-  #                 example: false
-  #           example:
-  #             cardId: '3657'
-  #             limitRid: PurchaseAmountLimit
-  #             inUse: false
-  #     responses:
-  #       '200':
-  #         description: Limit usage successfully updated
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               required:
-  #               - code
-  #               - params
-  #               properties:
-  #                 code:
-  #                   type: string
-  #                   example: SUCCESS_LIMIT_UPDATED
-  #                 params:
-  #                   type: object
-  #                   required:
-  #                   - message
-  #                   properties:
-  #                     message:
-  #                       type: string
-  #                       description: Success message
-  #                       example: Limit is Disabled
-  #             examples:
-  #               limitEnabled:
-  #                 summary: Limit enabled
-  #                 value:
-  #                   code: SUCCESS_LIMIT_UPDATED
-  #                   params:
-  #                     message: Limit is Enabled
-  #               limitDisabled:
-  #                 summary: Limit disabled
-  #                 value:
-  #                   code: SUCCESS_LIMIT_UPDATED
-  #                   params:
-  #                     message: Limit is Disabled
-  #       '400':
-  #         description: Bad request – validation failed
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ValidationError'
-  #             examples:
-  #               missingField:
-  #                 summary: Missing required field
-  #                 value:
-  #                   code: ERR_VALIDATION_FAILED
-  #                   params:
-  #                     message: 'Missing required field: limitRid'
-  #               invalidBoolean:
-  #                 summary: Invalid boolean format
-  #                 value:
-  #                   code: ERR_VALIDATION_FAILED
-  #                   params:
-  #                     message: Format Error please use Boolean value
-  #       '401':
-  #         $ref: '#/components/responses/Unauthorized'
-  #       '409':
-  #         description: Conflict – card or limit not found
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               required:
-  #               - code
-  #               - params
-  #               properties:
-  #                 code:
-  #                   type: string
-  #                   example: ERR_CARD_NOT_FOUND
-  #                 params:
-  #                   type: object
-  #                   required:
-  #                   - message
-  #                   properties:
-  #                     message:
-  #                       type: string
-  #                       example: Wrong Card ID please use a valid Card ID
-  #             examples:
-  #               cardNotFound:
-  #                 summary: Card not found
-  #                 value:
-  #                   code: ERR_CARD_NOT_FOUND
-  #                   params:
-  #                     message: Wrong Card ID please use a valid Card ID
-  #               invalidLimitRid:
-  #                 summary: Invalid limit RID
-  #                 value:
-  #                   code: ERR_INVALID_LIMIT_RID
-  #                   params:
-  #                     message: Wrong Limit RID Please use a valid RID
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  #       '504':
-  #         $ref: '#/components/responses/LambdaTimeout'
-  #       '403':
-  #         $ref: '#/components/responses/Forbidden'
-  # /limits/change-limit:
-  #   post:
-  #     operationId: changeCardLimit
-  #     summary: Change Card Limit Value
-  #     description: 'Update the maximum value of a specific card limit/restriction.
+        '
+      tags:
+      - Limit Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (numeric string)'
+                  example: '3657'
+                limitRid:
+                  type: string
+                  description: '**Required.** Limit reference ID (from Card Limit Retrieval API)'
+                  example: PurchaseAmountLimit
+                inUse:
+                  type: boolean
+                  description: '**Required.** Enable (true) or disable (false) the limit'
+                  example: false
+            example:
+              cardId: '3657'
+              limitRid: PurchaseAmountLimit
+              inUse: false
+      responses:
+        '200':
+          description: Limit usage successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_LIMIT_UPDATED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        description: Success message
+                        example: Limit is Disabled
+              examples:
+                limitEnabled:
+                  summary: Limit enabled
+                  value:
+                    code: SUCCESS_LIMIT_UPDATED
+                    params:
+                      message: Limit is Enabled
+                limitDisabled:
+                  summary: Limit disabled
+                  value:
+                    code: SUCCESS_LIMIT_UPDATED
+                    params:
+                      message: Limit is Disabled
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingField:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: limitRid'
+                invalidBoolean:
+                  summary: Invalid boolean format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Format Error please use Boolean value
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – card or limit not found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CARD_NOT_FOUND
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: Wrong Card ID please use a valid Card ID
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Wrong Card ID please use a valid Card ID
+                invalidLimitRid:
+                  summary: Invalid limit RID
+                  value:
+                    code: ERR_INVALID_LIMIT_RID
+                    params:
+                      message: Wrong Limit RID Please use a valid RID
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /limits/change-limit:
+    post:
+      operationId: changeCardLimit
+      summary: Change Card Limit Value
+      description: 'Update the maximum value of a specific card limit/restriction.
 
 
-  #       **Pre-requisites:**
+        **Pre-requisites:**
 
-  #       - The target CardID must exist
+        - The target CardID must exist
 
-  #       - Use Card Limit Retrieval API to get the limitRid first
+        - Use Card Limit Retrieval API to get the limitRid first
 
-  #       '
-  #     tags:
-  #     - Limit Management
-  #     parameters:
-  #     - $ref: '#/components/parameters/apiKey'
-  #     - $ref: '#/components/parameters/contentType'
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             type: object
-  #             properties:
-  #               cardId:
-  #                 type: string
-  #                 description: '**Required.** Card ID (numeric string)'
-  #                 example: '3657'
-  #               limitRid:
-  #                 type: string
-  #                 description: '**Required.** Limit reference ID (from Card Limit Retrieval API)'
-  #                 example: PurchaseAmountLimitRI
-  #               maxVal:
-  #                 type: number
-  #                 description: '**Required.** Maximum limit value (cannot be negative)'
-  #                 example: 1500
-  #                 minimum: 0
-  #           example:
-  #             cardId: '3657'
-  #             limitRid: PurchaseAmountLimitRI
-  #             maxVal: 1500
-  #     responses:
-  #       '200':
-  #         description: Limit value successfully updated
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               required:
-  #               - code
-  #               - params
-  #               properties:
-  #                 code:
-  #                   type: string
-  #                   example: SUCCESS_LIMIT_UPDATED
-  #                 params:
-  #                   type: object
-  #                   required:
-  #                   - message
-  #                   properties:
-  #                     message:
-  #                       type: string
-  #                       description: Success message
-  #                       example: Limit Updated Successfully
-  #             examples:
-  #               limitUpdated:
-  #                 summary: Limit updated successfully
-  #                 value:
-  #                   code: SUCCESS_LIMIT_UPDATED
-  #                   params:
-  #                     message: Limit Updated Successfully
-  #       '400':
-  #         description: Bad request – validation failed
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ValidationError'
-  #             examples:
-  #               missingField:
-  #                 summary: Missing required field
-  #                 value:
-  #                   code: ERR_VALIDATION_FAILED
-  #                   params:
-  #                     message: 'Missing required field: maxVal'
-  #               invalidValue:
-  #                 summary: Invalid value format
-  #                 value:
-  #                   code: ERR_VALIDATION_FAILED
-  #                   params:
-  #                     message: Please use a valid Value
-  #       '401':
-  #         $ref: '#/components/responses/Unauthorized'
-  #       '409':
-  #         description: Conflict – card or limit not found
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               required:
-  #               - code
-  #               - params
-  #               properties:
-  #                 code:
-  #                   type: string
-  #                   example: ERR_CARD_NOT_FOUND
-  #                 params:
-  #                   type: object
-  #                   required:
-  #                   - message
-  #                   properties:
-  #                     message:
-  #                       type: string
-  #                       example: Please Use a Valid Card Id
-  #             examples:
-  #               cardNotFound:
-  #                 summary: Card not found
-  #                 value:
-  #                   code: ERR_CARD_NOT_FOUND
-  #                   params:
-  #                     message: Please Use a Valid Card Id
-  #               invalidLimitRid:
-  #                 summary: Invalid limit RID
-  #                 value:
-  #                   code: ERR_INVALID_LIMIT_RID
-  #                   params:
-  #                     message: Please Use a Valid Limit RID
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  #       '504':
-  #         $ref: '#/components/responses/LambdaTimeout'
-  #       '403':
-  #         $ref: '#/components/responses/Forbidden'
+        '
+      tags:
+      - Limit Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (numeric string)'
+                  example: '3657'
+                limitRid:
+                  type: string
+                  description: '**Required.** Limit reference ID (from Card Limit Retrieval API)'
+                  example: PurchaseAmountLimitRI
+                maxVal:
+                  type: number
+                  description: '**Required.** Maximum limit value (cannot be negative)'
+                  example: 1500
+                  minimum: 0
+            example:
+              cardId: '3657'
+              limitRid: PurchaseAmountLimitRI
+              maxVal: 1500
+      responses:
+        '200':
+          description: Limit value successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_LIMIT_UPDATED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        description: Success message
+                        example: Limit Updated Successfully
+              examples:
+                limitUpdated:
+                  summary: Limit updated successfully
+                  value:
+                    code: SUCCESS_LIMIT_UPDATED
+                    params:
+                      message: Limit Updated Successfully
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingField:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: maxVal'
+                invalidValue:
+                  summary: Invalid value format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid maxVal. Maximum limit value cannot be negative
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – card or limit not found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CARD_NOT_FOUND
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: Please Use a Valid Card Id
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Please Use a Valid Card Id
+                invalidLimitRid:
+                  summary: Invalid limit RID
+                  value:
+                    code: ERR_INVALID_LIMIT_RID
+                    params:
+                      message: Please Use a Valid Limit RID
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
 components:
   responses:
     LambdaTimeout:
