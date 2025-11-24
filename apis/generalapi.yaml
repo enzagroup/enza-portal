@@ -4077,14 +4077,13 @@ components:
                 properties:
                   message:
                     type: string
-                    example: Invalid API key. The provided API key is not recognized or has been revoked.
-          examples:
+                    example: Access denied. You do not have permission to access this resource.
             invalidApiKey:
               summary: Invalid API key
               value:
                 code: ERR_FORBIDDEN
                 params:
-                  message: Invalid API key. The provided API key is not recognized or has been revoked.
+                  message: Access denied. You do not have permission to access this resource.
     MethodNotAllowed:
       description: Method not allowed
       content:
