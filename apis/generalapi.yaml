@@ -4066,26 +4066,25 @@ components:
             required:
             - code
             - params
+          properties:
+            code:
+              type: string
+              example: ERR_FORBIDDEN
+          params:
+            type: object
+            required:
+              - message
             properties:
-              code:
+              message:
                 type: string
-                example: ERR_FORBIDDEN
-              params:
-                type: object
-                required:
-                - message
-                properties:
-                  message:
-                    type: string
-                    example: Invalid API key. The provided API key is not recognized or has been revoked.
-          examples:
-            invalidApiKey:
-              summary: Invalid API key
-              value:
-                code: ERR_FORBIDDEN
-                params:
-                  message: Invalid API key. The provided API key is not recognized or has been revoked.
-    MethodNotAllowed:
+                example: Access denied. You do not have permission to access this resource.
+      examples:
+        forbidden:
+          summary: Forbidden
+          value:
+            code: ERR_FORBIDDEN
+            params:
+              message: Access denied. You do not have permission to access this resource.MethodNotAllowed:
       description: Method not allowed
       content:
         application/json:
