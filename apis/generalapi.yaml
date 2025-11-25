@@ -4084,7 +4084,8 @@ components:
           value:
             code: ERR_FORBIDDEN
             params:
-              message: Access denied. You do not have permission to access this resource.MethodNotAllowed:
+              message: Access denied. You do not have permission to access this resource.
+    MethodNotAllowed:
       description: Method not allowed
       content:
         application/json:
