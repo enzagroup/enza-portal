@@ -126,6 +126,22 @@ paths:
                   type: string
                   description: '**Optional.** Customer''s employer name'
                   example: Tech Corp
+                residenceCountryCode:
+                  type: string
+                  description: '**Optional.** Residence country ID (e.g., 826 for UK)'
+                  example: '826'
+                branch:
+                  type: string
+                  description: '**Optional.** Branch ID'
+                  example: '49'
+                birthplaceCity:
+                  type: string
+                  description: '**Optional.** Birthplace city title'
+                  example: London
+                birthplaceCountryCode:
+                  type: string
+                  description: '**Optional.** Birthplace country ID (e.g., 826 for UK)'
+                  example: '826'
             examples:
               withNationalId:
                 summary: Create customer with National ID
@@ -140,6 +156,10 @@ paths:
                   zip: WC1X 9NX
                   gender: Male
                   employer: Tech Corp
+                  residenceCountryCode: '826'
+                  branch: '49'
+                  birthplaceCity: London
+                  birthplaceCountryCode: '826'
               withPassport:
                 summary: Create customer with Passport
                 value:
@@ -674,6 +694,25 @@ paths:
                   type: string
                   description: '**Optional:** Postal/ZIP code'
                   example: WC1X 9NX
+                residenceCountryCode:
+                  type: string
+                  description: '**Optional:** Residence country ID (numeric only, e.g., 826 for UK)'
+                  example: '826'
+                  pattern: '^[0-9]+$'
+                branch:
+                  type: string
+                  description: '**Optional:** Branch ID (numeric only)'
+                  example: '49'
+                  pattern: '^[0-9]+$'
+                birthplaceCity:
+                  type: string
+                  description: '**Optional:** Birthplace city title'
+                  example: London
+                birthplaceCountryCode:
+                  type: string
+                  description: '**Optional:** Birthplace country ID (numeric only, e.g., 826 for UK)'
+                  example: '826'
+                  pattern: '^[0-9]+$'
             examples:
               fullUpdateWithPassport:
                 summary: Update all fields using passport
@@ -687,6 +726,10 @@ paths:
                   mobilePhone: '9991234567'
                   streetTitle: Baker's Str
                   zip: WC1X 9NX
+                  residenceCountryCode: '826'
+                  branch: '49'
+                  birthplaceCity: London
+                  birthplaceCountryCode: '826'
               partialUpdateWithNationalId:
                 summary: Update only email and phone using national ID
                 value:
@@ -748,6 +791,18 @@ paths:
                     code: ERR_VALIDATION_FAILED
                     params:
                       message: Invalid birthDate format. Expected YYYY-MM-DD
+                invalidCountryCode:
+                  summary: Invalid country code
+                  value:
+                    code: ERR_INVALID_COUNTRY_CODE
+                    params:
+                      message: 'Invalid country code provided. Please use a valid numeric country ID (e.g., 826 for UK)'
+                invalidBranchId:
+                  summary: Invalid branch ID
+                  value:
+                    code: ERR_INVALID_BRANCH_ID
+                    params:
+                      message: 'Invalid branch ID provided. Please use a valid branch ID for your institution'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '409':
