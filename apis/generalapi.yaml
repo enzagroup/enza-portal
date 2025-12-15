@@ -3357,14 +3357,14 @@ paths:
                     properties:
                       message:
                         type: string
-                        example: An unexpected error occurred. Please try again later.
+                        example: An unexpected error occurred.
               examples:
                 internalServerError:
                   summary: Internal server error
                   value:
                     code: ERR_INTERNAL_SERVER_ERROR
                     params:
-                      message: An unexpected error occurred. Please try again later.
+                      message: An unexpected error occurred.
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
@@ -3566,14 +3566,14 @@ paths:
                     properties:
                       message:
                         type: string
-                        example: An unexpected error occurred. Please try again later.
+                        example: An unexpected error occurred.
               examples:
                 internalServerError:
                   summary: Internal server error
                   value:
                     code: ERR_INTERNAL_SERVER_ERROR
                     params:
-                      message: An unexpected error occurred. Please try again later.
+                      message: An unexpected error occurred.
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
@@ -4225,14 +4225,14 @@ components:
                 properties:
                   message:
                     type: string
-                    example: An unexpected error occurred. Please try again later.
+                    example: An unexpected error occurred.
           examples:
             internalError:
               summary: Internal server error
               value:
                 code: ERR_INTERNAL_SERVER_ERROR
                 params:
-                  message: An unexpected error occurred. Please try again later.
+                  message: An unexpected error occurred.
   schemas:
     SuccessEnvelope:
       type: object
