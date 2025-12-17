@@ -171,6 +171,10 @@ paths:
                   gender: Female
                   employer: Finance Inc
                   mobilePhone: '9991234567'
+                  residenceCountryCode: '826'
+                  branch: '49'
+                  birthplaceCity: London
+                  birthplaceCountryCode: '826'
               withIdentityId:
                 summary: Create customer with Identity ID
                 value:
@@ -182,6 +186,10 @@ paths:
                   gender: Female
                   employer: Finance Inc
                   mobilePhone: '9991234567'
+                  residenceCountryCode: '826'
+                  branch: '49'
+                  birthplaceCity: London
+                  birthplaceCountryCode: '826'
       responses:
         '200':
           description: Customer created successfully
@@ -548,6 +556,22 @@ paths:
                         type: string
                         description: Customer status (N=Normal)
                         example: N
+                      gender:
+                        type: string
+                        description: Customer gender (Male or Female)
+                        example: Male
+                      employer:
+                        type: string
+                        description: Customer employer
+                        example: Acme Corporation
+                      residenceCountryCode:
+                        type: string
+                        description: Customer residence country code
+                        example: '826'
+                      branch:
+                        type: string
+                        description: Customer branch ID
+                        example: '49'
                       email:
                         type: string
                         format: email
@@ -568,22 +592,40 @@ paths:
                             type: string
                             description: Postal code
                             example: '11728'
+                      birthAddress:
+                        type: object
+                        properties:
+                          birthplaceCity:
+                            type: string
+                            description: City of birth
+                            example: London
+                          birthplaceCountryCode:
+                            type: string
+                            description: Country of birth code
+                            example: '826'
               examples:
                 successResponse:
                   summary: Customer details retrieved successfully
                   value:
                     code: SUCCESS_CUSTOMER_DETAILS_RETRIEVED
                     params:
-                      firstName: omnia
-                      middleName: API
+                      firstName: marina
+                      middleName: Ehab
                       lastName: Testing
-                      birthDate: '1989-12-31'
+                      birthDate: '1990-01-01'
                       status: N
-                      email: a@a.com
+                      gender: Female
+                      employer: null
+                      residenceCountryCode: '454'
+                      branch: null
+                      email: agg@gmail.com
                       mobilePhone: 01158900152
                       homeAddress:
                         streetTitle: asd
                         zip: '11728'
+                      birthAddress:
+                        birthplaceCity: london
+                        birthplaceCountryCode: '826'
         '400':
           description: Bad request – validation failed
           content:
@@ -1739,6 +1781,222 @@ paths:
                     code: ERR_PAYMENT_FAILED
                     params:
                       message: Payment declined
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /cards/reverse-top-ups:
+    post:
+      operationId: reverseTopUpCard
+      summary: Reverse Top Up Card
+      description: 'Reverse a previous top-up by deducting funds from the card''s available balance and returning them to the bank pool account. This operation cancels a top-up transaction.
+
+
+        **Transaction Flow:**
+
+        1. Validate card existence and status
+
+        2. Verify card has sufficient balance
+
+        3. Execute real-time fund transfer from card to bank pool
+
+        4. Update card balance immediately
+
+        5. Return transaction confirmation with approval code
+
+        '
+      tags:
+      - Card Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (numeric only)'
+                  example: '3280'
+                ccy:
+                  type: string
+                  description: '**Required.** Currency code (numeric only, e.g., 936 for GHS)'
+                  example: '936'
+                amount:
+                  type: string
+                  description: '**Required.** Amount to reverse (decimal with up to 2 decimal places, must be greater than zero)'
+                  example: '100.12'
+            example:
+              cardId: '3280'
+              ccy: '936'
+              amount: '100.12'
+      responses:
+        '200':
+          description: Reverse top-up successfully completed
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_REVERSE_TOPUP_COMPLETED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        description: Success message
+                        example: Successfully reversed the top-up
+                      transactionId:
+                        type: string
+                        description: Transaction ID
+                        example: '251026743389956338'
+                      approvalCode:
+                        type: string
+                        description: Transaction approval code
+                        example: 6Q212F
+                      amount:
+                        type: string
+                        description: Reversed amount
+                        example: '100.12'
+                      currency:
+                        type: string
+                        description: Currency code
+                        example: '936'
+              examples:
+                successResponse:
+                  summary: Reverse top-up completed successfully
+                  value:
+                    code: SUCCESS_REVERSE_TOPUP_COMPLETED
+                    params:
+                      message: Successfully reversed the top-up
+                      transactionId: '251026743389956338'
+                      approvalCode: 6Q212F
+                      amount: '100.12'
+                      currency: '936'
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_VALIDATION_FAILED
+                  params:
+                    type: object
+                    required:
+                    - field
+                    - message
+                    properties:
+                      field:
+                        type: string
+                        description: Field name that failed validation
+                        example: cardId
+                      message:
+                        type: string
+                        description: Validation error message
+                        example: Invalid cardId format. Card ID must contain only numbers (0-9) and be up to 19 digits long
+              examples:
+                invalidCardId:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: cardId
+                      message: Invalid cardId format. Card ID must contain only numbers (0-9) and be up to 19 digits long
+                invalidCurrency:
+                  summary: Invalid currency code format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: ccy
+                      message: Currency code must contain only numbers
+                invalidAmount:
+                  summary: Invalid amount format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: amount
+                      message: Amount must be a valid number with up to 2 decimal places
+                zeroOrNegativeAmount:
+                  summary: Zero or negative amount
+                  value:
+                    code: ERR_INVALID_AMOUNT
+                    params:
+                      field: amount
+                      message: Amount must be greater than zero.
+                missingField:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: cardId
+                      message: Card ID is required
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – reverse top-up declined
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CARD_NOT_FOUND
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card not found
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                insufficientBalance:
+                  summary: Insufficient balance
+                  value:
+                    code: ERR_INSUFFICIENT_BALANCE
+                    params:
+                      message: Insufficient balance
+                accountNotFound:
+                  summary: Account not found
+                  value:
+                    code: ERR_ACCOUNT_NOT_FOUND
+                    params:
+                      message: Account not found
+                reverseTopUpFailed:
+                  summary: Reverse top-up failed
+                  value:
+                    code: ERR_REVERSE_TOPUP_FAILED
+                    params:
+                      message: Reverse top-up declined
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
