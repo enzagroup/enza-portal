@@ -38,10 +38,121 @@ tags:
   description: Instant card issuance for new and existing customers
 - name: Limit Management
   description: Manage card limits and restrictions
+- name: Products
+  description: Retrieve available contract types and products for API access
 - name: Combined Section
   description: Combined section APIs
 paths:
-  /customers/create:
+  /v1/products/retrieve:
+    get:
+      operationId: getContractTypes
+      summary: Retrieve Contract Types
+      description: 'This API is to retrieve contract types to be used in selecting the card type and the account type in the next API like card creation.
+
+        **Process:**
+
+        1. Call RTP service to get issuing contract types
+
+        2. Filter contracts to only include those with "API" in the name
+
+        3. Remove "API" suffix from product names in response
+
+        4. Return list of authorized products
+
+        '
+      tags:
+      - Products
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      responses:
+        '200':
+          description: Contract types retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CONTRACT_TYPES_RETRIEVED
+                  params:
+                    type: object
+                    required:
+                    - allowedProducts
+                    properties:
+                      allowedProducts:
+                        type: array
+                        items:
+                          type: string
+                        description: List of authorized API products (API suffix removed)
+                        example:
+                        - VisaPrepaidClassicVirtual
+                        - VisaPrepaidClassicVirtual2
+              examples:
+                success:
+                  summary: Contract types retrieved
+                  value:
+                    code: SUCCESS_CONTRACT_TYPES_RETRIEVED
+                    params:
+                      allowedProducts:
+                      - VisaPrepaidClassicVirtual
+                      - VisaPrepaidClassicVirtual2
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: No authorized products available
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - result
+                - error
+                properties:
+                  result:
+                    type: string
+                    example: NO_AUTHORIZED_PRODUCTS
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    - details
+                    properties:
+                      code:
+                        type: string
+                        example: NO_AUTHORIZED_PRODUCTS
+                      message:
+                        type: string
+                        example: No products are authorized for API access.
+                      details:
+                        type: string
+                        example: Client has no API-enabled product entitlements.
+              examples:
+                noProducts:
+                  summary: No authorized products
+                  value:
+                    result: NO_AUTHORIZED_PRODUCTS
+                    error:
+                      code: NO_AUTHORIZED_PRODUCTS
+                      message: No products are authorized for API access.
+                      details: Client has no API-enabled product entitlements.
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+    options:
+      summary: CORS Preflight (Products)
+      tags:
+      - Products
+      responses:
+        '204':
+          description: Preflight request accepted
+      security: []
+  /v1/customers/create:
     post:
       operationId: createCustomer
       summary: Create New Customer
@@ -326,7 +437,7 @@ paths:
                         type: string
 
                         example: HTTP method not allowed for this endpoint
-  /customers/search:
+  /v1/customers/search:
     post:
       operationId: checkCustomerExistence
       summary: Check Customer Existence
@@ -470,7 +581,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /customers/details:
+  /v1/customers/details:
     post:
       operationId: getCustomerDetails
       summary: Show Customer Details
@@ -592,15 +703,23 @@ paths:
                           streetTitle:
                             type: string
                             description: Street address
-                            example: asd
+                            example: Baker Street
                           zip:
                             type: string
                             description: Postal code
-                            example: '11728'
+                            example: 'NW1 6XE'
+                          countryId:
+                            type: string
+                            description: Country ID from home address
+                            example: '826'
                           addressLine:
                             type: string
-                            description: Address line
-                            example: 'Apt 123, Main Street'
+                            description: Address line within city
+                            example: '221B Baker Street'
+                          city:
+                            type: string
+                            description: City name
+                            example: London
                       birthAddress:
                         type: object
                         properties:
@@ -630,9 +749,11 @@ paths:
                       email: agg@gmail.com
                       mobilePhone: 01158900152
                       homeAddress:
-                        streetTitle: asd
-                        zip: '11728'
-                        addressLine: 'Apt 123, Main Street'
+                        streetTitle: Baker Street
+                        zip: 'NW1 6XE'
+                        countryId: '826'
+                        addressLine: '221B Baker Street'
+                        city: London
                       birthAddress:
                         birthplaceCity: london
                         birthplaceCountryCode: '826'
@@ -672,7 +793,129 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /customers/update:
+  /v1/notification/status:
+    post:
+      operationId: getNotificationServiceStatus
+      summary: Get Notification Service Status
+      description: "Retrieve the active notification channels (SMS, Email) for an existing customer.\n\n**Workflow:**\n1. Provide one national identifier (nationalId, passport, or identityId)\n2. The system queries RTP for notification contracts\n3. Active contracts are mapped to notification channels\n4. Response returns enabled channels and contract metadata\n\nIf no active contracts are found, the response includes an empty channels array with a message."
+      tags:
+      - Notifications Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                nationalId:
+                  type: string
+                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
+                  example: '321321'
+                passport:
+                  type: string
+                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
+                  example: AB1234567
+                identityId:
+                  type: string
+                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
+                  example: ID123456
+              anyOf:
+              - required:
+                - nationalId
+              - required:
+                - passport
+              - required:
+                - identityId
+            examples:
+              byNationalId:
+                summary: Retrieve status with National ID
+                value:
+                  nationalId: '321321'
+              byPassport:
+                summary: Retrieve status with Passport
+                value:
+                  passport: AB1234567
+      responses:
+        '200':
+          description: Notification status retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_NOTIFICATION_STATUS_RETRIEVED
+                  params:
+                    type: object
+                    properties:
+                      EnabledChannels:
+                        type: array
+                        description: List of active notification channels
+                        items:
+                          type: string
+                        example:
+                        - SMS
+                        - Email
+                      message:
+                        type: string
+                        description: Status message
+                        example: Notification channels retrieved successfully
+              examples:
+                smsAndEmail:
+                  summary: SMS and Email enabled
+                  value:
+                    code: SUCCESS_NOTIFICATION_STATUS_RETRIEVED
+                    params:
+                      EnabledChannels:
+                      - SMS
+                      - Email
+                      message: Notification channels retrieved successfully
+                noChannels:
+                  summary: No active notification channels
+                  value:
+                    code: SUCCESS_NOTIFICATION_STATUS_RETRIEVED
+                    params:
+                      EnabledChannels: []
+                      message: No activated channels for this customer
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CUSTOMER_NOT_FOUND
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Customer not found with provided document ID
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /v1/customers/update:
     post:
       operationId: updateCustomerDetails
       summary: Update Customer Details
@@ -883,7 +1126,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /notifications/manage-notification-service:
+  /v1/notification/manage:
     post:
       operationId: manageNotificationService
       summary: Manage Notification Service
@@ -2548,10 +2791,10 @@ paths:
                   type: string
                   description: '**Required.** Name to emboss on card'
                   example: JOHN DOE
-                accountNum:
+                accountNumber:
                   type: string
-                  description: '**Required.** Account number for the debit account'
-                  example: '1234567890'
+                  description: '**Required.** External account number for the debit card'
+                  example: ACC1234567890
                 lastName:
                   type: string
                   description: '**Required.** Customer last name'
@@ -3631,8 +3874,7 @@ paths:
       tags:
       - Card Management
       summary: Create Virtual Prepaid Card
-      description: "Create a virtual prepaid card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Create Prepaid Card** using this API (`POST /cards/create-prepaid`)\n   - Provide the customer's document ID (nationalId, passport, or identityId)\n   - Optionally enable auto-activation and notifications\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Card Issuance**: Create issuing and financial contracts, issue virtual card\n3. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate\
-        \ the card (default: false)\n4. **Notifications** (Optional): Set `notificationStatus: \"enabled\"` to enable SMS/Email notifications\n\n**Note:** By default, card is NOT automatically activated unless `autoActivate` is set to `true`\n"
+      description: "Create a virtual prepaid card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n3. **Create Prepaid Card** using this API (`POST /cards/create-prepaid`)\n   - Provide the customer's document ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2\n   - Optionally enable auto-activation\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve`\n3. **Card Issuance**: Create issuing and financial contracts, issue virtual card\n4. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)\n5. **Notifications**: Use `POST /v1/notification/manage` after card creation if notifications are required\n\n**Note:** By default, card is NOT automatically activated unless `autoActivate` is set to `true`\n"
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -3641,7 +3883,13 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+              - productType
               properties:
+                productType:
+                  type: string
+                  description: '**Required.** Issuing product. Obtain via `GET /v1/products/retrieve`.'
+                  example: VisaPrepaidClassicVirtual
                 nationalId:
                   type: string
                   description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
@@ -3654,13 +3902,6 @@ paths:
                   type: string
                   description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
                   example: ID123456
-                notificationStatus:
-                  type: string
-                  enum:
-                  - enabled
-                  - disabled
-                  description: '**Optional.** Enable or disable notifications (default: disabled)'
-                  example: enabled
                 autoActivate:
                   type: boolean
                   description: '**Optional.** Automatically activate card after creation (default: false)'
@@ -3671,10 +3912,9 @@ paths:
                 summary: Create card with National ID
                 value:
                   nationalId: '1234567890'
-                  notificationStatus: enabled
                   autoActivate: false
               withPassport:
-                summary: Create card with Passport
+                summary: Create card with Passport and auto-activation
                 value:
                   passport: AB1234567
                   autoActivate: true
@@ -3698,7 +3938,6 @@ paths:
                     - personId
                     - cardId
                     - cardDetails
-                    - notificationStatus
                     properties:
                       personId:
                         type: string
@@ -3728,14 +3967,6 @@ paths:
                             type: string
                             description: Card verification value
                             example: '123'
-                      notificationStatus:
-                        type: boolean
-                        description: Whether notifications are enabled
-                        example: true
-                      notificationStatusMessage:
-                        type: string
-                        description: Notification status message (only if already existed)
-                        example: Already Enabled
               examples:
                 successResponse:
                   summary: Card created successfully
@@ -3748,7 +3979,6 @@ paths:
                         pan: '1234567890123456'
                         expirationDate: 2027-12-31
                         cvv2: '123'
-                      notificationStatus: true
         '400':
           description: Bad request – validation failed
           content:
@@ -3789,12 +4019,6 @@ paths:
                     code: ERR_ACTIVATE_CARD_DECLINED
                     params:
                       message: Card activation declined
-                notificationServiceUnavailable:
-                  summary: Notification service unavailable
-                  value:
-                    code: ERR_NOTIFICATION_SERVICE_UNAVAILABLE
-                    params:
-                      message: Notification service is not available for your account at this time. Please contact support.
         '500':
           description: Internal server error
           content:
@@ -3835,7 +4059,7 @@ paths:
       tags:
       - Card Management
       summary: Create Debit Card
-      description: "Create a debit card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Create Debit Card** using this API (`POST /cards/create-debit`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the account number\n   - Optionally enable notifications\n   - Optionally activate the card\n\n---\n"
+      description: "Create a debit card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n3. **Create Debit Card** using this API (`POST /cards/create-debit`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2\n   - Provide the account number\n   - Optionally enable auto-activation\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve`\n3. **Card Issuance**: Create issuing and financial contracts, issue physical card (inactive by default)\n4. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)\n5. **Notifications**: Use `POST /v1/notification/manage` after card creation if notifications are required\n\n**Note:** By default, card is NOT automatically activated unless `autoActivate` is set to `true`\n"
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -3844,7 +4068,14 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+              - productType
+              - accountNumber
               properties:
+                productType:
+                  type: string
+                  description: '**Required.** Issuing product. Obtain via `GET /v1/products/retrieve`.'
+                  example: VisaDebitPhysical
                 nationalId:
                   type: string
                   description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
@@ -3861,13 +4092,6 @@ paths:
                   type: string
                   description: '**Required.** External account number (DHI reference) to link with the financial contract'
                   example: DHI123456789
-                notificationStatus:
-                  type: string
-                  enum:
-                  - enabled
-                  - disabled
-                  description: '**Optional.** Enable or disable notifications (default: disabled)'
-                  example: enabled
                 autoActivate:
                   type: boolean
                   description: '**Optional.** Automatically activate card after creation (default: false)'
@@ -3879,7 +4103,6 @@ paths:
                 value:
                   nationalId: '1234567890'
                   accountNumber: DHI123456789
-                  notificationStatus: enabled
                   autoActivate: false
               withPassport:
                 summary: Create debit card with Passport and auto-activation
@@ -3907,7 +4130,6 @@ paths:
                     - personId
                     - cardId
                     - cardDetails
-                    - notificationStatus
                     properties:
                       personId:
                         type: string
@@ -3932,14 +4154,6 @@ paths:
                             format: date
                             description: Card expiration date in YYYY-MM-DD format
                             example: '2027-12-31'
-                      notificationStatus:
-                        type: boolean
-                        description: Whether notifications are enabled
-                        example: true
-                      notificationStatusMessage:
-                        type: string
-                        description: Notification status message (only if already existed)
-                        example: Already Enabled
               examples:
                 successResponse:
                   summary: Debit card created successfully
@@ -3951,7 +4165,6 @@ paths:
                       cardDetails:
                         pan: 526916******0106
                         expirationDate: 2027-12-31
-                      notificationStatus: true
         '400':
           description: Bad request – validation failed
           content:
@@ -3998,12 +4211,6 @@ paths:
                     code: ERR_ACTIVATE_CARD_DECLINED
                     params:
                       message: Card activation declined
-                notificationServiceUnavailable:
-                  summary: Notification service unavailable
-                  value:
-                    code: ERR_NOTIFICATION_SERVICE_UNAVAILABLE
-                    params:
-                      message: Notification service is not available for your account at this time. Please contact support.
         '500':
           description: Internal server error
           content:
