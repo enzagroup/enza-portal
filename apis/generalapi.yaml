@@ -38,7 +38,7 @@ tags:
   description: Instant card issuance for new and existing customers
 - name: Limit Management
   description: Manage card limits and restrictions
-- name: Products
+- name: Products Retrieval
   description: Retrieve available contract types and products for API access
 - name: Combined Section
   description: Combined section APIs
@@ -46,10 +46,10 @@ paths:
   /v1/products/retrieve:
     get:
       operationId: getContractTypes
-      summary: Retrieve Contract Types
+      summary: Get Card Products
       description: 'This API is to retrieve product types to be used in selecting the card type and the account type in the next API like card creation.'
       tags:
-      - Products
+      - Products Retrieval
       parameters:
       - $ref: '#/components/parameters/apiKey'
       responses:
