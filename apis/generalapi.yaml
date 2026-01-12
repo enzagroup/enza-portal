@@ -186,7 +186,7 @@ paths:
                   example: Doe
                 firstName:
                   type: string
-                  description: '**Optional.** Customer''s first name'
+                  description: '**Required.** Customer''s first name'
                   example: John
                 middleName:
                   type: string
@@ -195,7 +195,7 @@ paths:
                 birthDate:
                   type: string
                   format: date
-                  description: '**Required.** Customer''s birth date in YYYY-MM-DD format'
+                  description: '**Optional.** Customer''s birth date in YYYY-MM-DD format'
                   example: '1990-01-01'
                 nationalId:
                   type: string
@@ -216,7 +216,7 @@ paths:
                   example: john.doe@example.com
                 mobilePhone:
                   type: string
-                  description: '**Optional.** Customer''s mobile phone number'
+                  description: '**Required.** Customer''s mobile phone number'
                   example: '9991234567'
                 streetTitle:
                   type: string
@@ -255,7 +255,7 @@ paths:
                   example: London
                 birthplaceCountryCode:
                   type: string
-                  description: '**Optional.** Birthplace country ID (e.g., 826 for UK)'
+                  description: '**Required.** Birthplace country ID (e.g., 826 for UK)'
                   example: '826'
             examples:
               withNationalId:
