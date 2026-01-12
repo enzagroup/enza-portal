@@ -47,19 +47,7 @@ paths:
     get:
       operationId: getContractTypes
       summary: Retrieve Contract Types
-      description: 'This API is to retrieve contract types to be used in selecting the card type and the account type in the next API like card creation.
-
-        **Process:**
-
-        1. Call RTP service to get issuing contract types
-
-        2. Filter contracts to only include those with "API" in the name
-
-        3. Remove "API" suffix from product names in response
-
-        4. Return list of authorized products
-
-        '
+      description: 'This API is to retrieve product types to be used in selecting the card type and the account type in the next API like card creation.'
       tags:
       - Products
       parameters:
@@ -144,14 +132,6 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-    options:
-      summary: CORS Preflight (Products)
-      tags:
-      - Products
-      responses:
-        '204':
-          description: Preflight request accepted
-      security: []
   /v1/customers/create:
     post:
       operationId: createCustomer
@@ -417,6 +397,12 @@ paths:
               schema:
 
                 type: object
+
+                required:
+
+                - code
+
+                - params
 
                 properties:
 
@@ -797,18 +783,18 @@ paths:
     post:
       operationId: getNotificationServiceStatus
       summary: Get Notification Service Status
-      description: "Retrieve the active notification channels (SMS, Email) for an existing customer.\n\n**Workflow:**\n1. Provide one national identifier (nationalId, passport, or identityId)\n2. The system queries RTP for notification contracts\n3. Active contracts are mapped to notification channels\n4. Response returns enabled channels and contract metadata\n\nIf no active contracts are found, the response includes an empty channels array with a message."
+      description: "Retrieve the active notification channels (SMS, Email) for an existing customer"
       tags:
       - Notifications Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
-              additionalProperties: false
               properties:
                 nationalId:
                   type: string
@@ -822,13 +808,6 @@ paths:
                   type: string
                   description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
                   example: ID123456
-              anyOf:
-              - required:
-                - nationalId
-              - required:
-                - passport
-              - required:
-                - identityId
             examples:
               byNationalId:
                 summary: Retrieve status with National ID
@@ -838,6 +817,10 @@ paths:
                 summary: Retrieve status with Passport
                 value:
                   passport: AB1234567
+              byIdentityId:
+                summary: Retrieve status with Identity ID
+                value:
+                  identityId: ID123456
       responses:
         '200':
           description: Notification status retrieved successfully
@@ -997,12 +980,10 @@ paths:
                   type: string
                   description: '**Optional:** Residence country ID (numeric only, e.g., 826 for UK)'
                   example: '826'
-                  pattern: '^[0-9]+$'
                 branch:
                   type: string
                   description: '**Optional:** Branch ID (numeric only)'
                   example: '49'
-                  pattern: '^[0-9]+$'
                 birthplaceCity:
                   type: string
                   description: '**Optional:** Birthplace city title'
@@ -1011,7 +992,6 @@ paths:
                   type: string
                   description: '**Optional:** Birthplace country ID (numeric only, e.g., 826 for UK)'
                   example: '826'
-                  pattern: '^[0-9]+$'
             examples:
               fullUpdateWithPassport:
                 summary: Update all fields using passport
@@ -1134,10 +1114,9 @@ paths:
 
         **Process:**
 
-        1. Find customer by document ID (National ID, Passport, or Identity ID)
+        1. Find customer by ID (National ID, Passport, or Identity ID)
 
         2. If customer already has an active notification contract:
-           - Suspend the existing contract
            - Create a new contract with the specified channel
            - Activate the new contract
 
@@ -1160,24 +1139,21 @@ paths:
                   type: string
                   description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
                   example: '7623835006'
-                  maxLength: 50
-                  pattern: '^[a-zA-Z0-9]+$'
+
                 passport:
                   type: string
                   description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
                   example: AB1234567
-                  maxLength: 50
-                  pattern: '^[a-zA-Z0-9]+$'
+
                 identityId:
                   type: string
                   description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
                   example: ID123456
-                  maxLength: 50
-                  pattern: '^[a-zA-Z0-9]+$'
+
                 channel:
                   type: string
                   enum: ['sms', 'email', 'sms_and_email']
-                  description: '**STRONGLY RECOMMENDED:** Notification channel selection:\n- ''sms'': SMS notifications only\n- ''email'': Email notifications only\n- ''sms_and_email'': Both SMS and Email notifications\n**IMPORTANT:** If customer already has SMS notifications and requests ''email'', only email notifications will be enabled (SMS will be suspended)'
+                  description: '**Required.** Notification channel: ''sms'', ''email'', or ''sms_and_email''. Note: Requesting a new channel replaces any existing notification configuration.'
                   example: 'sms'
                 status:
                   type: string
@@ -1209,6 +1185,9 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - code
+                - params
                 properties:
                   code:
                     type: string
@@ -4811,6 +4790,9 @@ components:
         application/json:
           schema:
             type: object
+            required:
+            - code
+            - params
             properties:
               code:
                 type: string
