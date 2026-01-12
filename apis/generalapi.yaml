@@ -782,7 +782,7 @@ paths:
   /v1/notification/status:
     post:
       operationId: getNotificationServiceStatus
-      summary: Retrieve Notification Service Status
+      summary: Get Notification Service Status
       description: "Retrieve the active notification channels (SMS, Email) for an existing customer"
       tags:
       - Notifications Management
@@ -992,6 +992,15 @@ paths:
                   type: string
                   description: '**Optional:** Birthplace country ID (numeric only, e.g., 826 for UK)'
                   example: '826'
+                gender:
+                  type: string
+                  enum: [Male, Female]
+                  description: '**Optional:** Customer''s gender'
+                  example: Male
+                employer:
+                  type: string
+                  description: '**Optional:** Customer''s employer'
+                  example: 'Acme Corp'
             examples:
               fullUpdateWithPassport:
                 summary: Update all fields using passport
