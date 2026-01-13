@@ -39,7 +39,7 @@ tags:
 - name: Limit Management
   description: Manage card limits and restrictions
 - name: Products Retrieval
-  description: Retrieve available contract types and products for API access
+  description: Retrieve available product types and products for API access
 - name: Combined Section
   description: Combined section APIs
 paths:
@@ -54,7 +54,7 @@ paths:
       - $ref: '#/components/parameters/apiKey'
       responses:
         '200':
-          description: Contract types retrieved successfully
+          description: Product types retrieved successfully
           content:
             application/json:
               schema:
@@ -65,7 +65,7 @@ paths:
                 properties:
                   code:
                     type: string
-                    example: SUCCESS_CONTRACT_TYPES_RETRIEVED
+                    example: SUCCESS_PRODUCT_TYPES_RETRIEVED
                   params:
                     type: object
                     required:
@@ -81,9 +81,9 @@ paths:
                         - VisaPrepaidClassicVirtual2
               examples:
                 success:
-                  summary: Contract types retrieved
+                  summary: Product types retrieved
                   value:
-                    code: SUCCESS_CONTRACT_TYPES_RETRIEVED
+                    code: SUCCESS_PRODUCT_TYPES_RETRIEVED
                     params:
                       allowedProducts:
                       - VisaPrepaidClassicVirtual
@@ -1119,17 +1119,19 @@ paths:
     post:
       operationId: manageNotificationService
       summary: Manage Notification Service
-      description: 'Enable notification service for a customer by creating or replacing notification contract.
+      description: 'Enable notification service for a customer by creating or replacing notification service.
 
         **Process:**
 
         1. Find customer by ID (National ID, Passport, or Identity ID)
 
-        2. If customer already has an active notification contract:
-           - Create a new contract with the specified channel
-           - Activate the new contract
+        2. If customer already has an active notification service:
+           - Create a new service with the specified channel
+           - Activate the new service
 
-        3. If no existing contract, create new contract with specified status
+        3. If customer has no active notification service:
+           - Create a new service with the specified channel
+           - Activate the new service
 
         '
       tags:
@@ -1167,29 +1169,29 @@ paths:
                 status:
                   type: string
                   enum: ['Active', 'Deactivate']
-                  description: '**Optional.** Contract status: Active or Deactivate (default: Active)'
+                  description: '**Optional.** Service status: Active or Deactivate (default: Active)'
                   example: 'Active'
             examples:
-              createSMSContract:
-                summary: Create SMS notification contract
+              createSMSService:
+                summary: Create SMS notification service
                 value:
                   nationalId: '7623835006'
                   channel: 'sms'
                   status: 'Active'
-              suspendEmailContract:
-                summary: Deactivate email notification contract
+              suspendEmailService:
+                summary: Deactivate email notification service
                 value:
                   passport: AB1234567
                   channel: 'email'
                   status: 'Deactivate'
-              createSMSEmailContract:
-                summary: Create SMS and Email notification contract
+              createSMSEmailService:
+                summary: Create SMS and Email notification service
                 value:
                   identityId: ID123456
                   channel: 'sms_and_email'
       responses:
         '200':
-          description: Notification contract created/updated successfully
+          description: Notification service created/updated successfully
           content:
             application/json:
               schema:
@@ -3736,7 +3738,7 @@ paths:
                                   example: 15
                                 currency:
                                   type: string
-                                  description: Currency title (e.g., Egyptian Pound, US Dollar) retrieved from account contract
+                                  description: Currency title (e.g., Egyptian Pound, US Dollar)
                                   example: Egyptian Pound
                             hold:
                               type: object
@@ -3760,7 +3762,7 @@ paths:
                                   example: 15
                                 currency:
                                   type: string
-                                  description: Currency title (e.g., Egyptian Pound, US Dollar) retrieved from account contract
+                                  description: Currency title (e.g., Egyptian Pound, US Dollar)
                                   example: Egyptian Pound
               examples:
                 successResponse:
