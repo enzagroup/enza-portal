@@ -782,7 +782,7 @@ paths:
   /v1/notification/status:
     post:
       operationId: getNotificationServiceStatus
-      summary: Get Notification Service Status
+      summary: Retrieve Notification Service Status
       description: "Retrieve the active notification channels (SMS, Email) for an existing customer"
       tags:
       - Notifications Management
