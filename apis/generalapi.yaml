@@ -43,7 +43,7 @@ tags:
 - name: Combined Section
   description: Combined section APIs
 paths:
-  /v1/products/retrieve:
+  /products/retrieve:
     get:
       operationId: getContractTypes
       summary: Get Card Products
@@ -75,10 +75,10 @@ paths:
                         type: array
                         items:
                           type: string
-                        description: List of authorized API products (API suffix removed)
+                        description: List of authorized API products (includes API suffix)
                         example:
-                        - VisaPrepaidClassicVirtual
-                        - VisaPrepaidClassicVirtual2
+                        - VisaPrepaidClassicVirtualAPI
+                        - VisaPrepaidClassicVirtual2API
               examples:
                 success:
                   summary: Product types retrieved
@@ -86,8 +86,8 @@ paths:
                     code: SUCCESS_PRODUCT_TYPES_RETRIEVED
                     params:
                       allowedProducts:
-                      - VisaPrepaidClassicVirtual
-                      - VisaPrepaidClassicVirtual2
+                      - VisaPrepaidClassicVirtualAPI
+                      - VisaPrepaidClassicVirtual2API
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -132,7 +132,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /v1/customers/create:
+  /customers/create:
     post:
       operationId: createCustomer
       summary: Create New Customer
@@ -423,7 +423,7 @@ paths:
                         type: string
 
                         example: HTTP method not allowed for this endpoint
-  /v1/customers/search:
+  /customers/search:
     post:
       operationId: checkCustomerExistence
       summary: Check Customer Existence
@@ -567,7 +567,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /v1/customers/details:
+  /customers/details:
     post:
       operationId: getCustomerDetails
       summary: Show Customer Details
@@ -779,7 +779,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /v1/notification/status:
+  /notification/status:
     post:
       operationId: getNotificationServiceStatus
       summary: Retrieve Notification Service Status
@@ -898,7 +898,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /v1/customers/update:
+  /customers/update:
     post:
       operationId: updateCustomerDetails
       summary: Update Customer Details
@@ -1115,7 +1115,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /v1/notification/manage:
+  /notification/manage:
     post:
       operationId: manageNotificationService
       summary: Manage Notification Service
@@ -3878,8 +3878,8 @@ paths:
               properties:
                 productType:
                   type: string
-                  description: '**Required.** Issuing product. Obtain via `GET /v1/products/retrieve`.'
-                  example: VisaPrepaidClassicVirtual
+                  description: '**Required.** Issuing product. Obtain via `GET /products/retrieve`. Pass the product name exactly as returned (including API suffix).'
+                  example: VisaPrepaidClassicVirtualAPI
                 nationalId:
                   type: string
                   description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
@@ -4064,8 +4064,8 @@ paths:
               properties:
                 productType:
                   type: string
-                  description: '**Required.** Issuing product. Obtain via `GET /v1/products/retrieve`.'
-                  example: VisaDebitPhysical
+                  description: '**Required.** Issuing product. Obtain via `GET /products/retrieve`. Pass the product name exactly as returned (including API suffix).'
+                  example: VisaDebitPhysicalAPI
                 nationalId:
                   type: string
                   description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
