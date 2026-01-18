@@ -1168,8 +1168,8 @@ paths:
                   example: 'sms'
                 status:
                   type: string
-                  enum: ['Active', 'Suspend', 'Deactivate']
-                  description: '**Optional.** Service status: Active, Suspend, or Deactivate (default: Active)'
+                  enum: ['Active', 'Suspend']
+                  description: '**Optional.** Service status: Active or Suspend (default: Active)'
                   example: 'Active'
             examples:
               createSMSService:
@@ -1184,12 +1184,6 @@ paths:
                   passport: AB1234567
                   channel: 'email'
                   status: 'Suspend'
-              deactivateEmailService:
-                summary: Deactivate email notification service
-                value:
-                  passport: AB1234567
-                  channel: 'email'
-                  status: 'Deactivate'
               createSMSEmailService:
                 summary: Create SMS and Email notification service
                 value:
@@ -1222,6 +1216,12 @@ paths:
                     code: SUCCESS_NOTIFICATION_SERVICE_ENABLED
                     params:
                       message: Notification service enabled successfully
+                successSuspended:
+                  summary: Notification service suspended successfully
+                  value:
+                    code: SUCCESS_NOTIFICATION_SERVICE_SUSPENDED
+                    params:
+                      message: Notification service suspended successfully
                 successReplaced:
                   summary: Notification service replaced successfully
                   value:
