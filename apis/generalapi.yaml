@@ -24,22 +24,28 @@ tags:
     - HTTPS protocol
 
     '
+- name: Account Management
+  description: Manage account information
+- name: Products Retrieval
+  description: Retrieve available product types and products for API access
 - name: Card Management
   description: Operations for creating, activating, managing card status, and retrieving card details
+- name: Preproduced Card
+  description: Instant card issuance for new and existing customers
+- name: Card CVV2
+  description: Securely retrieve Card Verification Value (CVV2)
+- name: PIN Management
+  description: Set and change card PINs securely
+- name: Notifications Management
+  description: Manage notifications and alerts
+- name: E-Commerce
+  description: Manage e-commerce and online transaction settings
+- name: Limit Management
+  description: Manage card limits and restrictions
 - name: Customer Management
   description: Retrieve and manage customer information
 - name: Transactions
   description: View and manage card transaction history
-- name: E-Commerce
-  description: Manage e-commerce and online transaction settings
-- name: PIN Management
-  description: Set and change card PINs securely
-- name: Preproduced Card
-  description: Instant card issuance for new and existing customers
-- name: Limit Management
-  description: Manage card limits and restrictions
-- name: Products Retrieval
-  description: Retrieve available product types and products for API access
 - name: Combined Section
   description: Combined section APIs
 paths:
@@ -132,6 +138,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
   /customers/create:
     post:
       operationId: createCustomer
@@ -779,6 +787,106 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+  /accounts/account-info/{accountNumber}:
+    get:
+      operationId: getAccountInfo
+      summary: Get Account Information
+      description: Retrieve account details including hold, overdraft, and currency.
+      tags:
+      - Account Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - name: accountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+          description: The account number to retrieve information for.
+      responses:
+        '200':
+          description: Account information retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_ACCOUNT_INFO_RETRIEVED
+                  params:
+                    type: object
+                    properties:
+                      transactionId:
+                        type: string
+                      approvalCode:
+                        type: string
+                      amountOnHold:
+                        type: string
+                        example: "0"
+                      overdraft:
+                        type: string
+                        example: "0"
+                      currency:
+                        type: string
+                        example: "US dollar"
+                      ccy:
+                        type: string
+                        example: "840"
+                      status:
+                        type: string
+                        example: "Active"
+              examples:
+                success:
+                  summary: Account info retrieved
+                  value:
+                    code: SUCCESS_ACCOUNT_INFO_RETRIEVED
+                    params:
+                      transactionId: "N/A"
+                      approvalCode: "N/A"
+                      amountOnHold: "100.00"
+                      overdraft: "500.00"
+                      currency: "US dollar"
+                      ccy: "840"
+                      status: "Active"
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                validationError:
+                  summary: Validation failed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid accountNumber format
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                accountNotFound:
+                  summary: Account not found
+                  value:
+                    code: ERR_ACCOUNT_NOT_FOUND
+                    params:
+                      message: Account not found
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
   /notification/status:
     post:
       operationId: getNotificationServiceStatus
@@ -1119,21 +1227,18 @@ paths:
     post:
       operationId: manageNotificationService
       summary: Manage Notification Service
-      description: 'Enable notification service for a customer by creating or replacing notification service.
+      description: |
+        Enable notification service for a customer by specifying which service to be active.
 
-        **Process:**
-
-        1. Find customer by ID (National ID, Passport, or Identity ID)
-
-        2. If customer already has an active notification service:
-           - Create a new service with the specified channel
-           - Activate the new service
-
-        3. If customer has no active notification service:
-           - Create a new service with the specified channel
-           - Activate the new service
-
-        '
+        **How It Works:**
+        1. **Customer Verification**: Verifies customer existence using National ID, Passport, or Identity ID
+        2. **Service Activation**: Specifies which notification service to be active
+        3. **Exclusive Behavior**: Activates **only** what is sent and automatically suspends any other notification service
+  
+        
+        > **Note:** To check currently active notification services before making changes, refer to the [POST /notification/status] endpoint.
+        
+        
       tags:
       - Notifications Management
       parameters:
@@ -1163,9 +1268,14 @@ paths:
 
                 channel:
                   type: string
-                  enum: ['sms', 'email', 'sms_and_email']
-                  description: '**Required.** Notification channel: ''sms'', ''email'', or ''sms_and_email''. Note: Requesting a new channel replaces any existing notification configuration.'
-                  example: 'sms'
+                  description: |
+                    **Required.** Notification channel(s) to activate. 
+                    
+                    ⚠️ **IMPORTANT:** Requesting a channel will replace/suspend any existing notification configuration.
+                    - To activate Email only: send `email` (this will suspend SMS if active)
+                    - To activate SMS only: send `sms` (this will suspend Email if active)
+                    - To activate BOTH channels: send `sms,email` (comma-separated, no spaces)
+                  example: 'sms,email'
                 status:
                   type: string
                   enum: ['Active', 'Suspend']
@@ -1188,7 +1298,7 @@ paths:
                 summary: Create SMS and Email notification service
                 value:
                   identityId: ID123456
-                  channel: 'sms_and_email'
+                  channel: 'sms,email'
       responses:
         '200':
           description: Notification service created/updated successfully
@@ -1305,10 +1415,10 @@ paths:
                       message: Customer already has an active notification service
         '500':
           $ref: '#/components/responses/InternalServerError'
-        '504':
-          $ref: '#/components/responses/LambdaTimeout'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
   /instant-issuing:
     post:
       operationId: instantIssueCard
@@ -1480,22 +1590,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: ERR_VALIDATION_FAILED
-                  params:
-                    type: object
-                    required:
-                    - missingProperty
-                    properties:
-                      missingProperty:
-                        type: string
-                        example: cardRefNum
+                $ref: '#/components/schemas/ValidationError'
               examples:
                 badRequestExample:
                   summary: Missing required field
@@ -1510,22 +1605,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: ERR_READTOKEN_DECLINED
-                  params:
-                    type: object
-                    required:
-                    - message
-                    properties:
-                      message:
-                        type: string
-                        example: Card not found
+                $ref: '#/components/schemas/ConflictError'
               examples:
                 conflictExample:
                   summary: Card not found
@@ -1640,6 +1720,204 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /cards/get-cvv2/by_card_data:
+    post:
+      operationId: getCVV2ByCardData
+      summary: Retrieve CVV2 By Card Data
+      description: Retrieve the CVV2 for a card using its PAN and Expiry Date.
+      tags:
+      - Card CVV2
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - pan
+              - expiryDate
+              properties:
+                pan:
+                  type: string
+                  description: '**Required.** Card Primary Account Number'
+                  example: '4373580000005738'
+                expiryDate:
+                  type: string
+                  description: '**Required.** Card Expiry Date (YYYY-MM-DD)'
+                  example: '2029-01-31'
+            examples:
+              validRequest:
+                summary: Valid CVV2 Request
+                value:
+                  pan: '4373580000005738'
+                  expiryDate: '2029-01-31'
+      responses:
+        '200':
+          description: CVV2 retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CVV2_RETRIEVED
+                  params:
+                    type: object
+                    required:
+                    - cvv2
+                    properties:
+                      cvv2:
+                        type: string
+                        example: '928'
+              examples:
+                success:
+                  summary: CVV2 Retrieved
+                  value:
+                    code: SUCCESS_CVV2_RETRIEVED
+                    params:
+                      cvv2: '928'
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                validationError:
+                  summary: Invalid Input
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Invalid expiryDate format. Expected YYYY-MM-DD'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – Card Not Found or Inactive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card Not Found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                cardNotActive:
+                  summary: Card Not Active
+                  value:
+                    code: ERR_CARD_NOT_ACTIVE
+                    params:
+                      message: card must be active
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /cards/get-cvv2/{cardId}:
+    get:
+      operationId: getCVV2ByCardId
+      summary: Retrieve CVV2 by Card ID
+      description: Retrieve the CVV2 for a card using its Card ID.
+      tags:
+      - Card CVV2
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - name: cardId
+        in: path
+        description: '**Required.** Unique Card Identifier'
+        required: true
+        schema:
+          type: string
+          example: '123456789'
+      responses:
+        '200':
+          description: CVV2 retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CVV2_RETRIEVED
+                  params:
+                    type: object
+                    required:
+                    - cvv2
+                    properties:
+                      cvv2:
+                        type: string
+                        example: '928'
+              examples:
+                success:
+                  summary: CVV2 Retrieved
+                  value:
+                    code: SUCCESS_CVV2_RETRIEVED
+                    params:
+                      cvv2: '928'
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                validationError:
+                  summary: Invalid Input
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: cardId'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – Card Not Found or Inactive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card Not Found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                cardNotActive:
+                  summary: Card Not Active
+                  value:
+                    code: ERR_CARD_NOT_ACTIVE
+                    params:
+                      message: card must be active
+                cvv2Failure:
+                  summary: CVV2 Retrieval Failed
+                  value:
+                    code: ERR_CVV2_RETRIEVAL_FAILED
+                    params:
+                      message: CVV2 cannot be retrieved as this card might be not active
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
   /pin/set:
@@ -1862,18 +2140,18 @@ paths:
                 required:
                 - code
                 - params
-              properties:
-                code:
-                  type: string
-                  example: ERR_PIN_CHANGE_DECLINED
-                params:
-                  type: object
-                  required:
-                  - message
-                  properties:
-                    message:
-                      type: string
-                      example: Invalid PIN block format
+                properties:
+                  code:
+                    type: string
+                    example: ERR_PIN_CHANGE_DECLINED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: Invalid PIN block format
               examples:
                 conflictExample:
                   summary: PIN change declined
@@ -1921,6 +2199,117 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+  /pin/reset-pin-counter:
+    post:
+      operationId: resetPinCounter
+      summary: Reset PIN Tries Counter
+      description: Reset the PIN tries counter for a card, enabling PIN transactions again after the counter was exceeded.
+      tags:
+      - PIN Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cardId
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (numeric only)'
+                  example: '3280'
+            examples:
+              validRequest:
+                summary: Valid Reset Request
+                value:
+                  cardId: '3280'
+      responses:
+        '200':
+          description: PIN counter reset successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_PIN_COUNTER_RESET
+                  params:
+                    type: object
+                    required:
+                    - transactionId
+                    - approvalCode
+                    properties:
+                      transactionId:
+                        type: string
+                        example: '260126434196615751'
+                      approvalCode:
+                        type: string
+                        example: JR2MK9
+              examples:
+                success:
+                  summary: PIN Counter Reset Successfully
+                  value:
+                    code: SUCCESS_PIN_COUNTER_RESET
+                    params:
+                      transactionId: '260126434196615751'
+                      approvalCode: JR2MK9
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                validationError:
+                  summary: Invalid Input
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Invalid cardId format. Numeric digits only required.'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – Card Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card Not Found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorMessage:
+                    type: string
+                    example: Task timed out after 1.10 seconds
+              examples:
+                timeoutResponse:
+                  summary: Gateway Timeout
+                  value:
+                    errorMessage: Task timed out after 1.10 seconds
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /cards/update-status-by-id:
     post:
       operationId: updateCardStatusById
