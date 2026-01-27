@@ -4,8 +4,8 @@
   "type": "module",
   "private": false,
   "scripts": {
-    "dev": "zudoku dev",
-    "build": "zudoku build",
+    "dev": "node node_modules/zudoku/cli.js dev",
+    "build": "node node_modules/zudoku/cli.js build",
     "deploy": "npm run build && gh-pages -d dist -b gh-pages",
     "lint": "eslint"
   },

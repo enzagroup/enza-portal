@@ -1621,6 +1621,267 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+  /cards/link-card-to-account:
+    post:
+      operationId: linkCardToAccount
+      summary: Link Card to Account
+      description: 'Link a card to an account with flexible linking modes. This operation establishes a relationship between a card and an account, enabling specific transaction capabilities.
+
+
+        **Linking Modes:**
+
+
+        - **Access**: Card can authorize transactions on the account (authorization flow)
+
+        - **Charge**: Card can be charged fees from the account
+
+        - **Access,Charge**: Both authorization and charging capabilities
+
+
+        **Validation Flow:**
+
+
+        1. Verify card status is "New" or "Active"
+
+        2. Verify card contract status is "Active"
+
+        3. Verify target account status is "Active"
+
+        4. Execute linking operation if all validations pass
+
+
+        **Common Use Cases:**
+
+
+        - Link a card to an account for transaction authorization
+
+        - Link a card to an account for fee charging
+
+        - Enable both authorization and fee charging on a single account
+
+        '
+      tags:
+      - Card Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cardId
+              - accountNumber
+              - kindOfLinking
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID to link'
+                  example: '6426'
+                accountNumber:
+                  type: string
+                  description: '**Required.** Account Number to link to (e.g., ACC01, ACC02)'
+                  example: 'ACC01'
+                kindOfLinking:
+                  type: string
+                  description: '**Required.** Type of linking - Access | Charge | Access,Charge'
+                  enum:
+                  - Access
+                  - Charge
+                  - Access,Charge
+                  example: 'Access'
+            examples:
+              accessOnly:
+                summary: Link for Authorization Only
+                value:
+                  cardId: '6426'
+                  accountNumber: 'ACC01'
+                  kindOfLinking: 'Access'
+              chargeOnly:
+                summary: Link for Fee Charging Only
+                value:
+                  cardId: '6426'
+                  accountNumber: 'ACC01'
+                  kindOfLinking: 'Charge'
+              both:
+                summary: Link for Both Authorization and Charging
+                value:
+                  cardId: '6426'
+                  accountNumber: 'ACC01'
+                  kindOfLinking: 'Access,Charge'
+              chargeAccess:
+                summary: Link for Both (Reversed Order)
+                value:
+                  cardId: '6426'
+                  accountNumber: 'ACC01'
+                  kindOfLinking: 'Charge,Access'
+      responses:
+        '200':
+          description: Card successfully linked to account
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CARD_LINKED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    - cardId
+                    - accountNumber
+                    - kindOfLinking
+                    - transactionId
+                    - approvalCode
+                    properties:
+                      message:
+                        type: string
+                        example: Card successfully linked to account
+                      cardId:
+                        type: string
+                        example: '6426'
+                      accountNumber:
+                        type: string
+                        example: 'ACC01'
+                      kindOfLinking:
+                        type: string
+                        example: 'Access'
+                      transactionId:
+                        type: string
+                        example: '260127344883815956'
+                      approvalCode:
+                        type: string
+                        example: 'A8B8GD'
+              examples:
+                successAccess:
+                  summary: Access Link Success
+                  value:
+                    code: SUCCESS_CARD_LINKED
+                    params:
+                      message: Card successfully linked to account
+                      cardId: '6426'
+                      accountNumber: 'ACC01'
+                      kindOfLinking: 'Access'
+                      transactionId: '260127344883815956'
+                      approvalCode: 'A8B8GD'
+                successCharge:
+                  summary: Charge Link Success
+                  value:
+                    code: SUCCESS_CARD_LINKED
+                    params:
+                      message: Card successfully linked to account
+                      cardId: '6426'
+                      accountNumber: 'ACC01'
+                      kindOfLinking: 'Charge'
+                      transactionId: '260127344883815957'
+                      approvalCode: 'B9C9HE'
+                successBoth:
+                  summary: Both Links Success
+                  value:
+                    code: SUCCESS_CARD_LINKED
+                    params:
+                      message: Card successfully linked to account
+                      cardId: '6426'
+                      accountNumber: 'ACC01'
+                      kindOfLinking: 'Access,Charge'
+                      transactionId: '260127344883815958'
+                      approvalCode: 'C0D0IF'
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingCardId:
+                  summary: Missing card ID
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing or invalid required field: cardId'
+                missingAccountNumber:
+                  summary: Missing account number
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing or invalid required field: accountNumber'
+                missingKindOfLinking:
+                  summary: Missing kind of linking
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing or invalid required field: kindOfLinking'
+                invalidKindOfLinking:
+                  summary: Invalid linking type
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Invalid kindOfLinking. Must be one of: Access, Charge, Access,Charge'
+                invalidJson:
+                  summary: Invalid JSON body
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Invalid JSON in request body'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – linking validation or operation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotValid:
+                  summary: Card Not New or Active
+                  value:
+                    code: ERR_CARD_NOT_VALID
+                    params:
+                      message: Card is not new or active
+                cardContractNotActive:
+                  summary: Card Contract Inactive
+                  value:
+                    code: ERR_CONTRACT_NOT_ACTIVE
+                    params:
+                      message: Card contract is not active
+                accountNotActive:
+                  summary: Account Not Active
+                  value:
+                    code: ERR_ACCOUNT_NOT_ACTIVE
+                    params:
+                      message: Account is not active
+                cardNotFound:
+                  summary: Card Not Found
+                  value:
+                    code: ERR_VALIDATION_DECLINED
+                    params:
+                      message: Card not found
+                accountNotFound:
+                  summary: Account Not Found
+                  value:
+                    code: ERR_VALIDATION_DECLINED
+                    params:
+                      message: Contract not found
+                linkingDeclined:
+                  summary: Linking Operation Declined
+                  value:
+                    code: ERR_LINKING_DECLINED
+                    params:
+                      message: Linking operation declined by system
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/update-status-by-ref:
     post:
       operationId: updateCardStatusByRefNum
@@ -2310,6 +2571,7 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '403':
           $ref: '#/components/responses/Forbidden'
+  
   /cards/update-status-by-id:
     post:
       operationId: updateCardStatusById
@@ -2833,6 +3095,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+  
   /preproduced/prepaid/new-customer:
     post:
       operationId: linkPrepaidNewCustomer
