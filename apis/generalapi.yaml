@@ -28,6 +28,8 @@ tags:
   description: Operations for creating, activating, managing card status, and retrieving card details
 - name: Customer Management
   description: Retrieve and manage customer information
+- name: Account Management
+  description: Create and manage customer accounts
 - name: Transactions
   description: View and manage card transaction history
 - name: E-Commerce
@@ -422,6 +424,173 @@ paths:
 
                         type: string
 
+                        example: HTTP method not allowed for this endpoint
+  /accounts:
+    post:
+      operationId: createAccount
+      summary: Create Account
+      description: |
+        Create a new account for an existing customer.
+        
+        **Prerequisites:**
+        - Customer must exist in the system
+      tags:
+      - Account Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - accountNumber
+              properties:
+                nationalId:
+                  type: string
+                  description: Customer's national ID
+                  example: '123456789'
+                passport:
+                  type: string
+                  description: Customer's passport number
+                  example: 'P12345678'
+                identityId:
+                  type: string
+                  description: Customer's identity ID
+                  example: 'ID123456'
+                accountNumber:
+                  type: string
+                  description: Account number to create
+                  example: 'ACC123456'
+              anyOf:
+              - required: [nationalId]
+              - required: [passport]
+              - required: [identityId]
+            examples:
+              withNationalId:
+                summary: Create account with National ID
+                value:
+                  nationalId: '123456789'
+                  accountNumber: 'ACC123456'
+              withPassport:
+                summary: Create account with Passport
+                value:
+                  passport: 'P12345678'
+                  accountNumber: 'ACC789012'
+              withIdentityId:
+                summary: Create account with Identity ID
+                value:
+                  identityId: 'ID123456'
+                  accountNumber: 'ACC345678'
+      responses:
+        '200':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_ACCOUNT_CREATED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Account created successfully
+              examples:
+                success:
+                  summary: Account created
+                  value:
+                    code: SUCCESS_ACCOUNT_CREATED
+                    params:
+                      message: Account created successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                missingAccountNumber:
+                  summary: Missing account number
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: accountNumber'
+                missingDocumentId:
+                  summary: Missing document ID
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'One of the following fields is required: nationalId, passport, identityId'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CUSTOMER_NOT_FOUND
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Customer not found with provided document ID
+              examples:
+                customerNotFound:
+                  summary: Customer not found
+                  value:
+                    code: ERR_CUSTOMER_NOT_FOUND
+                    params:
+                      message: Customer not found with provided document ID
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '405':
+          description: Method not allowed
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_METHOD_NOT_ALLOWED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
                         example: HTTP method not allowed for this endpoint
   /customers/search:
     post:
@@ -4241,6 +4410,270 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+  /cards/create-supplementary:
+    post:
+      operationId: createSupplementaryCard
+      tags:
+      - Card Management
+      summary: Create Supplementary Card
+      description: "Create a supplementary card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - **Important:** Product must contain 'SUPP' and 'API' for supplementary cards\n   - Pass the product name exactly as returned \n\n3. **Create Supplementary Card** using this API (`POST /cards/create-supplementary`)\n   - Provide the customer's document ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2 (must contain SUPP and API)\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve` (must contain SUPP and API)\n3. **Card Issuance**: Create issuing contract, issue supplementary card\n4. **Card Details**: Return card ID for further operations\n\n**Note:** Supplementary cards are linked to existing customer accounts and require special product types containing 'SUPP' and 'API'\n"
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - productType
+              properties:
+                productType:
+                  type: string
+                  description: '**Required.** Issuing product. Obtain via `GET /products/retrieve`. Must contain SUPP and API for supplementary cards.'
+                  example: GTBGH2-PHY-VS-PRP-CLS-NOR-CUS-SUPP-CardsIssuingContractAPI
+                nationalId:
+                  type: string
+                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
+                  example: '1234567890'
+                passport:
+                  type: string
+                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
+                  example: AB1234567
+                identityId:
+                  type: string
+                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
+                  example: ID123456
+            examples:
+              withNationalId:
+                summary: Create supplementary card with National ID
+                value:
+                  productType: GTBGH2-PHY-VS-PRP-CLS-NOR-CUS-SUPP-CardsIssuingContractAPI
+                  nationalId: '1234567890'
+              withPassport:
+                summary: Create supplementary card with Passport
+                value:
+                  productType: GTBGH2-PHY-VS-PRP-CLS-NOR-CUS-SUPP-CardsIssuingContractAPI
+                  passport: AB1234567
+      responses:
+        '200':
+          description: Supplementary card created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_REQUEST_PROCESSED
+                  params:
+                    type: object
+                    required:
+                    - cardId
+                    properties:
+                      cardId:
+                        type: string
+                        description: Card ID (TokenId) for the created supplementary card
+                        example: '6501'
+              examples:
+                success:
+                  summary: Supplementary card created successfully
+                  value:
+                    code: SUCCESS_REQUEST_PROCESSED
+                    params:
+                      cardId: '6501'
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                invalidProductType:
+                  summary: Invalid product type
+                  value:
+                    code: ERR_INVALID_PRODUCT_TYPE
+                    params:
+                      message: Can not create a supplementary card from this product type. Product type not found.
+                validationFailed:
+                  summary: Validation failed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid national ID. Should be letters and numbers only (e.g., "NAT123456789")
+        '409':
+          description: Conflict - Customer not found or product type invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                customerNotFound:
+                  summary: Customer not found
+                  value:
+                    code: ERR_CUSTOMER_NOT_FOUND
+                    params:
+                      message: Customer not found. Please create the customer first using the /customers/create API.
+                invalidProductType:
+                  summary: Invalid product type for supplementary card
+                  value:
+                    code: ERR_INVALID_PRODUCT_TYPE
+                    params:
+                      message: Can not create a supplementary card from this product type. Product type not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /cards/link-supplementary-card:
+    post:
+      operationId: linkSupplementaryCard
+      tags:
+      - Card Management
+      summary: Link Supplementary Card
+      description: "Link a supplementary card to a main card.\n\n## ⚠️ Important: Cards Must Exist First\n\n**This API only works for existing cards.** Both the supplementary card and main card must exist.\n\n**Workflow:**\n\n1. **Create Supplementary Card** using `POST /cards/create-supplementary`\n   - This will return the supplementary `cardId`\n\n2. **Get Main Card ID** using customer card info endpoints\n   - Retrieve the `mainCardId` of the primary card\n\n3. **Link Cards** using this API (`POST /cards/link-supplementary-card`)\n   - Provide the `mainCardId` and `cardId`\n   - Establish the linking relationship\n\n---\n\n**Process Flow:**\n1. **Card Verification**: Both cards must exist in the system\n2. **Linking Process**: Use ModifyToken to establish main-supplementary relationship\n3. **Confirmation**: Return success confirmation\n\n**Note:** The supplementary card will be linked to the main card for shared limits and controls\n"
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - mainCardId
+              - cardId
+              properties:
+                mainCardId:
+                  type: string
+                  description: '**Required.** Main card ID (numeric). Retrieved from customer card info endpoints.'
+                  example: '6500'
+                cardId:
+                  type: string
+                  description: '**Required.** Supplementary card ID (numeric). Retrieved from create supplementary card response.'
+                  example: '6499'
+            examples:
+              linkRequest:
+                summary: Link supplementary card to main card
+                value:
+                  mainCardId: '6500'
+                  cardId: '6499'
+      responses:
+        '200':
+          description: Supplementary card linked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CARD_LINKED
+                  params:
+                    type: object
+                    required:
+                    - mainCardId
+                    - cardId
+                    - message
+                    properties:
+                      mainCardId:
+                        type: string
+                        description: Main card ID
+                        example: '6500'
+                      cardId:
+                        type: string
+                        description: Supplementary card ID
+                        example: '6499'
+                      message:
+                        type: string
+                        description: Success message
+                        example: Link successful
+              examples:
+                success:
+                  summary: Card linked successfully
+                  value:
+                    code: SUCCESS_CARD_LINKED
+                    params:
+                      mainCardId: '6500'
+                      cardId: '6499'
+                      message: Link successful
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                invalidMainCardId:
+                  summary: Invalid main card ID
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid main card ID. Should be numbers only (e.g., "6500")
+                invalidCardId:
+                  summary: Invalid card ID
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid card ID. Should be numbers only (e.g., "6499")
+        '409':
+          description: Conflict - Card not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                cardNotFound:
+                  summary: Supplementary card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Cannot find supplementary card
+                mainCardNotFound:
+                  summary: Main card not found
+                  value:
+                    code: ERR_MAIN_CARD_NOT_FOUND
+                    params:
+                      message: Cannot find main card
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /limits/retrieve/{card_Id}:
     get:
       operationId: retrieveCardLimits
@@ -5194,3 +5627,285 @@ components:
         type: string
         default: application/json
       description: Content type of the request body
+  /cards/{cardId}/renew:
+    post:
+      tags:
+        - Card Management
+      summary: Renew expired card
+      description: Renew an expired card with a new expiry date while keeping the same PAN
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+          description: Card ID to be renewed (numeric)
+          example: '6522'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  pattern: '^[0-9]+$'
+                  minLength: 1
+                  maxLength: 50
+                  description: Card ID to be renewed (numeric)
+                  example: '6522'
+              required:
+                - cardId
+              additionalProperties: false
+      responses:
+        '200':
+          description: Card renewed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+              examples:
+                success:
+                  summary: Card renewed successfully
+                  value:
+                    code: SUCCESS_CARD_RENEWED
+                    params:
+                      newCardId: '6392'
+                      message: Card renewed successfully
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                invalidCardId:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid card ID format. Card ID should contain only numbers (e.g., "6522")
+        '409':
+          description: Conflict - Card not eligible for renewal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                cardNotFound:
+                  summary: Card does not exist
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card does not exist
+                notEligible:
+                  summary: Card not eligible for renewal
+                  value:
+                    code: ERR_CARD_NOT_ELIGIBLE_FOR_RENEWAL
+                    params:
+                      message: Cannot renew this card
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                serverError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred
+  /cards/{cardId}/reissue:
+    post:
+      tags:
+        - Card Management
+      summary: Reissue damaged card
+      description: Reissue a damaged card with the same PAN and expiry date
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+          description: Card ID to be reissued (numeric)
+          example: '6522'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  pattern: '^[0-9]+$'
+                  minLength: 1
+                  maxLength: 50
+                  description: Card ID to be reissued (numeric)
+                  example: '6522'
+              required:
+                - cardId
+              additionalProperties: false
+      responses:
+        '200':
+          description: Card reissued successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+              examples:
+                success:
+                  summary: Card reissued successfully
+                  value:
+                    code: SUCCESS_CARD_REISSUED
+                    params:
+                      newCardId: '6392'
+                      message: Card reissued successfully
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                invalidCardId:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid card ID format. Card ID should contain only numbers (e.g., "6522")
+        '409':
+          description: Conflict - Card not eligible for reissue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                cardNotFound:
+                  summary: Card does not exist
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card does not exist
+                notEligible:
+                  summary: Card not eligible for reissue
+                  value:
+                    code: ERR_CARD_NOT_ELIGIBLE_FOR_REISSUE
+                    params:
+                      message: Cannot reissue this card
+                virtualCard:
+                  summary: Cannot reissue virtual card
+                  value:
+                    code: ERR_CANNOT_REISSUE_VIRTUAL_CARD
+                    params:
+                      message: Cannot reissue a virtual card please create a new one
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                serverError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred
+  /cards/{cardId}/replace:
+    post:
+      tags:
+        - Card Management
+      summary: Replace lost/stolen/compromised card
+      description: Replace a lost, stolen, or compromised card with a new PAN and new expiry date
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+          description: Card ID to be replaced (numeric)
+          example: '6522'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  pattern: '^[0-9]+$'
+                  minLength: 1
+                  maxLength: 50
+                  description: Card ID to be replaced (numeric)
+                  example: '6522'
+              required:
+                - cardId
+              additionalProperties: false
+      responses:
+        '200':
+          description: Card replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+              examples:
+                success:
+                  summary: Card replaced successfully
+                  value:
+                    code: SUCCESS_CARD_REPLACED
+                    params:
+                      newCardId: '6392'
+                      message: Card replaced successfully
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                invalidCardId:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid card ID format. Card ID should contain only numbers (e.g., "6522")
+        '409':
+          description: Conflict - Card not eligible for replacement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                cardNotFound:
+                  summary: Card does not exist
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card does not exist
+                notEligible:
+                  summary: Card not eligible for replacement
+                  value:
+                    code: ERR_CARD_NOT_ELIGIBLE_FOR_REPLACEMENT
+                    params:
+                      message: Cannot replace this card
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                serverError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred
