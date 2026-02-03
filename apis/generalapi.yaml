@@ -5791,7 +5791,7 @@ paths:
     post:
       tags:
         - Card Management
-      summary: Renew expired card
+      summary: Renew Card
       description: Renew an expired card with a new expiry date while keeping the same PAN
       parameters:
       - $ref: '#/components/parameters/apiKey'
@@ -5879,7 +5879,7 @@ paths:
     post:
       tags:
         - Card Management
-      summary: Reissue damaged card
+      summary: Reissue Card
       description: Reissue a damaged card with the same PAN and expiry date
       parameters:
       - $ref: '#/components/parameters/apiKey'
@@ -5973,7 +5973,7 @@ paths:
     post:
       tags:
         - Card Management
-      summary: Replace lost/stolen/compromised card
+      summary: Replace Card
       description: Replace a lost, stolen, or compromised card with a new PAN and new expiry date
       parameters:
       - $ref: '#/components/parameters/apiKey'
