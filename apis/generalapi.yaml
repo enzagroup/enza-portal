@@ -5830,6 +5830,8 @@ paths:
                     params:
                       newCardId: '6392'
                       message: Card renewed successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '400':
           description: Bad request - Invalid input or validation failed
           content:
@@ -5875,6 +5877,12 @@ paths:
                     code: ERR_INTERNAL_SERVER_ERROR
                     params:
                       message: An unexpected error occurred
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/reissue:
     post:
       tags:
@@ -5918,6 +5926,8 @@ paths:
                     params:
                       newCardId: '6392'
                       message: Card reissued successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '400':
           description: Bad request - Invalid input or validation failed
           content:
@@ -5969,6 +5979,12 @@ paths:
                     code: ERR_INTERNAL_SERVER_ERROR
                     params:
                       message: An unexpected error occurred
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/replace:
     post:
       tags:
@@ -6012,6 +6028,8 @@ paths:
                     params:
                       newCardId: '6392'
                       message: Card replaced successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '400':
           description: Bad request - Invalid input or validation failed
           content:
@@ -6057,6 +6075,12 @@ paths:
                     code: ERR_INTERNAL_SERVER_ERROR
                     params:
                       message: An unexpected error occurred
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
 components:
   responses:
     LambdaTimeout:
