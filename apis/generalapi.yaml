@@ -6182,6 +6182,38 @@ components:
           properties:
             message:
               example: An unexpected error occurred
+    errorResponse:
+      type: object
+      required:
+      - code
+      - params
+      properties:
+        code:
+          type: string
+          example: ERR_VALIDATION_FAILED
+        params:
+          type: object
+          required:
+          - message
+          properties:
+            message:
+              type: string
+              example: An error occurred processing the request
+    successResponse:
+      type: object
+      required:
+      - code
+      - params
+      properties:
+        code:
+          type: string
+          example: SUCCESS_REQUEST_PROCESSED
+        params:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Request processed successfully
     CreateCardStandard:
       type: object
       properties:
