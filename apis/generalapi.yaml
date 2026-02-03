@@ -440,8 +440,29 @@ paths:
       description: |
         Create a new account for an existing customer.
         
-        **Prerequisites:**
-        - Customer must exist in the system
+        ## ⚠️ Important: Customer Must Exist First
+        
+        **This API only works for existing customers.** If the customer doesn't exist, you will receive an error.
+        
+        **Workflow:**
+        
+        1. **Check if Customer Exists** using `POST /customers/search`
+           - Search by nationalId, passport, or identityId
+           - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first
+           - If customer **exists** → Proceed to step 2
+        
+        2. **Create Account** using this API (`POST /accounts`)
+           - Provide the customer's document ID (nationalId, passport, or identityId)
+           - Provide the account number to create
+        
+        ---
+        
+        **Process Flow:**
+        1. **Customer Verification**: Check if customer exists using document ID
+        2. **Account Creation**: Create new account linked to the existing customer
+        3. **Account Number Assignment**: Assign the provided account number to the customer
+        
+        **Note:** One of the following document IDs is required: nationalId, passport, or identityId
       tags:
       - Account Management
       parameters:
@@ -453,29 +474,23 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-              - accountNumber
               properties:
                 nationalId:
                   type: string
-                  description: Customer's national ID
+                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
                   example: '123456789'
                 passport:
                   type: string
-                  description: Customer's passport number
+                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
                   example: 'P12345678'
                 identityId:
                   type: string
-                  description: Customer's identity ID
+                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
                   example: 'ID123456'
                 accountNumber:
                   type: string
-                  description: Account number to create
+                  description: '**Required.** Account number to create'
                   example: 'ACC123456'
-              anyOf:
-              - required: [nationalId]
-              - required: [passport]
-              - required: [identityId]
             examples:
               withNationalId:
                 summary: Create account with National ID
@@ -5244,31 +5259,19 @@ paths:
                   params:
                     type: object
                     required:
-                    - mainCardId
-                    - cardId
                     - message
                     properties:
-                      mainCardId:
-                        type: string
-                        description: Main card ID
-                        example: '6500'
-                      cardId:
-                        type: string
-                        description: Supplementary card ID
-                        example: '6499'
                       message:
                         type: string
                         description: Success message
-                        example: Link successful
+                        example: Link Supplementary Card Successfully
               examples:
                 success:
                   summary: Card linked successfully
                   value:
                     code: SUCCESS_CARD_LINKED
                     params:
-                      mainCardId: '6500'
-                      cardId: '6499'
-                      message: Link successful
+                      message: Link Supplementary Card Successfully
         '400':
           description: Bad request - Invalid input or validation failed
           content:
@@ -5784,21 +5787,15 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
                    $ref: '#/components/responses/MethodNotAllowed'
-  /cards/{cardId}/renew:
+  /cards/renew:
     post:
       tags:
         - Card Management
       summary: Renew expired card
       description: Renew an expired card with a new expiry date while keeping the same PAN
       parameters:
-        - name: cardId
-          in: path
-          required: true
-          schema:
-            type: string
-            pattern: '^[0-9]+$'
-          description: Card ID to be renewed (numeric)
-          example: '6522'
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -5808,14 +5805,16 @@ paths:
               properties:
                 cardId:
                   type: string
-                  pattern: '^[0-9]+$'
-                  minLength: 1
-                  maxLength: 50
-                  description: Card ID to be renewed (numeric)
+                  description: '**Required.** Card ID to be renewed (numeric)'
                   example: '6522'
               required:
                 - cardId
               additionalProperties: false
+            examples:
+              renewCard:
+                summary: Renew card
+                value:
+                  cardId: '6522'
       responses:
         '200':
           description: Card renewed successfully
@@ -5876,21 +5875,15 @@ paths:
                     code: ERR_INTERNAL_SERVER_ERROR
                     params:
                       message: An unexpected error occurred
-  /cards/{cardId}/reissue:
+  /cards/reissue:
     post:
       tags:
         - Card Management
       summary: Reissue damaged card
       description: Reissue a damaged card with the same PAN and expiry date
       parameters:
-        - name: cardId
-          in: path
-          required: true
-          schema:
-            type: string
-            pattern: '^[0-9]+$'
-          description: Card ID to be reissued (numeric)
-          example: '6522'
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -5900,14 +5893,16 @@ paths:
               properties:
                 cardId:
                   type: string
-                  pattern: '^[0-9]+$'
-                  minLength: 1
-                  maxLength: 50
-                  description: Card ID to be reissued (numeric)
+                  description: '**Required.** Card ID to be reissued (numeric)'
                   example: '6522'
               required:
                 - cardId
               additionalProperties: false
+            examples:
+              reissueCard:
+                summary: Reissue card
+                value:
+                  cardId: '6522'
       responses:
         '200':
           description: Card reissued successfully
@@ -5974,21 +5969,15 @@ paths:
                     code: ERR_INTERNAL_SERVER_ERROR
                     params:
                       message: An unexpected error occurred
-  /cards/{cardId}/replace:
+  /cards/replace:
     post:
       tags:
         - Card Management
       summary: Replace lost/stolen/compromised card
       description: Replace a lost, stolen, or compromised card with a new PAN and new expiry date
       parameters:
-        - name: cardId
-          in: path
-          required: true
-          schema:
-            type: string
-            pattern: '^[0-9]+$'
-          description: Card ID to be replaced (numeric)
-          example: '6522'
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -5998,14 +5987,16 @@ paths:
               properties:
                 cardId:
                   type: string
-                  pattern: '^[0-9]+$'
-                  minLength: 1
-                  maxLength: 50
-                  description: Card ID to be replaced (numeric)
+                  description: '**Required.** Card ID to be replaced (numeric)'
                   example: '6522'
               required:
                 - cardId
               additionalProperties: false
+            examples:
+              replaceCard:
+                summary: Replace card
+                value:
+                  cardId: '6522'
       responses:
         '200':
           description: Card replaced successfully
