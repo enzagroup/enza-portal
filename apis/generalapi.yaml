@@ -5784,6 +5784,288 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
                    $ref: '#/components/responses/MethodNotAllowed'
+  /cards/{cardId}/renew:
+    post:
+      tags:
+        - Card Management
+      summary: Renew expired card
+      description: Renew an expired card with a new expiry date while keeping the same PAN
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+          description: Card ID to be renewed (numeric)
+          example: '6522'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  pattern: '^[0-9]+$'
+                  minLength: 1
+                  maxLength: 50
+                  description: Card ID to be renewed (numeric)
+                  example: '6522'
+              required:
+                - cardId
+              additionalProperties: false
+      responses:
+        '200':
+          description: Card renewed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+              examples:
+                success:
+                  summary: Card renewed successfully
+                  value:
+                    code: SUCCESS_CARD_RENEWED
+                    params:
+                      newCardId: '6392'
+                      message: Card renewed successfully
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                invalidCardId:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid card ID format. Card ID should contain only numbers (e.g., "6522")
+        '409':
+          description: Conflict - Card not eligible for renewal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                cardNotFound:
+                  summary: Card does not exist
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card does not exist
+                notEligible:
+                  summary: Card not eligible for renewal
+                  value:
+                    code: ERR_CARD_NOT_ELIGIBLE_FOR_RENEWAL
+                    params:
+                      message: Cannot renew this card
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                serverError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred
+  /cards/{cardId}/reissue:
+    post:
+      tags:
+        - Card Management
+      summary: Reissue damaged card
+      description: Reissue a damaged card with the same PAN and expiry date
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+          description: Card ID to be reissued (numeric)
+          example: '6522'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  pattern: '^[0-9]+$'
+                  minLength: 1
+                  maxLength: 50
+                  description: Card ID to be reissued (numeric)
+                  example: '6522'
+              required:
+                - cardId
+              additionalProperties: false
+      responses:
+        '200':
+          description: Card reissued successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+              examples:
+                success:
+                  summary: Card reissued successfully
+                  value:
+                    code: SUCCESS_CARD_REISSUED
+                    params:
+                      newCardId: '6392'
+                      message: Card reissued successfully
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                invalidCardId:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid card ID format. Card ID should contain only numbers (e.g., "6522")
+        '409':
+          description: Conflict - Card not eligible for reissue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                cardNotFound:
+                  summary: Card does not exist
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card does not exist
+                notEligible:
+                  summary: Card not eligible for reissue
+                  value:
+                    code: ERR_CARD_NOT_ELIGIBLE_FOR_REISSUE
+                    params:
+                      message: Cannot reissue this card
+                virtualCard:
+                  summary: Cannot reissue virtual card
+                  value:
+                    code: ERR_CANNOT_REISSUE_VIRTUAL_CARD
+                    params:
+                      message: Cannot reissue a virtual card please create a new one
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                serverError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred
+  /cards/{cardId}/replace:
+    post:
+      tags:
+        - Card Management
+      summary: Replace lost/stolen/compromised card
+      description: Replace a lost, stolen, or compromised card with a new PAN and new expiry date
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+          description: Card ID to be replaced (numeric)
+          example: '6522'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  pattern: '^[0-9]+$'
+                  minLength: 1
+                  maxLength: 50
+                  description: Card ID to be replaced (numeric)
+                  example: '6522'
+              required:
+                - cardId
+              additionalProperties: false
+      responses:
+        '200':
+          description: Card replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+              examples:
+                success:
+                  summary: Card replaced successfully
+                  value:
+                    code: SUCCESS_CARD_REPLACED
+                    params:
+                      newCardId: '6392'
+                      message: Card replaced successfully
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                invalidCardId:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid card ID format. Card ID should contain only numbers (e.g., "6522")
+        '409':
+          description: Conflict - Card not eligible for replacement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                cardNotFound:
+                  summary: Card does not exist
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card does not exist
+                notEligible:
+                  summary: Card not eligible for replacement
+                  value:
+                    code: ERR_CARD_NOT_ELIGIBLE_FOR_REPLACEMENT
+                    params:
+                      message: Cannot replace this card
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                serverError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred
 components:
   responses:
     LambdaTimeout:
@@ -6311,285 +6593,3 @@ components:
         type: string
         default: application/json
       description: Content type of the request body
-  /cards/{cardId}/renew:
-    post:
-      tags:
-        - Card Management
-      summary: Renew expired card
-      description: Renew an expired card with a new expiry date while keeping the same PAN
-      parameters:
-        - name: cardId
-          in: path
-          required: true
-          schema:
-            type: string
-            pattern: '^[0-9]+$'
-          description: Card ID to be renewed (numeric)
-          example: '6522'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                cardId:
-                  type: string
-                  pattern: '^[0-9]+$'
-                  minLength: 1
-                  maxLength: 50
-                  description: Card ID to be renewed (numeric)
-                  example: '6522'
-              required:
-                - cardId
-              additionalProperties: false
-      responses:
-        '200':
-          description: Card renewed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/successResponse'
-              examples:
-                success:
-                  summary: Card renewed successfully
-                  value:
-                    code: SUCCESS_CARD_RENEWED
-                    params:
-                      newCardId: '6392'
-                      message: Card renewed successfully
-        '400':
-          description: Bad request - Invalid input or validation failed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-              examples:
-                invalidCardId:
-                  summary: Invalid card ID format
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: Invalid card ID format. Card ID should contain only numbers (e.g., "6522")
-        '409':
-          description: Conflict - Card not eligible for renewal
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-              examples:
-                cardNotFound:
-                  summary: Card does not exist
-                  value:
-                    code: ERR_CARD_NOT_FOUND
-                    params:
-                      message: Card does not exist
-                notEligible:
-                  summary: Card not eligible for renewal
-                  value:
-                    code: ERR_CARD_NOT_ELIGIBLE_FOR_RENEWAL
-                    params:
-                      message: Cannot renew this card
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-              examples:
-                serverError:
-                  summary: Internal server error
-                  value:
-                    code: ERR_INTERNAL_SERVER_ERROR
-                    params:
-                      message: An unexpected error occurred
-  /cards/{cardId}/reissue:
-    post:
-      tags:
-        - Card Management
-      summary: Reissue damaged card
-      description: Reissue a damaged card with the same PAN and expiry date
-      parameters:
-        - name: cardId
-          in: path
-          required: true
-          schema:
-            type: string
-            pattern: '^[0-9]+$'
-          description: Card ID to be reissued (numeric)
-          example: '6522'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                cardId:
-                  type: string
-                  pattern: '^[0-9]+$'
-                  minLength: 1
-                  maxLength: 50
-                  description: Card ID to be reissued (numeric)
-                  example: '6522'
-              required:
-                - cardId
-              additionalProperties: false
-      responses:
-        '200':
-          description: Card reissued successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/successResponse'
-              examples:
-                success:
-                  summary: Card reissued successfully
-                  value:
-                    code: SUCCESS_CARD_REISSUED
-                    params:
-                      newCardId: '6392'
-                      message: Card reissued successfully
-        '400':
-          description: Bad request - Invalid input or validation failed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-              examples:
-                invalidCardId:
-                  summary: Invalid card ID format
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: Invalid card ID format. Card ID should contain only numbers (e.g., "6522")
-        '409':
-          description: Conflict - Card not eligible for reissue
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-              examples:
-                cardNotFound:
-                  summary: Card does not exist
-                  value:
-                    code: ERR_CARD_NOT_FOUND
-                    params:
-                      message: Card does not exist
-                notEligible:
-                  summary: Card not eligible for reissue
-                  value:
-                    code: ERR_CARD_NOT_ELIGIBLE_FOR_REISSUE
-                    params:
-                      message: Cannot reissue this card
-                virtualCard:
-                  summary: Cannot reissue virtual card
-                  value:
-                    code: ERR_CANNOT_REISSUE_VIRTUAL_CARD
-                    params:
-                      message: Cannot reissue a virtual card please create a new one
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-              examples:
-                serverError:
-                  summary: Internal server error
-                  value:
-                    code: ERR_INTERNAL_SERVER_ERROR
-                    params:
-                      message: An unexpected error occurred
-  /cards/{cardId}/replace:
-    post:
-      tags:
-        - Card Management
-      summary: Replace lost/stolen/compromised card
-      description: Replace a lost, stolen, or compromised card with a new PAN and new expiry date
-      parameters:
-        - name: cardId
-          in: path
-          required: true
-          schema:
-            type: string
-            pattern: '^[0-9]+$'
-          description: Card ID to be replaced (numeric)
-          example: '6522'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                cardId:
-                  type: string
-                  pattern: '^[0-9]+$'
-                  minLength: 1
-                  maxLength: 50
-                  description: Card ID to be replaced (numeric)
-                  example: '6522'
-              required:
-                - cardId
-              additionalProperties: false
-      responses:
-        '200':
-          description: Card replaced successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/successResponse'
-              examples:
-                success:
-                  summary: Card replaced successfully
-                  value:
-                    code: SUCCESS_CARD_REPLACED
-                    params:
-                      newCardId: '6392'
-                      message: Card replaced successfully
-        '400':
-          description: Bad request - Invalid input or validation failed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-              examples:
-                invalidCardId:
-                  summary: Invalid card ID format
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: Invalid card ID format. Card ID should contain only numbers (e.g., "6522")
-        '409':
-          description: Conflict - Card not eligible for replacement
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-              examples:
-                cardNotFound:
-                  summary: Card does not exist
-                  value:
-                    code: ERR_CARD_NOT_FOUND
-                    params:
-                      message: Card does not exist
-                notEligible:
-                  summary: Card not eligible for replacement
-                  value:
-                    code: ERR_CARD_NOT_ELIGIBLE_FOR_REPLACEMENT
-                    params:
-                      message: Cannot replace this card
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-              examples:
-                serverError:
-                  summary: Internal server error
-                  value:
-                    code: ERR_INTERNAL_SERVER_ERROR
-                    params:
-                      message: An unexpected error occurred
