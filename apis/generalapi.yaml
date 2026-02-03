@@ -440,28 +440,6 @@ paths:
       description: |
         Create a new account for an existing customer.
         
-        ## ⚠️ Important: Customer Must Exist First
-        
-        **This API only works for existing customers.** If the customer doesn't exist, you will receive an error.
-        
-        **Workflow:**
-        
-        1. **Check if Customer Exists** using `POST /customers/search`
-           - Search by nationalId, passport, or identityId
-           - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first
-           - If customer **exists** → Proceed to step 2
-        
-        2. **Create Account** using this API (`POST /accounts`)
-           - Provide the customer's document ID (nationalId, passport, or identityId)
-           - Provide the account number to create
-        
-        ---
-        
-        **Process Flow:**
-        1. **Customer Verification**: Check if customer exists using document ID
-        2. **Account Creation**: Create new account linked to the existing customer
-        3. **Account Number Assignment**: Assign the provided account number to the customer
-        
         **Note:** One of the following document IDs is required: nationalId, passport, or identityId
       tags:
       - Account Management
@@ -5083,7 +5061,7 @@ paths:
       tags:
       - Card Management
       summary: Create Supplementary Card
-      description: "Create a supplementary card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - **Important:** Product must contain 'SUPP' and 'API' for supplementary cards\n   - Pass the product name exactly as returned \n\n3. **Create Supplementary Card** using this API (`POST /cards/create-supplementary`)\n   - Provide the customer's document ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2 (must contain SUPP and API)\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve` (must contain SUPP and API)\n3. **Card Issuance**: Create issuing contract, issue supplementary card\n4. **Card Details**: Return card ID for further operations\n\n**Note:** Supplementary cards are linked to existing customer accounts and require special product types containing 'SUPP' and 'API'\n"
+      description: "Create a supplementary card for an existing customer.\n\n**Workflow:**\n\n1. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n2. **Create Supplementary Card** using this API (`POST /cards/create-supplementary`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 1 \n\n---\n\n**Process Flow:**\n1. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve` (must contain SUPP and API)\n2. **Card Issuance**: Create issuing contract, issue supplementary card\n3. **Card Details**: Return card ID for further operations\n\n**Note:** Supplementary cards are linked to existing customer accounts and require special product types containing 'SUPP' and 'API'\n"
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -5215,7 +5193,7 @@ paths:
       tags:
       - Card Management
       summary: Link Supplementary Card
-      description: "Link a supplementary card to a main card.\n\n## ⚠️ Important: Cards Must Exist First\n\n**This API only works for existing cards.** Both the supplementary card and main card must exist.\n\n**Workflow:**\n\n1. **Create Supplementary Card** using `POST /cards/create-supplementary`\n   - This will return the supplementary `cardId`\n\n2. **Get Main Card ID** using customer card info endpoints\n   - Retrieve the `mainCardId` of the primary card\n\n3. **Link Cards** using this API (`POST /cards/link-supplementary-card`)\n   - Provide the `mainCardId` and `cardId`\n   - Establish the linking relationship\n\n---\n\n**Process Flow:**\n1. **Card Verification**: Both cards must exist in the system\n2. **Linking Process**: Use ModifyToken to establish main-supplementary relationship\n3. **Confirmation**: Return success confirmation\n\n**Note:** The supplementary card will be linked to the main card for shared limits and controls\n"
+      description: "Link a supplementary card to a main card for shared limits and controls.\n\n**Process Flow:**\n1. **Card Verification**: Both cards must exist in the system\n2. **Linking Process**: Establish main-supplementary relationship\n3. **Confirmation**: Return success confirmation\n\n**Note:** The supplementary card will be linked to the main card and share limits and controls"
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
