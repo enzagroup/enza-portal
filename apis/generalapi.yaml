@@ -142,6 +142,84 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
+  /preproduced/contracts/retrieve:
+    get:
+      operationId: retrievePreproducedContracts
+      summary: Retrieve Preproduced Contracts
+      description: Retrieve a list of preproduced contracts under the bank's corporate customer. These contracts can be used to create preproduced cards.
+      tags:
+      - Preproduced Card
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      responses:
+        '200':
+          description: Preproduced contracts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_PREPRODUCED_CONTRACTS_RETRIEVED
+                  params:
+                    type: object
+                    required:
+                    - contracts
+                    - count
+                    properties:
+                      contracts:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            contractRid:
+                              type: string
+                              description: Preproduced Contract RID
+                            contractTitle:
+                              type: string
+                              description: Contract title or name
+                            contractStatus:
+                              type: string
+                              description: Contract status (Active, Closed, etc.)
+                            contractTypeTitle:
+                              type: string
+                              description: Type of contract
+                      count:
+                        type: integer
+                        description: Number of preproduced contracts found
+              examples:
+                success:
+                  summary: Preproduced contracts retrieved
+                  value:
+                    code: SUCCESS_PREPRODUCED_CONTRACTS_RETRIEVED
+                    params:
+                      contracts:
+                      - contractRid: PHY-VS-PRP-CLS-PreproducedContract
+                        contractTitle: Preproduced Cards Contract
+                        contractStatus: Active
+                        contractTypeTitle: Preproduced Contract Type
+                      count: 1
+                empty:
+                  summary: No preproduced contracts found
+                  value:
+                    code: SUCCESS_PREPRODUCED_CONTRACTS_RETRIEVED
+                    params:
+                      contracts: []
+                      count: 0
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
   /customers/create:
     post:
       operationId: createCustomer
@@ -5042,6 +5120,676 @@ paths:
                       message:
                         type: string
                         example: An unexpected error occurred.
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /cards/create-preproduced:
+    post:
+      operationId: createPreproducedCard
+      tags:
+      - Card Management
+      summary: Create Preproduced Card
+      description: |
+        Create a card under a Preproduced Contract. This API enables banks to create multiple pre-produced cards programmatically under a preproduced contract.
+
+        **Required Fields:**
+        - `contractRid`: Preproduced Contract RID (e.g., PHY-VS-PRP-CLS-PreproducedContract)
+        - `productRid`: Token Product RID (e.g., PHY-VS-PRP-CLS-PRE-Token)
+
+        **Pre-requisites:**
+        - Preproduced Contract must exist and be active
+        - Token Product RID must exist
+
+        **Error Handling:**
+        - Invalid Contract RID: Returns 409 with ERR_INVALID_CONTRACT
+        - Invalid Product RID: Returns 409 with ERR_INVALID_PRODUCT
+        - Contract Not Active: Returns 409 with ERR_CONTRACT_NOT_ACTIVE
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - contractRid
+              - productRid
+              properties:
+                contractRid:
+                  type: string
+                  description: '**Required.** Preproduced Contract RID (e.g., PHY-VS-PRP-CLS-PreproducedContract)'
+                  example: PHY-VS-PRP-CLS-PreproducedContract
+                productRid:
+                  type: string
+                  description: '**Required.** Token Product RID (e.g., PHY-VS-PRP-CLS-PRE-Token)'
+                  example: PHY-VS-PRP-CLS-PRE-Token
+            examples:
+              createPreproducedCard:
+                summary: Create preproduced card
+                value:
+                  contractRid: PHY-VS-PRP-CLS-PreproducedContract
+                  productRid: PHY-VS-PRP-CLS-PRE-Token
+      responses:
+        '200':
+          description: Preproduced card created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_PREPRODUCED_CARD_CREATED
+                  params:
+                    type: object
+                    required:
+                    - cardId
+                    - message
+                    properties:
+                      cardId:
+                        type: string
+                        description: Card ID for the created preproduced card
+                        example: '6278'
+                      message:
+                        type: string
+                        description: Success message
+                        example: Preproduced card created successfully
+              examples:
+                success:
+                  summary: Preproduced card created successfully
+                  value:
+                    code: SUCCESS_PREPRODUCED_CARD_CREATED
+                    params:
+                      cardId: '6278'
+                      message: Preproduced card created successfully
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                validationFailed:
+                  summary: Validation failed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Missing required field: contractRid
+        '409':
+          description: Conflict - Invalid contract, invalid product, or contract not active
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                invalidContract:
+                  summary: Invalid preproduced contract
+                  value:
+                    code: ERR_INVALID_CONTRACT
+                    params:
+                      message: Invalid preproduced contract. Contract not found.
+                invalidProduct:
+                  summary: Invalid token product
+                  value:
+                    code: ERR_INVALID_PRODUCT
+                    params:
+                      message: Invalid token product. Product not found.
+                contractNotActive:
+                  summary: Contract is not active
+                  value:
+                    code: ERR_CONTRACT_NOT_ACTIVE
+                    params:
+                      message: Contract is not active.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /v1/cards/emv-status:
+    post:
+      operationId: blockEmvCard
+      tags:
+      - Card Management
+      summary: Block/Unblock EMV Card
+      description: |
+        Block or unblock the EMV functionality of a card.
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cardId
+              - enabled
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (Token ID) to block/unblock EMV'
+                  example: '6442'
+                enabled:
+                  type: boolean
+                  description: '**Required.** false to block EMV card, true to unblock EMV card'
+                  example: false
+            examples:
+              blockEmv:
+                summary: Block EMV card
+                value:
+                  cardId: '6442'
+                  enabled: false
+              unblockEmv:
+                summary: Unblock EMV card
+                value:
+                  cardId: '6442'
+                  enabled: true
+      responses:
+        '200':
+          description: EMV card status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_EMV_CARD_UPDATED
+                  params:
+                    type: object
+                    required:
+                    - cardId
+                    - message
+                    properties:
+                      cardId:
+                        type: string
+                        description: Card ID that was updated
+                        example: '6442'
+                      status:
+                        type: integer
+                        description: EMV block status (0 or 1)
+                        example: 1
+                      message:
+                        type: string
+                        description: Success message
+                        example: EMV card blocked successfully
+              examples:
+                success:
+                  summary: EMV card updated successfully
+                  value:
+                    code: SUCCESS_EMV_CARD_UPDATED
+                    params:
+                      cardId: '6442'
+                      status: 1
+                      message: EMV card blocked successfully
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                validationFailed:
+                  summary: Validation failed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Missing required field: cardId
+                invalidCardIdFormat:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId format. Card ID must contain only numbers (0-9) and be between 1 to 50 digits long
+        '409':
+          description: Conflict - Card not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /v1/cards/contactless-status:
+    post:
+      operationId: contactlessInterface
+      tags:
+      - Card Management
+      summary: Enable/Disable Contactless Interface
+      description: |
+        Enable or disable the contactless interface of a card.
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cardId
+              - enabled
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (Token ID) for contactless interface control'
+                  example: '6605'
+                enabled:
+                  type: boolean
+                  description: '**Required.** false to disable contactless interface, true to enable contactless interface'
+                  example: true
+            examples:
+              disableContactless:
+                summary: Disable contactless interface
+                value:
+                  cardId: '6605'
+                  enabled: false
+              enableContactless:
+                summary: Enable contactless interface
+                value:
+                  cardId: '6605'
+                  enabled: true
+      responses:
+        '200':
+          description: Contactless interface updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CONTACTLESS_INTERFACE_UPDATED
+                  params:
+                    type: object
+                    required:
+                    - cardId
+                    - message
+                    properties:
+                      cardId:
+                        type: string
+                        description: Card ID that was updated
+                        example: '6605'
+                      status:
+                        type: integer
+                        description: Contactless interface status (1 or 3)
+                        example: 1
+                      message:
+                        type: string
+                        description: Success message
+                        example: Contactless interface disabled successfully
+              examples:
+                success:
+                  summary: Contactless interface updated successfully
+                  value:
+                    code: SUCCESS_CONTACTLESS_INTERFACE_UPDATED
+                    params:
+                      cardId: '6605'
+                      status: 1
+                      message: Contactless interface disabled successfully
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                validationFailed:
+                  summary: Validation failed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Missing required field: cardId
+                invalidCardIdFormat:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId format. Card ID must contain only numbers (0-9) and be between 1 to 50 digits long
+        '409':
+          description: Conflict - Card not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /v1/cards/atm-status:
+    post:
+      operationId: setAtmStatus
+      tags:
+      - Card Management
+      summary: Set ATM Status
+      description: Enable or disable ATM transaction restriction for a card.
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cardId
+              - inUse
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (Token ID) for ATM restriction control'
+                  example: '6442'
+                inUse:
+                  type: boolean
+                  description: '**Required.** true to enable ATM transactions, false to disable ATM transactions'
+                  example: true
+            examples:
+              enableAtm:
+                summary: Enable ATM transactions
+                value:
+                  cardId: '6442'
+                  inUse: true
+              disableAtm:
+                summary: Disable ATM transactions
+                value:
+                  cardId: '6442'
+                  inUse: false
+      responses:
+        '200':
+          description: ATM restriction updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_ATM_RESTRICTION_UPDATED
+                  params:
+                    type: object
+                    required:
+                    - cardId
+                    - message
+                    properties:
+                      cardId:
+                        type: string
+                        description: Card ID that was updated
+                        example: '6442'
+                      message:
+                        type: string
+                        description: Success message
+                        example: ATM restriction enabled successfully
+              examples:
+                atmEnabled:
+                  summary: ATM enabled
+                  value:
+                    code: SUCCESS_ATM_RESTRICTION_UPDATED
+                    params:
+                      cardId: '6442'
+                      message: ATM restriction enabled successfully
+                atmDisabled:
+                  summary: ATM disabled
+                  value:
+                    code: SUCCESS_ATM_RESTRICTION_UPDATED
+                    params:
+                      cardId: '6442'
+                      message: ATM restriction disabled successfully
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                validationFailed:
+                  summary: Validation failed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Missing required field: cardId
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict - Card not found or no ATM restriction assigned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Wrong Card ID please use a valid Card ID
+                noAtmRestriction:
+                  summary: No ATM restriction assigned
+                  value:
+                    code: ERR_NO_ATM_RESTRICTION
+                    params:
+                      message: There are no ATM restriction assigned to this card
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /v1/cards/pos-status:
+    post:
+      operationId: setPosStatus
+      tags:
+      - Card Management
+      summary: Set POS Status
+      description: Enable or disable POS transaction restriction for a card.
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cardId
+              - inUse
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (Token ID) for POS restriction control'
+                  example: '6605'
+                inUse:
+                  type: boolean
+                  description: '**Required.** true to enable POS transactions, false to disable POS transactions'
+                  example: true
+            examples:
+              enablePos:
+                summary: Enable POS transactions
+                value:
+                  cardId: '6605'
+                  inUse: true
+              disablePos:
+                summary: Disable POS transactions
+                value:
+                  cardId: '6605'
+                  inUse: false
+      responses:
+        '200':
+          description: POS restriction updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_POS_RESTRICTION_UPDATED
+                  params:
+                    type: object
+                    required:
+                    - cardId
+                    - message
+                    properties:
+                      cardId:
+                        type: string
+                        description: Card ID that was updated
+                        example: '6605'
+                      message:
+                        type: string
+                        description: Success message
+                        example: POS restriction enabled successfully
+              examples:
+                posEnabled:
+                  summary: POS enabled
+                  value:
+                    code: SUCCESS_POS_RESTRICTION_UPDATED
+                    params:
+                      cardId: '6605'
+                      message: POS restriction enabled successfully
+                posDisabled:
+                  summary: POS disabled
+                  value:
+                    code: SUCCESS_POS_RESTRICTION_UPDATED
+                    params:
+                      cardId: '6605'
+                      message: POS restriction disabled successfully
+        '400':
+          description: Bad request - Invalid input or validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                validationFailed:
+                  summary: Validation failed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Missing required field: cardId
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict - Card not found or no POS restriction assigned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Wrong Card ID please use a valid Card ID
+                noPosRestriction:
+                  summary: No POS restriction assigned
+                  value:
+                    code: ERR_NO_POS_RESTRICTION
+                    params:
+                      message: There are no POS restriction assigned to this card
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
               examples:
                 internalServerError:
                   summary: Internal server error
