@@ -5921,7 +5921,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/conflictError'
+                $ref: '#/components/schemas/ConflictError'
               examples:
                 cardNotFound:
                   summary: Card not found
@@ -5950,10 +5950,6 @@ paths:
                       message: An unexpected error occurred.
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
   /cards/last-atc:
     get:
       operationId: getLastAtc
@@ -6051,7 +6047,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/conflictError'
+                $ref: '#/components/schemas/ConflictError'
               examples:
                 cardNotFound:
                   summary: Card not found
@@ -6159,7 +6155,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/conflictError'
+                $ref: '#/components/schemas/ConflictError'
               examples:
                 cardNotFound:
                   summary: Card not found
@@ -6458,7 +6454,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/conflictError'
+                $ref: '#/components/schemas/ConflictError'
               examples:
                 cardNotFound:
                   summary: Card not found
@@ -6580,7 +6576,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/conflictError'
+                $ref: '#/components/schemas/ConflictError'
               examples:
                 cardNotFound:
                   summary: Card not found
@@ -6698,7 +6694,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/conflictError'
+                $ref: '#/components/schemas/ConflictError'
               examples:
                 cardNotFound:
                   summary: Card not found
@@ -7943,6 +7939,21 @@ components:
                 code: ERR_INTERNAL_SERVER_ERROR
                 params:
                   message: An unexpected error occurred.
+    Options:
+      description: CORS preflight request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: CORS preflight request successful
+      examples:
+        options:
+          summary: CORS preflight
+          value:
+            message: CORS preflight request successful
   schemas:
     SuccessEnvelope:
       type: object
