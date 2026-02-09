@@ -5273,7 +5273,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /v1/cards/emv-status:
+  /cards/emv-status:
     post:
       operationId: blockEmvCard
       tags:
@@ -5404,7 +5404,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /v1/cards/contactless-status:
+  /cards/contactless-status:
     post:
       operationId: contactlessInterface
       tags:
@@ -5535,11 +5535,11 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /v1/cards/atm-status:
+  /limits/atm-status:
     post:
       operationId: setAtmStatus
       tags:
-      - Card Management
+      - Limits Management
       summary: Set ATM Status
       description: Enable or disable ATM transaction restriction for a card.
       parameters:
@@ -5669,11 +5669,11 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /v1/cards/pos-status:
+  /limits/pos-status:
     post:
       operationId: setPosStatus
       tags:
-      - Card Management
+      - Limits Management
       summary: Set POS Status
       description: Enable or disable POS transaction restriction for a card.
       parameters:
@@ -5803,11 +5803,11 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /cards/ecomm-status:
+  /Limits/ecomm-status:
     post:
       operationId: setEcommStatus
       tags:
-        - Card Management
+        - Limits Management
       summary: Set Ecommerce Status
       description: |
         Enable or disable Ecommerce transaction restriction for a card. Controls whether Ecommerce limit is in use or out of use.
