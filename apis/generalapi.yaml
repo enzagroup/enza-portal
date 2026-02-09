@@ -5539,7 +5539,7 @@ paths:
     post:
       operationId: setAtmStatus
       tags:
-      - Limits Management
+      - Limit Management
       summary: Set ATM Status
       description: Enable or disable ATM transaction restriction for a card.
       parameters:
@@ -5673,7 +5673,7 @@ paths:
     post:
       operationId: setPosStatus
       tags:
-      - Limits Management
+      - Limit Management
       summary: Set POS Status
       description: Enable or disable POS transaction restriction for a card.
       parameters:
@@ -5807,7 +5807,7 @@ paths:
     post:
       operationId: setEcommStatus
       tags:
-        - Limits Management
+        - Limit Management
       summary: Set Ecommerce Status
       description: |
         Enable or disable Ecommerce transaction restriction for a card. Controls whether Ecommerce limit is in use or out of use.
