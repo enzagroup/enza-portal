@@ -5808,6 +5808,9 @@ paths:
       operationId: setEcommStatus
       tags:
         - Limit Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'  
       summary: Set Ecommerce Status
       description: |
         Enable or disable Ecommerce transaction restriction for a card. Controls whether Ecommerce limit is in use or out of use.
@@ -5823,9 +5826,6 @@ paths:
               properties:
                 cardId:
                   type: string
-                  pattern: '^[0-9]+$'
-                  minLength: 1
-                  maxLength: 50
                   description: Card ID (Token ID) for Ecommerce restriction control
                   example: '58'
                 inUse:
@@ -5966,9 +5966,6 @@ paths:
           description: Card ID (Token ID) to retrieve Last ATC
           schema:
             type: string
-            pattern: '^[0-9]+$'
-            minLength: 1
-            maxLength: 50
             example: '4471'
       responses:
         '200':
@@ -6067,6 +6064,9 @@ paths:
       tags:
         - Card Management
       summary: Reset Last ATC
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
       description: |
         Reset the Last ATC (Application Transaction Counter) for a card to 0.
       requestBody:
@@ -6080,9 +6080,6 @@ paths:
               properties:
                 cardId:
                   type: string
-                  pattern: '^[0-9]+$'
-                  minLength: 1
-                  maxLength: 50
                   description: Card ID (Token ID) to reset Last ATC
                   example: '4471'
               additionalProperties: false
@@ -6174,6 +6171,9 @@ paths:
       operationId: listCustomerAccounts
       tags:
         - Customer Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'  
       summary: List Customer Accounts
       description: |
         Retrieve list of all customer accounts and account numbers by customer id (nationalId, passport or identityId).
@@ -6351,9 +6351,6 @@ paths:
           description: Card ID (Token ID) to check terminal restrictions
           schema:
             type: string
-            pattern: '^[0-9]+$'
-            minLength: 1
-            maxLength: 50
             example: '4471'
       responses:
         '200':
@@ -6484,9 +6481,6 @@ paths:
           description: Card ID (Token ID) to retrieve PIN trials count
           schema:
             type: string
-            pattern: '^[0-9]+$'
-            minLength: 1
-            maxLength: 50
             example: '4471'
       responses:
         '200':
@@ -6595,6 +6589,9 @@ paths:
       operationId: setPinById
       tags:
         - PIN Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
       summary: Set PIN for Card by ID
       description: |
         Set or update the PIN for a customer card using Card ID.
@@ -6610,9 +6607,6 @@ paths:
               properties:
                 cardId:
                   type: string
-                  pattern: '^[0-9]+$'
-                  minLength: 1
-                  maxLength: 50
                   description: Card ID (Token ID) for the card
                   example: '6393'
                 pinBlock:
