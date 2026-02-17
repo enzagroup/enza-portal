@@ -38,8 +38,6 @@ tags:
   description: Set and change card PINs securely
 - name: Notifications Management
   description: Manage notifications and alerts
-- name: E-Commerce
-  description: Manage e-commerce and online transaction settings
 - name: Limit Management
   description: Manage card limits and restrictions
 - name: Customer Management
@@ -1764,99 +1762,6 @@ paths:
                   summary: Lambda execution timed out
                   value:
                     errorMessage: Task timed out after 1.10 seconds
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-  /cards/tds-enrollment:
-    post:
-      operationId: updateEcommerceStatus
-      summary: Enable or Disable E-Commerce Transactions
-      description: 'Control e-commerce (online) transaction capabilities for a card.
-
-        '
-      tags:
-      - E-Commerce
-      parameters:
-      - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
-      requestBody:
-        description: Details for updating ECstatus of a card.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                cardRefNum:
-                  type: string
-                  description: '**Required.** Card reference number'
-                ecStatusEnable:
-                  type: string
-                  description: '**Required.** EC status: `"1"` = Enrolled, `"0"` = Not enrolled'
-            example:
-              cardRefNum: '000515'
-              ecStatusEnable: '1'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: SUCCESS_ECSTATUS_CHANGED
-                  params:
-                    type: object
-                    required:
-                    - status
-                    properties:
-                      status:
-                        type: string
-                        example: Enabled
-              examples:
-                successResponse:
-                  summary: Successful Request Example
-                  value:
-                    code: SUCCESS_ECSTATUS_CHANGED
-                    params:
-                      status: Enabled
-        '400':
-          description: Bad request – validation failed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationError'
-              examples:
-                badRequestExample:
-                  summary: Missing required field
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      missingProperty: cardRefNum
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '409':
-          description: Conflict – card not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConflictError'
-              examples:
-                conflictExample:
-                  summary: Card not found
-                  value:
-                    code: ERR_READTOKEN_DECLINED
-                    params:
-                      message: Card not found
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        '504':
-          $ref: '#/components/responses/LambdaTimeout'
         '403':
           $ref: '#/components/responses/Forbidden'
         '405':
@@ -6056,7 +5961,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-
+    options:
+      $ref: '#/components/responses/Options'
   /cards/reset-atc:
     post:
       operationId: resetLastAtc
@@ -6163,6 +6069,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
+    options:
+      $ref: '#/components/responses/Options'
   /customers/list-accounts:
     post:
       operationId: listCustomerAccounts
@@ -6330,7 +6238,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-
+    options:
+      $ref: '#/components/responses/Options'
   /limits/restricted-terminals:
     get:
       operationId: getRestrictedTerminals
@@ -6459,7 +6368,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-
+    options:
+      $ref: '#/components/responses/Options'
   /cards/pin-trials:
     get:
       operationId: getPinTrials
@@ -6577,8 +6487,9 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-
-  /pin/set-pin-by-card-id:
+    options:
+      $ref: '#/components/responses/Options'
+  /pin/set-pin:
     post:
       operationId: setPinById
       tags:
@@ -6705,7 +6616,8 @@ paths:
                       message: 'Error importing PIN block: bad PIN block format'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-
+    options:
+      $ref: '#/components/responses/Options'
   /cards/create-supplementary:
     post:
       operationId: createSupplementaryCard
