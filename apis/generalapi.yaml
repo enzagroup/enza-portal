@@ -4704,13 +4704,21 @@ paths:
               withNationalId:
                 summary: Create card with National ID
                 value:
+                  productType: VisaPrepaidClassicVirtualAPI
                   nationalId: '1234567890'
                   autoActivate: false
               withPassport:
                 summary: Create card with Passport and auto-activation
                 value:
+                  productType: VisaPrepaidClassicVirtualAPI
                   passport: AB1234567
                   autoActivate: true
+              withIdentityId:
+                summary: Create card with Identity ID
+                value:
+                  productType: VisaPrepaidClassicVirtualAPI
+                  identityId: ID123456
+                  autoActivate: false
       responses:
         '200':
           description: Card successfully created (and activated if autoActivate was true)
@@ -4894,15 +4902,24 @@ paths:
               withNationalId:
                 summary: Create debit card with National ID
                 value:
+                  productType: VisaDebitPhysicalAPI
                   nationalId: '1234567890'
                   accountNumber: DHI123456789
                   autoActivate: false
               withPassport:
                 summary: Create debit card with Passport and auto-activation
                 value:
+                  productType: VisaDebitPhysicalAPI
                   passport: AB1234567
                   accountNumber: DHI987654321
                   autoActivate: true
+              withIdentityId:
+                summary: Create debit card with Identity ID
+                value:
+                  productType: VisaDebitPhysicalAPI
+                  identityId: ID123456
+                  accountNumber: DHI567890123
+                  autoActivate: false
       responses:
         '200':
           description: Debit card successfully created (and activated if autoActivate was true)
