@@ -5961,8 +5961,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-    options:
-      $ref: '#/components/responses/Options'
+
   /cards/reset-atc:
     post:
       operationId: resetLastAtc
@@ -6069,8 +6068,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-    options:
-      $ref: '#/components/responses/Options'
+
   /customers/list-accounts:
     post:
       operationId: listCustomerAccounts
@@ -6238,8 +6236,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-    options:
-      $ref: '#/components/responses/Options'
+
   /limits/restricted-terminals:
     get:
       operationId: getRestrictedTerminals
@@ -6368,8 +6365,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-    options:
-      $ref: '#/components/responses/Options'
+
   /cards/pin-trials:
     get:
       operationId: getPinTrials
@@ -6487,8 +6483,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-    options:
-      $ref: '#/components/responses/Options'
+
   /pin/set-pin:
     post:
       operationId: setPinById
@@ -6616,8 +6611,7 @@ paths:
                       message: 'Error importing PIN block: bad PIN block format'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-    options:
-      $ref: '#/components/responses/Options'
+
   /cards/create-supplementary:
     post:
       operationId: createSupplementaryCard
