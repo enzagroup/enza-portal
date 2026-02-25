@@ -1116,13 +1116,282 @@ paths:
                   value:
                     code: ERR_ACCOUNT_NOT_FOUND
                     params:
-                      message: Account not found
+                      message: Account number not found
         '500':
           $ref: '#/components/responses/InternalServerError'
         '403':
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+  /accounts/status:
+    post:
+      operationId: changeAccountStatus
+      summary: Change Account Status
+      description: |
+        Change the status of an existing account.
+      tags:
+      - Account Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountNumber:
+                  type: string
+                  description: Account number (Contract RID)
+                  example: '100000000001336'
+                status:
+                  type: string
+                  enum: ['ACTIVE', 'SUSPENDED', 'CLOSURE_INITIATED', 'CLOSED', 'FORCE_CLOSED']
+                  description: |
+                    New account status:
+                    - ACTIVE: Account is open and usable for normal operations
+                    - SUSPENDED: Account is temporarily restricted (limited/blocked operations)
+                    - CLOSURE_INITIATED: Closure process has started (final settlement / pending closure window)
+                    - CLOSED: Account is closed normally (standard closure path)
+                    - FORCE_CLOSED: Account is closed via forced closure flow (operational override / immediate finalize)
+                  example: 'SUSPENDED'
+            examples:
+              suspendAccount:
+                summary: Suspend an active account
+                value:
+                  accountNumber: '100000000001336'
+                  status: 'SUSPENDED'
+              activateAccount:
+                summary: Activate a suspended account
+                value:
+                  accountNumber: '100000000001336'
+                  status: 'ACTIVE'
+              prepareForClosure:
+                summary: Prepare account for closure
+                value:
+                  accountNumber: '100000000001336'
+                  status: 'CLOSURE_INITIATED'
+              closeAccount:
+                summary: Close account (from prepared for closure)
+                value:
+                  accountNumber: '100000000001336'
+                  status: 'CLOSED'
+              forceCloseAccount:
+                summary: Force close account (operational override)
+                value:
+                  accountNumber: '100000000001336'
+                  status: 'FORCE_CLOSED'
+      responses:
+        '200':
+          description: Account status changed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_ACCOUNT_STATUS_CHANGED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Account suspended successfully
+              examples:
+                success:
+                  summary: Status changed successfully
+                  value:
+                    code: SUCCESS_ACCOUNT_STATUS_CHANGED
+                    params:
+                      message: Account suspended successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                invalidStatus:
+                  summary: Invalid status value
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Invalid status value. Must be one of: A (Active), S (Suspended), F (Closure Initiated), C (Closed)'
+                missingAccountNumber:
+                  summary: Missing account number
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: accountNumber'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Account not found or invalid status transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                accountNotFound:
+                  summary: Account not found
+                  value:
+                    code: ERR_ACCOUNT_NOT_FOUND
+                    params:
+                      message: Account number not found
+                invalidStatusTransition:
+                  summary: Invalid status transition
+                  value:
+                    code: ERR_INVALID_STATUS_TRANSITION
+                    params:
+                      message: Unable to activate contract - status is not 'New' or 'Suspended'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+  /accounts/cards/{accountNumber}:
+    get:
+      operationId: getCardsByAccount
+      summary: Get Cards by Account
+      description: |
+        Retrieve all cards linked to a customer account.
+      tags:
+      - Account Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      - name: accountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+        description: '**Required.** Account Number to retrieve cards for - numeric only, 1-20 digits'
+        example: '100000000001488'
+      responses:
+        '200':
+          description: Cards retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CARDS_RETRIEVED
+                  params:
+                    type: object
+                    properties:
+                      accountNumber:
+                        type: string
+                        example: '100000000001488'
+                      totalCards:
+                        type: integer
+                        example: 7
+                      cards:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            cardId:
+                              type: string
+                              description: Card/Token internal ID
+                              example: '6314'
+                            maskedPan:
+                              type: string
+                              description: Masked PAN/Reference number
+                              example: '437358******5928'
+                            cardStatus:
+                              type: string
+                              description: Current token/card status
+                              example: 'Active'
+                            expiryDate:
+                              type: string
+                              description: Card expiry timestamp
+                              example: '2029-01-31T23:59:59.000'
+                            productType:
+                              type: string
+                              description: Contract type RID
+                              example: 'VisaPrepaidClassicVirtualAPI'
+                            productName:
+                              type: string
+                              description: Token product title
+                              example: 'GTBGH Visa Prepaid Virtual Test Token Product'
+              examples:
+                success:
+                  summary: Cards retrieved successfully
+                  value:
+                    code: SUCCESS_CARDS_RETRIEVED
+                    params:
+                      accountNumber: '100000000001488'
+                      totalCards: 7
+                      cards:
+                      - cardId: '6314'
+                        maskedPan: '437358******5928'
+                        cardStatus: 'Compromized'
+                        expiryDate: '2029-01-31T23:59:59.000'
+                        productType: 'VisaPrepaidClassicVirtualAPI'
+                        productName: 'GTBGH Visa Prepaid Virtual Test Token Product'
+                      - cardId: '6393'
+                        maskedPan: '437358******5985'
+                        cardStatus: 'Active'
+                        expiryDate: '2029-01-31T23:59:59.000'
+                        productType: 'VisaPrepaidClassicVirtualAPI'
+                        productName: 'GTBGH Visa Prepaid Virtual Test Token Product'
+                noCards:
+                  summary: Account exists but has no cards
+                  value:
+                    code: SUCCESS_CARDS_RETRIEVED
+                    params:
+                      accountNumber: '100000000001488'
+                      totalCards: 0
+                      cards: []
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingAccountNumber:
+                  summary: Missing account number
+                  value:
+                    code: ERR_MISSING_ACCOUNT_NUMBER
+                    params:
+                      message: 'accountNumber path parameter is required'
+                invalidAccountNumber:
+                  summary: Invalid account number format
+                  value:
+                    code: ERR_INVALID_ACCOUNT_NUMBER
+                    params:
+                      message: 'Invalid accountNumber format. Account Number must contain only numbers (0-9) and be 1-20 digits long.'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                accountNotFound:
+                  summary: Account not found
+                  value:
+                    code: ERR_ACCOUNT_NOT_FOUND
+                    params:
+                      message: Account number not found
+        '500':
+          $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
   /notification/status:
@@ -2326,6 +2595,1148 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+  /cards/verify-cvv2:
+    post:
+      operationId: verifyCVV2
+      summary: Verify CVV2 for Card
+      description: |
+        Validate a customer-entered CVV2/CVC2 for a card. 
+        Confirms card possession in card-not-present flows (e.g., onboarding, step-up verification, add-card).
+        This API is validation-only. It does not return CVV2 to the client and does not modify any counters/state.
+      tags:
+      - Card Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        description: CVV2 verification request containing cardId and cvv2 to validate.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Target Card ID to be validated (numeric only, 1-20 digits)'
+                  example: '3132'
+                cvv2:
+                  type: string
+                  description: '**Required.** 3-4 digit CVV2 entered by customer'
+                  example: '147'
+            example:
+              cardId: '3132'
+              cvv2: '147'
+      responses:
+        '200':
+          description: CVV2 verification result
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CVV2_VERIFIED
+                  params:
+                    type: object
+                    required:
+                    - isMatched
+                    - message
+                    properties:
+                      isMatched:
+                        type: boolean
+                        description: True if calculated CVV2 equals input
+                        example: true
+                      message:
+                        type: string
+                        example: CVV2 verified
+              examples:
+                successMatch:
+                  summary: CVV2 Verified (Match)
+                  value:
+                    code: SUCCESS_CVV2_VERIFIED
+                    params:
+                      isMatched: true
+                      message: CVV2 verified
+                mismatch:
+                  summary: CVV2 Mismatch
+                  value:
+                    code: ERR_CVV2_MISMATCH
+                    params:
+                      isMatched: false
+                      message: Invalid CVV2
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingCardId:
+                  summary: Missing cardId
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: cardId'
+                invalidCvv2Format:
+                  summary: Invalid CVV2 format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Format error. Provide a 3-4 digit CVV2'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – card not found, inactive, or data incomplete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card Not Found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                cardNotActive:
+                  summary: Card Not Active
+                  value:
+                    code: ERR_CARD_INACTIVE
+                    params:
+                      message: Card not active
+                cardDataIncomplete:
+                  summary: Card Data Incomplete
+                  value:
+                    code: ERR_CARD_DATA_INCOMPLETE
+                    params:
+                      message: Card data incomplete for CVV2 verification
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /cards/delivery-address:
+    post:
+      operationId: setDeliveryAddress
+      summary: Set Card Delivery Address
+      description: |
+        Update or set the card delivery address for a specific card.
+        Used when the cardholder requests to receive a card at a different address than the default.
+        All address fields are optional except cardId and countryId.
+      tags:
+      - Card Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        description: Delivery address details for the card
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  pattern: '^[0-9]{1,20}$'
+                  description: '**Required.** Target Card ID (numeric only, 1-20 digits)'
+                  example: '2973'
+                countryId:
+                  type: string
+                  pattern: '^[0-9]{1,3}$'
+                  description: '**Required.** Country numeric code (ISO 3166-1 numeric, 1-3 digits)'
+                  example: '840'
+                region:
+                  type: string
+                  maxLength: 100
+                  pattern: '^[a-zA-Z0-9\s\-'',.]+$'
+                  description: Region name/code
+                  example: 'Greater Accra'
+                city:
+                  type: string
+                  maxLength: 100
+                  pattern: '^[a-zA-Z0-9\s\-'',.]+$'
+                  description: City name
+                  example: 'Accra'
+                street:
+                  type: string
+                  maxLength: 200
+                  pattern: '^[a-zA-Z0-9\s\-'',.]+$'
+                  description: Street name
+                  example: 'Oxford Street'
+                house:
+                  type: string
+                  maxLength: 20
+                  pattern: '^[a-zA-Z0-9\-\/]+$'
+                  description: House number
+                  example: '15'
+                zip:
+                  type: string
+                  maxLength: 20
+                  pattern: '^[a-zA-Z0-9\s\-]+$'
+                  description: Postal code
+                  example: 'GA-184-9023'
+                building:
+                  type: string
+                  maxLength: 20
+                  pattern: '^[a-zA-Z0-9\-\/]+$'
+                  description: Building number
+                  example: 'B2'
+                flat:
+                  type: string
+                  maxLength: 20
+                  pattern: '^[a-zA-Z0-9\-\/]+$'
+                  description: Apartment/Flat number
+                  example: '4A'
+                construction:
+                  type: string
+                  maxLength: 20
+                  pattern: '^[a-zA-Z0-9\-\/]+$'
+                  description: Construction/Block number
+                  example: 'Block C'
+                area:
+                  type: string
+                  maxLength: 100
+                  pattern: '^[a-zA-Z0-9\s\-'',.]+$'
+                  description: Area/District name
+                  example: 'Osu'
+                parentCity:
+                  type: string
+                  maxLength: 100
+                  pattern: '^[a-zA-Z0-9\s\-'',.]+$'
+                  description: Parent city/municipality
+                  example: 'Accra Metropolitan'
+                addressLine:
+                  type: string
+                  description: Full formatted address inside the city
+                  example: '15 Oxford Street, Osu'
+                countryName:
+                  type: string
+                  description: Country name in text format
+                  example: 'Ghana'
+            example:
+              cardId: '2973'
+              countryId: '288'
+              region: 'Greater Accra'
+              city: 'Accra'
+              street: 'Oxford Street'
+              house: '15'
+              zip: 'GA-184-9023'
+              building: 'B2'
+              flat: '4A'
+              construction: 'Block C'
+              area: 'Osu'
+              parentCity: 'Accra Metropolitan'
+              addressLine: '15 Oxford Street, Osu'
+              countryName: 'Ghana'
+      responses:
+        '200':
+          description: Delivery address updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_DELIVERY_ADDRESS_SET
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Address updated successfully
+              examples:
+                success:
+                  summary: Address Updated
+                  value:
+                    code: SUCCESS_DELIVERY_ADDRESS_SET
+                    params:
+                      message: Address updated successfully
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingCardId:
+                  summary: Missing cardId
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: cardId'
+                missingCountryId:
+                  summary: Missing countryId
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: countryId'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – card not found or country not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card Not Found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Cannot find Customer Card
+                countryNotFound:
+                  summary: Country Not Found
+                  value:
+                    code: ERR_COUNTRY_NOT_FOUND
+                    params:
+                      message: Country not found
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /cards/delivery-address/{card_Id}:
+    get:
+      operationId: getDeliveryAddress
+      summary: Retrieve Card Delivery Address
+      description: |
+        Retrieve the delivery address assigned to a specific customer card.
+        Used to verify the cardholder's delivery address before dispatch.
+      tags:
+      - Card Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - name: card_Id
+        in: path
+        description: '**Required.** Target Card ID'
+        required: true
+        schema:
+          type: string
+          example: '2973'
+      responses:
+        '200':
+          description: Delivery address retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_DELIVERY_ADDRESS_RETRIEVED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      deliveryAddress:
+                        type: object
+                        properties:
+                          countryId:
+                            type: string
+                          house:
+                            type: string
+                          addressInCity:
+                            type: string
+                          addressInCountry:
+                            type: string
+                          zip:
+                            type: string
+                          construction:
+                            type: string
+                          building:
+                            type: string
+                          flat:
+                            type: string
+                          regionTitle:
+                            type: string
+                          areaTitle:
+                            type: string
+                          cityTitle:
+                            type: string
+                          parentCityTitle:
+                            type: string
+                          streetTitle:
+                            type: string
+              examples:
+                withAddress:
+                  summary: Address Found
+                  value:
+                    code: SUCCESS_DELIVERY_ADDRESS_RETRIEVED
+                    params:
+                      deliveryAddress:
+                        countryId: '288'
+                        countryCode: '288'
+                        house: '15'
+                        addressInCity: '15 Oxford Street, Osu'
+                        addressInCountry: 'Ghana'
+                        zip: 'GA-184-9023'
+                        construction: 'Block C'
+                        building: 'B2'
+                        flat: '4A'
+                        regionTitle: 'Greater Accra'
+                        region: 'Greater Accra'
+                        areaTitle: 'Osu'
+                        area: 'Osu'
+                        cityTitle: 'Accra'
+                        city: 'Accra'
+                        parentCityTitle: 'Accra Metropolitan'
+                        parentCity: 'Accra Metropolitan'
+                        streetTitle: 'Oxford Street'
+                        street: 'Oxford Street'
+                noAddress:
+                  summary: No Address Found
+                  value:
+                    code: SUCCESS_NO_DELIVERY_ADDRESS
+                    params:
+                      message: No Delivery Address found for this card
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – card not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card Not Found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Wrong Card ID, please use a valid Card ID
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+    # delete:
+    #   operationId: deleteDeliveryAddress
+    #   summary: Delete Card Delivery Address
+    #   description: |
+    #     Remove the delivery address assigned to a specific customer card.
+    #     Used when the address was added by mistake or card is switched to branch pickup.
+    #   tags:
+    #   - Card Management
+    #   parameters:
+    #   - $ref: '#/components/parameters/apiKey'
+    #   - name: card_Id
+    #     in: path
+    #     description: '**Required.** Target Card ID'
+    #     required: true
+    #     schema:
+    #       type: string
+    #       example: '2973'
+    #   responses:
+    #     '200':
+    #       description: Delivery address deleted successfully
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             required:
+    #             - code
+    #             - params
+    #             properties:
+    #               code:
+    #                 type: string
+    #                 example: SUCCESS_DELIVERY_ADDRESS_DELETED
+    #               params:
+    #                 type: object
+    #                 properties:
+    #                   message:
+    #                     type: string
+    #                     example: Delivery Address removed successfully
+    #           examples:
+    #             success:
+    #               summary: Address Deleted
+    #               value:
+    #                 code: SUCCESS_DELIVERY_ADDRESS_DELETED
+    #                 params:
+    #                   message: Delivery Address removed successfully
+    #     '400':
+    #       description: Bad request – validation failed
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ValidationError'
+    #     '401':
+    #       $ref: '#/components/responses/Unauthorized'
+    #     '409':
+    #       description: Conflict – card not found
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ConflictError'
+    #           examples:
+    #             cardNotFound:
+    #               summary: Card Not Found
+    #               value:
+    #                 code: ERR_CARD_NOT_FOUND
+    #                 params:
+    #                   message: Wrong Card ID, please use a valid Card ID
+    #     '500':
+    #       $ref: '#/components/responses/InternalServerError'
+    #     '504':
+    #       $ref: '#/components/responses/LambdaTimeout'
+    #     '405':
+    #       $ref: '#/components/responses/MethodNotAllowed'
+  /v1/holds/debit:
+    post:
+      operationId: createDebitHold
+      summary: Create Debit Hold
+      description: |
+        Place a manual hold amount on a debit account using the Account Number.
+        The hold amount will reduce the available balance and prevent the customer from using the held amount.
+        The hold remains blocked until the defined CloseTime is reached or the hold is released manually.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountNumber:
+                  type: string
+                  description: '**Required.** Target account number (contract RID) to place hold on - numeric only, 1-20 digits'
+                  example: '100000000001488'
+                amount:
+                  type: number
+                  description: '**Required.** Hold amount - must be positive (minimum 0.01)'
+                  example: 10
+                ccy:
+                  type: string
+                  description: '**Required.** Currency code (ISO 3166-1 numeric, 3 digits, e.g., 840 for USD)'
+                  example: '840'
+                closeTime:
+                  type: string
+                  pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})?$'
+                  description: '**Required.** Hold expiry date/time in ISO 8601 format without milliseconds. Example: 2026-02-16T00:00:00'
+                  example: '2026-02-16T00:00:00'
+            example:
+              accountNumber: '100000000001488'
+              amount: 10
+              ccy: '840'
+              closeTime: '2026-02-16T00:00:00.000'
+      responses:
+        '200':
+          description: Debit hold created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_DEBIT_HOLD_CREATED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Debit hold created successfully
+                      holdId:
+                        type: string
+                        description: Unique hold reference ID
+                        example: '10516'
+                      holdType:
+                        type: string
+                        example: DEBIT
+                      accountNumber:
+                        type: string
+                        example: '100000000001488'
+                      amount:
+                        type: number
+                        example: 10
+                      ccy:
+                        type: string
+                        example: '840'
+                      closeTime:
+                        type: string
+                        example: '2026-02-16T00:00:00.000'
+                      operationDate:
+                        type: string
+                        example: '2026-02-19T00:00:00.000'
+                      approvalCode:
+                        type: string
+                        example: 'VB1FHL'
+              examples:
+                success:
+                  summary: Debit hold created successfully
+                  value:
+                    code: SUCCESS_DEBIT_HOLD_CREATED
+                    params:
+                      message: Debit hold created successfully
+                      holdId: '10516'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: Conflict - Business logic error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                contractNotFound:
+                  summary: Contract not found
+                  value:
+                    code: ERR_CONTRACT_NOT_FOUND
+                    params:
+                      message: Cannot find contract
+                currencyMismatch:
+                  summary: Currency mismatch
+                  value:
+                    code: ERR_CURRENCY_MISMATCH
+                    params:
+                      message: Currency mismatch error
+                insufficientBalance:
+                  summary: Insufficient balance
+                  value:
+                    code: ERR_INSUFFICIENT_BALANCE
+                    params:
+                      message: Not enough available balance
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  # /v1/holds/credit:
+  #   post:
+  #     operationId: createCreditHold
+  #     summary: Create Credit Hold
+  #     description: |
+  #       Place a manual credit hold amount on a debit account (contract) using the Contract RID.
+  #       The credit hold increases the available balance temporarily without affecting the ledger balance.
+  #       The hold remains effective until the defined CloseTime is reached or the hold is released manually.
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               accountNumber:
+  #                 type: string
+  #                 description: '**Required.** Target account number (contract RID) to place hold on - numeric only, 1-20 digits'
+  #                 example: '4567'
+  #               amount:
+  #                 type: number
+  #                 description: '**Required.** Hold amount - must be positive (minimum 0.01)'
+  #                 example: 1000
+  #               ccy:
+  #                 type: string
+  #                 description: '**Required.** Currency code (ISO 3166-1 numeric, 3 digits, e.g., 840 for USD)'
+  #                 example: '840'
+  #               closeTime:
+  #                 type: string
+  #                 description: '**Required.** Hold expiry date/time in ISO 8601 format without milliseconds. Example: 2026-02-16T00:00:00'
+  #                 example: '2026-02-16T00:00:00'
+  #           example:
+  #             accountNumber: '4567'
+  #             amount: 1000
+  #             ccy: '840'
+  #             closeTime: '2026-02-16T00:00:00.000'
+  #     responses:
+  #       '200':
+  #         description: Credit hold created successfully
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: SUCCESS_CREDIT_HOLD_CREATED
+  #                 params:
+  #                   type: object
+  #                   properties:
+  #                     message:
+  #                       type: string
+  #                       example: Credit hold created successfully
+  #                     holdId:
+  #                       type: string
+  #                       description: Unique hold reference ID
+  #                       example: '10517'
+  #                     holdType:
+  #                       type: string
+  #                       example: CREDIT
+  #                     accountNumber:
+  #                       type: string
+  #                       example: '4567'
+  #                     amount:
+  #                       type: number
+  #                       example: 1000
+  #                     ccy:
+  #                       type: string
+  #                       example: '840'
+  #                     closeTime:
+  #                       type: string
+  #                       example: '2026-02-16T00:00:00.000'
+  #                     operationDate:
+  #                       type: string
+  #                       example: '2026-02-19T00:00:00.000'
+  #                     approvalCode:
+  #                       type: string
+  #                       example: 'VB1FHL'
+  #             examples:
+  #               success:
+  #                 summary: Credit hold created successfully
+  #                 value:
+  #                   code: SUCCESS_CREDIT_HOLD_CREATED
+  #                   params:
+  #                     message: Credit hold created successfully
+  #                     holdId: '10517'
+  #                     holdType: CREDIT
+  #                     accountNumber: '4567'
+  #                     amount: 1000
+  #                     ccy: '840'
+  #                     closeTime: '2026-02-16T00:00:00.000'
+  #                     operationDate: '2026-02-19T00:00:00.000'
+  #                     approvalCode: 'VB1FHL'
+  #       '400':
+  #         $ref: '#/components/responses/BadRequest'
+  #       '401':
+  #         $ref: '#/components/responses/Unauthorized'
+  #       '403':
+  #         $ref: '#/components/responses/Forbidden'
+  #       '409':
+  #         description: Conflict - Business logic error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                 params:
+  #                   type: object
+  #                   properties:
+  #                     message:
+  #                       type: string
+  #             examples:
+  #               contractNotFound:
+  #                 summary: Contract not found
+  #                 value:
+  #                   code: ERR_CONTRACT_NOT_FOUND
+  #                   params:
+  #                     message: Cannot find contract
+  #               currencyMismatch:
+  #                 summary: Currency mismatch
+  #                 value:
+  #                   code: ERR_CURRENCY_MISMATCH
+  #                   params:
+  #                     message: Currency mismatch error
+  #       '500':
+  #         $ref: '#/components/responses/InternalServerError'
+  #       '504':
+  #         $ref: '#/components/responses/LambdaTimeout'
+  #       '405':
+  #         $ref: '#/components/responses/MethodNotAllowed'
+
+  /v1/holds/release:
+    post:
+      operationId: releaseHold
+      summary: Release Hold
+      description: |
+        Release (close) an existing hold on a debit account using the Contract RID and HoldId.
+        The hold record is closed and the available balance is adjusted accordingly.
+        The hold can no longer be modified or released again.
+      tags:
+      - Hold Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountNumber:
+                  type: string
+                  pattern: '^[0-9]{1,20}$'
+                  description: '**Required.** Target account number (contract RID) to release hold from - numeric only, 1-20 digits'
+                  example: '100000000001488'
+                holdId:
+                  type: string
+                  pattern: '^[0-9]+$'
+                  description: '**Required.** Hold reference ID to release - numeric only'
+                  example: '10505'
+            example:
+              accountNumber: '100000000001488'
+              holdId: '10505'
+      responses:
+        '200':
+          description: Hold released successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_HOLD_RELEASED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Hold released successfully
+              examples:
+                success:
+                  summary: Hold released successfully
+                  value:
+                    code: SUCCESS_HOLD_RELEASED
+                    params:
+                      message: Hold released successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: Conflict - Business logic error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                holdNotBelong:
+                  summary: Hold does not belong to account
+                  value:
+                    code: ERR_HOLD_NOT_BELONG
+                    params:
+                      message: Hold does not belong to this account
+                holdNotFound:
+                  summary: Hold not found
+                  value:
+                    code: ERR_HOLD_NOT_FOUND
+                    params:
+                      message: Hold not found
+                accountNotFound:
+                  summary: Account not found
+                  value:
+                    code: ERR_ACCOUNT_NOT_FOUND
+                    params:
+                      message: Account number not found
+                holdAlreadyClosed:
+                  summary: Hold already closed
+                  value:
+                    code: ERR_HOLD_ALREADY_CLOSED
+                    params:
+                      message: Hold already closed
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /v1/holds/increase:
+    post:
+      operationId: increaseHold
+      summary: Increase Hold Amount
+      description: |
+        Increase the amount of an existing hold on a debit account.
+        The system will increase the hold amount and adjust the available balance accordingly.
+        The original hold remains active with the new increased amount.
+      tags:
+      - Hold Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountNumber:
+                  type: string
+                  description: '**Required.** Target account number (contract RID) to increase hold on - numeric only, 1-20 digits'
+                  example: '100000000001488'
+                holdId:
+                  type: string
+                  description: '**Required.** Hold reference ID to increase - numeric only'
+                  example: '10495'
+                amount:
+                  type: number
+                  description: '**Required.** Amount to increase the hold by - must be positive (minimum 0.01)'
+                  example: 130
+                ccy:
+                  type: string
+                  description: '**Required.** Currency code (ISO 3166-1 numeric, 3 digits, e.g., 840 for USD)'
+                  example: '840'
+            example:
+              accountNumber: '100000000001488'
+              holdId: '10495'
+              amount: 130
+              ccy: '840'
+      responses:
+        '200':
+          description: Hold increased successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_HOLD_INCREASED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Hold increased successfully
+              examples:
+                success:
+                  summary: Hold increased successfully
+                  value:
+                    code: SUCCESS_HOLD_INCREASED
+                    params:
+                      message: Hold increased successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: Conflict - Business logic error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                holdNotBelong:
+                  summary: Hold does not belong to account
+                  value:
+                    code: ERR_HOLD_NOT_BELONG
+                    params:
+                      message: Hold does not belong to this account
+                holdNotFound:
+                  summary: Hold not found
+                  value:
+                    code: ERR_HOLD_NOT_FOUND
+                    params:
+                      message: Hold not found
+                contractNotFound:
+                  summary: Contract not found
+                  value:
+                    code: ERR_CONTRACT_NOT_FOUND
+                    params:
+                      message: Contract #6789 not found for institution #160
+                holdAlreadyClosed:
+                  summary: Hold already closed
+                  value:
+                    code: ERR_HOLD_ALREADY_CLOSED
+                    params:
+                      message: Hold already closed
+                currencyMismatch:
+                  summary: Currency mismatch
+                  value:
+                    code: ERR_CURRENCY_MISMATCH
+                    params:
+                      message: Currency mismatch error
+                amountExceeds:
+                  summary: Amount exceeds current hold
+                  value:
+                    code: ERR_AMOUNT_EXCEEDS_HOLD
+                    params:
+                      message: Decrease amount exceeds current hold
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /v1/holds/decrease:
+    post:
+      operationId: decreaseHold
+      summary: Decrease Hold Amount
+      description: |
+        Decrease the amount of an existing hold on a debit account.
+        The system will reduce the hold amount and adjust the available balance accordingly.
+        The hold remains active with the reduced amount.
+      tags:
+      - Hold Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountNumber:
+                  type: string
+                  description: '**Required.** Target account number (contract RID) to decrease hold on - numeric only, 1-20 digits'
+                  example: '100000000001488'
+                holdId:
+                  type: string
+                  description: '**Required.** Hold reference ID to decrease - numeric only'
+                  example: '10495'
+                amount:
+                  type: number
+                  description: '**Required.** Amount to decrease the hold by - must be positive (minimum 0.01, sign handled by code)'
+                  example: 130
+                ccy:
+                  type: string
+                  description: '**Required.** Currency code (ISO 3166-1 numeric, 3 digits, e.g., 840 for USD)'
+                  example: '840'
+            example:
+              accountNumber: '100000000001488'
+              holdId: '10495'
+              amount: 130
+              ccy: '840'
+      responses:
+        '200':
+          description: Hold decreased successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_HOLD_DECREASED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Hold decreased successfully
+              examples:
+                success:
+                  summary: Hold decreased successfully
+                  value:
+                    code: SUCCESS_HOLD_DECREASED
+                    params:
+                      message: Hold decreased successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: Conflict - Business logic error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                holdNotBelong:
+                  summary: Hold does not belong to account
+                  value:
+                    code: ERR_HOLD_NOT_BELONG
+                    params:
+                      message: Hold does not belong to this account
+                holdNotFound:
+                  summary: Hold not found
+                  value:
+                    code: ERR_HOLD_NOT_FOUND
+                    params:
+                      message: Hold not found
+                contractNotFound:
+                  summary: Contract not found
+                  value:
+                    code: ERR_CONTRACT_NOT_FOUND
+                    params:
+                      message: Contract #6789 not found for institution #160
+                holdAlreadyClosed:
+                  summary: Hold already closed
+                  value:
+                    code: ERR_HOLD_ALREADY_CLOSED
+                    params:
+                      message: Hold already closed
+                currencyMismatch:
+                  summary: Currency mismatch
+                  value:
+                    code: ERR_CURRENCY_MISMATCH
+                    params:
+                      message: Currency mismatch error
+                amountExceeds:
+                  summary: Amount exceeds current hold
+                  value:
+                    code: ERR_AMOUNT_EXCEEDS_HOLD
+                    params:
+                      message: Decrease amount exceeds current hold
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
   /pin/set-pin-by-pan:
     post:
       operationId: setCardPin
@@ -3011,7 +4422,7 @@ paths:
                   value:
                     code: ERR_ACCOUNT_NOT_FOUND
                     params:
-                      message: Account not found
+                      message: Account number not found
                 paymentFailed:
                   summary: Payment failed
                   value:
@@ -3225,7 +4636,7 @@ paths:
                   value:
                     code: ERR_ACCOUNT_NOT_FOUND
                     params:
-                      message: Account not found
+                      message: Account number not found
                 reverseTopUpFailed:
                   summary: Reverse top-up failed
                   value:
@@ -3908,7 +5319,7 @@ paths:
                   value:
                     code: ERR_ACCOUNT_NOT_FOUND
                     params:
-                      message: Account number does not exist in the system
+                      message: Account number not found
                 cardNotFound:
                   summary: Card not found
                   value:
@@ -5049,6 +6460,122 @@ paths:
                     code: ERR_INTERNAL_SERVER_ERROR
                     params:
                       message: An unexpected error occurred.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /v1/cards/risk-level:
+    post:
+      operationId: setCardRiskLevel
+      summary: Set Card Risk Level
+      description: |
+        Update the risk level assigned to a specific customer card.
+      tags:
+      - Card Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: Card ID (Token ID) to set risk level - numeric only, 1-50 digits
+                  example: '2973'
+                riskLevel:
+                  type: integer
+                  description: Risk level to assign to the card (integer value from 0 to 999)
+                  example: 1
+            examples:
+              setRiskLevel:
+                summary: Set card risk level
+                value:
+                  cardId: '2973'
+                  riskLevel: 1
+      responses:
+        '200':
+          description: Card risk level updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_RISK_LEVEL_UPDATED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Card risk level updated successfully
+              examples:
+                success:
+                  summary: Risk level updated successfully
+                  value:
+                    code: SUCCESS_RISK_LEVEL_UPDATED
+                    params:
+                      message: Card risk level updated successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                invalidCardId:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId format. Card ID must contain only numbers.
+                invalidRiskLevelType:
+                  summary: Invalid risk level type
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid riskLevel type. Risk level must be an integer.
+                negativeRiskLevel:
+                  summary: Negative risk level not allowed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Risk level must be 0 or higher. Negative values are not allowed.
+                riskLevelTooHigh:
+                  summary: Risk level exceeds maximum
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Risk level must be 999 or lower. Maximum value is 999.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Card not found or invalid risk level
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                invalidRiskLevel:
+                  summary: Invalid risk level
+                  value:
+                    code: ERR_INVALID_RISK_LEVEL
+                    params:
+                      message: Invalid risk level. Risk level must be an integer between 0 and 999.
+        '500':
+          $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
         '403':
