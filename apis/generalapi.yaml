@@ -390,6 +390,18 @@ paths:
                   branch: '49'
                   birthplaceCity: London
                   birthplaceCountryCode: '826'
+                  customerUuid: '550e8400-e29b-41d4-a716-446655440000'
+                  mailAddress:
+                    countryId: '826'
+                    house: '12'
+                    addressInCity: 'Apt 4B'
+                    addressInCountry: 'London'
+                    recipientName: 'John Doe'
+                    zip: 'WC1X 9NX'
+                    construction: 'A'
+                    building: 'Main'
+                    flat: '4B'
+                    streetTitle: "Baker's Street"
               withPassport:
                 summary: Create customer with Passport
                 value:
@@ -405,6 +417,18 @@ paths:
                   branch: '49'
                   birthplaceCity: London
                   birthplaceCountryCode: '826'
+                  customerUuid: '550e8400-e29b-41d4-a716-446655440001'
+                  mailAddress:
+                    countryId: '826'
+                    house: '15'
+                    addressInCity: 'Suite 200'
+                    addressInCountry: 'London'
+                    recipientName: 'Jane Smith'
+                    zip: 'EC1A 1BB'
+                    construction: '1'
+                    building: 'Tower'
+                    flat: '200'
+                    streetTitle: 'Fleet Street'
               withIdentityId:
                 summary: Create customer with Identity ID
                 value:
@@ -420,6 +444,18 @@ paths:
                   branch: '49'
                   birthplaceCity: London
                   birthplaceCountryCode: '826'
+                  customerUuid: '550e8400-e29b-41d4-a716-446655440002'
+                  mailAddress:
+                    countryId: '826'
+                    house: '20'
+                    addressInCity: 'Flat 3'
+                    addressInCountry: 'Manchester'
+                    recipientName: 'Jane Smith'
+                    zip: 'M1 1AE'
+                    construction: 'B'
+                    building: 'Northern'
+                    flat: '3'
+                    streetTitle: 'Piccadilly'
       responses:
         '200':
           description: Customer created successfully
@@ -1088,6 +1124,18 @@ paths:
                       branch: null
                       email: agg@gmail.com
                       mobilePhone: 01158900152
+                      customerUuid: '550e8400-e29b-41d4-a716-446655440000'
+                      mailAddress:
+                        countryId: '826'
+                        house: '12'
+                        addressInCity: 'Apt 4B'
+                        addressInCountry: 'London'
+                        recipientName: 'Marina Ehab'
+                        zip: 'NW1 6XE'
+                        construction: 'A'
+                        building: 'Main'
+                        flat: '4B'
+                        streetTitle: 'Baker Street'
                       homeAddress:
                         streetTitle: Baker Street
                         zip: 'NW1 6XE'
@@ -1790,18 +1838,54 @@ paths:
                   branch: '49'
                   birthplaceCity: London
                   birthplaceCountryCode: '826'
+                  customerUuid: '550e8400-e29b-41d4-a716-446655440003'
+                  mailAddress:
+                    countryId: '826'
+                    house: '25'
+                    addressInCity: 'Suite 200'
+                    addressInCountry: 'London'
+                    recipientName: 'John Emboss'
+                    zip: 'WC1X 9NX'
+                    construction: '2'
+                    building: 'Baker'
+                    flat: '200'
+                    streetTitle: "Baker's Street"
               partialUpdateWithNationalId:
                 summary: Update only email and phone using national ID
                 value:
                   nationalId: NAT123456
                   email: newemail@test.com
                   mobilePhone: '1234567890'
+                  customerUuid: '550e8400-e29b-41d4-a716-446655440004'
+                  mailAddress:
+                    countryId: '826'
+                    house: '30'
+                    addressInCity: 'Flat 5'
+                    addressInCountry: 'Birmingham'
+                    recipientName: 'Updated Name'
+                    zip: 'B1 1AA'
+                    construction: '3'
+                    building: 'Central'
+                    flat: '5'
+                    streetTitle: 'New Street'
               updateWithId:
                 summary: Update using ID
                 value:
                   identityId: ID123456
                   lastName: NewLastName
                   email: updated@test.com
+                  customerUuid: '550e8400-e29b-41d4-a716-446655440005'
+                  mailAddress:
+                    countryId: '826'
+                    house: '35'
+                    addressInCity: 'Unit 10'
+                    addressInCountry: 'Liverpool'
+                    recipientName: 'New Last Name'
+                    zip: 'L1 1AA'
+                    construction: '4'
+                    building: 'Mersey'
+                    flat: '10'
+                    streetTitle: 'Albert Dock'
       responses:
         '200':
           description: Customer details successfully updated
