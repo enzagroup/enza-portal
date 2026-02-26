@@ -3106,6 +3106,8 @@ paths:
     #       $ref: '#/components/responses/MethodNotAllowed'
   /v1/holds/debit:
     post:
+      tags:
+      - Hold Management
       operationId: createDebitHold
       summary: Create Debit Hold
       description: |
@@ -3133,14 +3135,19 @@ paths:
                   example: '840'
                 closeTime:
                   type: string
-                  pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})?$'
-                  description: '**Required.** Hold expiry date/time in ISO 8601 format without milliseconds. Example: 2026-02-16T00:00:00'
-                  example: '2026-02-16T00:00:00'
+                  description: '**Required.** Hold expiry date/time in ISO 8601 format without milliseconds. Examples: 2025-02-18T00:00:00 (start of Feb 18), 2025-02-19T23:59:59 (last second of Feb 19)'
+                  examples:
+                    start_of_day:
+                      value: '2025-02-18T00:00:00'
+                      description: 'Start of February 18, 2025'
+                    end_of_day:
+                      value: '2025-02-19T23:59:59'
+                      description: 'Last second of February 19, 2025'
             example:
               accountNumber: '100000000001488'
               amount: 10
               ccy: '840'
-              closeTime: '2026-02-16T00:00:00.000'
+              closeTime: '2025-02-18T00:00:00'
       responses:
         '200':
           description: Debit hold created successfully
@@ -3176,13 +3183,7 @@ paths:
                         example: '840'
                       closeTime:
                         type: string
-                        example: '2026-02-16T00:00:00.000'
-                      operationDate:
-                        type: string
-                        example: '2026-02-19T00:00:00.000'
-                      approvalCode:
-                        type: string
-                        example: 'VB1FHL'
+                        example: '2025-02-18T00:00:00'
               examples:
                 success:
                   summary: Debit hold created successfully
