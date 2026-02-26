@@ -323,6 +323,54 @@ paths:
                   type: string
                   description: '**Required.** Birthplace country ID (e.g., 826 for UK)'
                   example: '826'
+                customerUuid:
+                  type: string
+                  description: '**Optional.** Unique constraint, identifies the customer for cross-system mapping'
+                  example: '550e8400-e29b-41d4-a716-446655440000'
+                mailAddress:
+                  type: object
+                  description: '**Optional.** Mailing address for the customer'
+                  properties:
+                    countryId:
+                      type: string
+                      description: 'Country ID (ISO numeric code, e.g., 826 for UK)'
+                      example: '826'
+                    house:
+                      type: string
+                      description: 'House number'
+                      example: '12'
+                    addressInCity:
+                      type: string
+                      description: 'Address within city'
+                      example: '12 Baker Street'
+                    addressInCountry:
+                      type: string
+                      description: 'Address within country'
+                      example: '12 Baker Street, London'
+                    recipientName:
+                      type: string
+                      description: 'Name of recipient'
+                      example: 'FADY'
+                    zip:
+                      type: string
+                      description: 'Postal/ZIP code (e.g., "12345", "WC1X 9NX", "SW1A 1AA")'
+                      example: '1234'
+                    construction:
+                      type: string
+                      description: 'Construction/Block number (e.g., "12", "A-5", "1/2")'
+                      example: '12'
+                    building:
+                      type: string
+                      description: 'Building name/number'
+                      example: '12'
+                    flat:
+                      type: string
+                      description: 'Flat/Apartment number'
+                      example: '12'
+                    streetTitle:
+                      type: string
+                      description: 'Street name'
+                      example: '1234'
             examples:
               withNationalId:
                 summary: Create customer with National ID
@@ -470,6 +518,18 @@ paths:
                     code: ERR_CUSTOMER_ALREADY_EXISTS
                     params:
                       message: Customer already exists
+                duplicateUuid:
+                  summary: Duplicate UUID - customer with this UUID already exists
+                  value:
+                    code: ERR_DUPLICATE_UUID
+                    params:
+                      message: Customer with this UUID already exists
+                invalidCountryId:
+                  summary: Invalid Country ID provided
+                  value:
+                    code: ERR_INVALID_COUNTRY_ID
+                    params:
+                      message: Invalid Country ID entered
         '500':
           $ref: '#/components/responses/InternalServerError'
         '405': &id003
@@ -963,6 +1023,54 @@ paths:
                             type: string
                             description: Country of birth code
                             example: '826'
+                      customerUuid:
+                        type: string
+                        description: Customer unique identifier for cross-system mapping
+                        example: '550e8400-e29b-41d4-a716-446655440000'
+                      mailAddress:
+                        type: object
+                        description: Mailing address for the customer
+                        properties:
+                          countryId:
+                            type: string
+                            description: Country ID (ISO numeric code)
+                            example: '826'
+                          house:
+                            type: string
+                            description: House number
+                            example: '12'
+                          addressInCity:
+                            type: string
+                            description: Address within city
+                            example: '12 Baker Street'
+                          addressInCountry:
+                            type: string
+                            description: Address within country
+                            example: '12 Baker Street, London'
+                          recipientName:
+                            type: string
+                            description: Name of recipient
+                            example: 'FADY'
+                          zip:
+                            type: string
+                            description: Postal/ZIP code
+                            example: '1234'
+                          construction:
+                            type: string
+                            description: Construction details
+                            example: '12'
+                          building:
+                            type: string
+                            description: Building name/number
+                            example: '12'
+                          flat:
+                            type: string
+                            description: Flat/Apartment number
+                            example: '12'
+                          streetTitle:
+                            type: string
+                            description: Street name
+                            example: 'Baker Street'
               examples:
                 successResponse:
                   summary: Customer details retrieved successfully
@@ -1607,6 +1715,54 @@ paths:
                   type: string
                   description: '**Optional:** Birthplace country ID (numeric only, e.g., 826 for UK)'
                   example: '826'
+                customerUuid:
+                  type: string
+                  description: '**Optional.** Unique constraint, identifies the customer for cross-system mapping'
+                  example: '550e8400-e29b-41d4-a716-446655440000'
+                mailAddress:
+                  type: object
+                  description: '**Optional.** Mailing address for the customer'
+                  properties:
+                    countryId:
+                      type: string
+                      description: 'Country ID (ISO numeric code, e.g., 826 for UK)'
+                      example: '826'
+                    house:
+                      type: string
+                      description: 'House number'
+                      example: '12'
+                    addressInCity:
+                      type: string
+                      description: 'Address within city'
+                      example: '12 Baker Street'
+                    addressInCountry:
+                      type: string
+                      description: 'Address within country'
+                      example: '12 Baker Street, London'
+                    recipientName:
+                      type: string
+                      description: 'Name of recipient'
+                      example: 'FADY'
+                    zip:
+                      type: string
+                      description: 'Postal/ZIP code (e.g., "12345", "WC1X 9NX", "SW1A 1AA")'
+                      example: '1234'
+                    construction:
+                      type: string
+                      description: 'Construction/Block number (e.g., "12", "A-5", "1/2")'
+                      example: '12'
+                    building:
+                      type: string
+                      description: 'Building name/number'
+                      example: '12'
+                    flat:
+                      type: string
+                      description: 'Flat/Apartment number'
+                      example: '12'
+                    streetTitle:
+                      type: string
+                      description: 'Street name'
+                      example: '1234'
                 gender:
                   type: string
                   enum: [Male, Female]
@@ -1722,6 +1878,18 @@ paths:
                     code: ERR_CUSTOMER_NOT_FOUND
                     params:
                       message: Customer not found
+                duplicateUuid:
+                  summary: Duplicate UUID - customer with this UUID already exists
+                  value:
+                    code: ERR_DUPLICATE_UUID
+                    params:
+                      message: Customer with this UUID already exists
+                invalidCountryId:
+                  summary: Invalid Country ID provided
+                  value:
+                    code: ERR_INVALID_COUNTRY_ID
+                    params:
+                      message: Invalid Country ID entered
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
@@ -2744,72 +2912,50 @@ paths:
               properties:
                 cardId:
                   type: string
-                  pattern: '^[0-9]{1,20}$'
                   description: '**Required.** Target Card ID (numeric only, 1-20 digits)'
                   example: '2973'
                 countryId:
                   type: string
-                  pattern: '^[0-9]{1,3}$'
                   description: '**Required.** Country numeric code (ISO 3166-1 numeric, 1-3 digits)'
                   example: '840'
                 region:
                   type: string
-                  maxLength: 100
-                  pattern: '^[a-zA-Z0-9\s\-'',.]+$'
                   description: Region name/code
                   example: 'Greater Accra'
                 city:
                   type: string
-                  maxLength: 100
-                  pattern: '^[a-zA-Z0-9\s\-'',.]+$'
                   description: City name
                   example: 'Accra'
                 street:
                   type: string
-                  maxLength: 200
-                  pattern: '^[a-zA-Z0-9\s\-'',.]+$'
                   description: Street name
                   example: 'Oxford Street'
                 house:
                   type: string
-                  maxLength: 20
-                  pattern: '^[a-zA-Z0-9\-\/]+$'
                   description: House number
                   example: '15'
                 zip:
                   type: string
-                  maxLength: 20
-                  pattern: '^[a-zA-Z0-9\s\-]+$'
                   description: Postal code
                   example: 'GA-184-9023'
                 building:
                   type: string
-                  maxLength: 20
-                  pattern: '^[a-zA-Z0-9\-\/]+$'
                   description: Building number
                   example: 'B2'
                 flat:
                   type: string
-                  maxLength: 20
-                  pattern: '^[a-zA-Z0-9\-\/]+$'
                   description: Apartment/Flat number
                   example: '4A'
                 construction:
                   type: string
-                  maxLength: 20
-                  pattern: '^[a-zA-Z0-9\-\/]+$'
                   description: Construction/Block number
-                  example: 'Block C'
+                  example: 'Block-C'
                 area:
                   type: string
-                  maxLength: 100
-                  pattern: '^[a-zA-Z0-9\s\-'',.]+$'
                   description: Area/District name
                   example: 'Osu'
                 parentCity:
                   type: string
-                  maxLength: 100
-                  pattern: '^[a-zA-Z0-9\s\-'',.]+$'
                   description: Parent city/municipality
                   example: 'Accra Metropolitan'
                 addressLine:
@@ -2830,7 +2976,7 @@ paths:
               zip: 'GA-184-9023'
               building: 'B2'
               flat: '4A'
-              construction: 'Block C'
+              construction: 'Block-C'
               area: 'Osu'
               parentCity: 'Accra Metropolitan'
               addressLine: '15 Oxford Street, Osu'
@@ -2987,7 +3133,7 @@ paths:
                         addressInCity: '15 Oxford Street, Osu'
                         addressInCountry: 'Ghana'
                         zip: 'GA-184-9023'
-                        construction: 'Block C'
+                        construction: 'Block-C'
                         building: 'B2'
                         flat: '4A'
                         regionTitle: 'Greater Accra'
@@ -3104,10 +3250,13 @@ paths:
     #       $ref: '#/components/responses/LambdaTimeout'
     #     '405':
     #       $ref: '#/components/responses/MethodNotAllowed'
-  /v1/holds/debit:
+  /holds/debit:
     post:
       tags:
       - Hold Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
       operationId: createDebitHold
       summary: Create Debit Hold
       description: |
@@ -3136,13 +3285,7 @@ paths:
                 closeTime:
                   type: string
                   description: '**Required.** Hold expiry date/time in ISO 8601 format without milliseconds. Examples: 2025-02-18T00:00:00 (start of Feb 18), 2025-02-19T23:59:59 (last second of Feb 19)'
-                  examples:
-                    start_of_day:
-                      value: '2025-02-18T00:00:00'
-                      description: 'Start of February 18, 2025'
-                    end_of_day:
-                      value: '2025-02-19T23:59:59'
-                      description: 'Last second of February 19, 2025'
+                  example: '2025-02-18T00:00:00'
             example:
               accountNumber: '100000000001488'
               amount: 10
@@ -3238,7 +3381,7 @@ paths:
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
 
-  # /v1/holds/credit:
+  # /holds/credit:
   #   post:
   #     operationId: createCreditHold
   #     summary: Create Credit Hold
@@ -3371,7 +3514,7 @@ paths:
   #       '405':
   #         $ref: '#/components/responses/MethodNotAllowed'
 
-  /v1/holds/release:
+  /holds/release:
     post:
       operationId: releaseHold
       summary: Release Hold
@@ -3393,12 +3536,10 @@ paths:
               properties:
                 accountNumber:
                   type: string
-                  pattern: '^[0-9]{1,20}$'
                   description: '**Required.** Target account number (contract RID) to release hold from - numeric only, 1-20 digits'
                   example: '100000000001488'
                 holdId:
                   type: string
-                  pattern: '^[0-9]+$'
                   description: '**Required.** Hold reference ID to release - numeric only'
                   example: '10505'
             example:
@@ -3480,7 +3621,7 @@ paths:
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
 
-  /v1/holds/increase:
+  /holds/increase:
     post:
       operationId: increaseHold
       summary: Increase Hold Amount
@@ -3609,7 +3750,7 @@ paths:
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
 
-  /v1/holds/decrease:
+  /holds/decrease:
     post:
       operationId: decreaseHold
       summary: Decrease Hold Amount
@@ -6467,7 +6608,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /v1/cards/risk-level:
+  /cards/risk-level:
     post:
       operationId: setCardRiskLevel
       summary: Set Card Risk Level
