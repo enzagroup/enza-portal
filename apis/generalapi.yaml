@@ -1343,7 +1343,7 @@ paths:
               properties:
                 accountNumber:
                   type: string
-                  description: Account number (Contract RID)
+                  description: Account number
                   example: '100000000001336'
                 status:
                   type: string
@@ -1356,6 +1356,15 @@ paths:
                     - CLOSED: Account is closed normally (standard closure path)
                     - FORCE_CLOSED: Account is closed via forced closure flow (operational override / immediate finalize)
                   example: 'SUSPENDED'
+                window:
+                  type: integer
+                  description: |
+                    **Optional.** The number of days the account remains in a pending closure state before it is fully closed. During this window, final settlements are processed and any remaining transactions are completed.
+                    - Default: 14 days (two weeks)
+                    - Only applicable when status is `CLOSURE_INITIATED`
+                    - After the window expires, the account transitions to `CLOSED`
+                  default: 14
+                  example: 14
             examples:
               suspendAccount:
                 summary: Suspend an active account
@@ -1372,6 +1381,7 @@ paths:
                 value:
                   accountNumber: '100000000001336'
                   status: 'CLOSURE_INITIATED'
+                  window: 14
               closeAccount:
                 summary: Close account (from prepared for closure)
                 value:
