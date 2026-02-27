@@ -185,7 +185,7 @@ paths:
   /preproduced/contracts/retrieve:
     get:
       operationId: retrievePreproducedContracts
-      summary: Retrieve Preproduced Contracts
+      summary: GET Preproduced Contracts
       description: Retrieve a list of preproduced contracts under the bank's corporate customer. These contracts can be used to create preproduced cards.
       tags:
       - Preproduced Card
@@ -3183,7 +3183,7 @@ paths:
   /cards/delivery-address/{card_Id}:
     get:
       operationId: getDeliveryAddress
-      summary: Retrieve Card Delivery Address
+      summary: Get Card Delivery Address
       description: |
         Retrieve the delivery address assigned to a specific customer card.
         Used to verify the cardholder's delivery address before dispatch.
@@ -5779,7 +5779,7 @@ paths:
       operationId: getCardDetails
       tags:
       - Card Details
-      summary: Show Card Details by Card ID
+      summary: GET Card Details by Card ID
       description: 'Retrieve comprehensive card information using the card ID.
 
         '
@@ -5889,7 +5889,7 @@ paths:
       operationId: listCustomerCards
       tags:
       - Customer Management
-      summary: List All Customer Cards
+      summary: Show Customer Cards
       description: 'Retrieve all cards issued to a customer using their identification document.
 
 
@@ -8158,7 +8158,7 @@ paths:
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'  
-      summary: List Customer Accounts
+      summary: Show Customer Accounts
       description: |
         Retrieve list of all customer accounts and account numbers by customer id (nationalId, passport or identityId).
       requestBody:
@@ -8452,7 +8452,7 @@ paths:
       operationId: getPinTrials
       tags:
         - Card Details
-      summary: Retrieve PIN Trials Count
+      summary: GET PIN Trials Count
       description: |
         Retrieve the PIN trials counter for a card. This shows how many incorrect PIN attempts have been made.
       parameters:
