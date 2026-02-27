@@ -1467,7 +1467,7 @@ paths:
   /accounts/cards/{accountNumber}:
     get:
       operationId: getCardsByAccount
-      summary: Get Cards by Account
+      summary: GET Account Cards
       description: |
         Retrieve all cards linked to a customer account.
       tags:
