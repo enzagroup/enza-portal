@@ -24,30 +24,72 @@ tags:
     - HTTPS protocol
 
     '
-- name: Account Management
-  description: Manage account information
 - name: Products Retrieval
   description: Retrieve available product types and products for API access
-- name: Card Management
-  description: Operations for creating, activating, managing card status, and retrieving card details
-- name: Preproduced Card
-  description: Instant card issuance for new and existing customers
-- name: Card CVV2
-  description: Securely retrieve Card Verification Value (CVV2)
-- name: PIN Management
-  description: Set and change card PINs securely
-- name: Notifications Management
-  description: Manage notifications and alerts
-- name: Limit Management
-  description: Manage card limits and restrictions
 - name: Customer Management
   description: Retrieve and manage customer information
 - name: Account Management
   description: Create and manage customer accounts
-- name: Transactions
+- name: Card Issuance
+  description: Create, link, and issue new cards including prepaid, debit, supplementary, and preproduced cards
+- name: Card Lifecycle
+  description: Manage card renewals, reissuances, and replacements
+- name: Card Control
+  description: Manage card status, security settings, and risk levels
+- name: Card Details
+  description: Retrieve card information, delivery addresses, CVV2 values, and security counters
+- name: Preproduced Card
+  description: Instant card issuance for new and existing customers
+- name: PIN Management
+  description: Set and change card PINs securely
+- name: Money Transfer
+  description: Transfer and manage funds between accounts and cards
+- name: Limits Management
+  description: Manage card limits and restrictions
+- name: Holds Management
+  description: '# Holds Management
+
+
+    Manage reserved funds and blocked amounts on customer accounts securely. This
+    section enables financial institutions to place, release, and adjust holds to protect
+    transactions, ensure regulatory compliance, and deliver better service to end-users.
+
+
+    ## Available Operations
+
+
+    | Endpoint | Description |
+
+    |---|---|
+
+    | **Create Debit Hold** | Place a hold on an account to reserve a specific amount,
+    preventing it from being used until released or modified. |
+
+    | **Release Hold** | Remove a previously placed hold and make the reserved funds
+    available again. |
+
+    | **Increase Hold** | Increase the reserved amount on an existing hold. |
+
+    | **Decrease Hold** | Reduce the reserved amount on an existing hold. |
+
+
+    ## How It Works
+
+
+    1. **Place a hold** — Submit the account number and amount to reserve. A confirmation
+    is returned with the hold reference and status.
+
+    2. **Adjust if needed** — Increase or decrease the hold amount using the hold reference
+    and account number. Updated details are returned.
+
+    3. **Release when done** — Remove the hold to make funds available again. The system
+    confirms the release.
+
+    '
+- name: Transactions Management
   description: View and manage card transaction history
-- name: Combined Section
-  description: Combined section APIs
+- name: Notifications Management
+  description: Manage notifications and alerts
 paths:
   /products/retrieve:
     get:
@@ -2198,7 +2240,7 @@ paths:
 
         '
       tags:
-      - Combined Sections
+      - Card Issuance
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -2327,7 +2369,7 @@ paths:
 
         '
       tags:
-      - Card Management
+      - Card Issuance
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -2552,7 +2594,7 @@ paths:
     post:
       operationId: updateCardStatusByRefNum
       tags:
-      - Card Management
+      - Card Control
       summary: Update Card Status by Reference Number
       description: 'Update card status using the card reference number.
 
@@ -2655,7 +2697,7 @@ paths:
       summary: Retrieve CVV2 By Card Data
       description: Retrieve the CVV2 for a card using its PAN and Expiry Date.
       tags:
-      - Card CVV2
+      - Card Details
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -2760,7 +2802,7 @@ paths:
       summary: Retrieve CVV2 by Card ID
       description: Retrieve the CVV2 for a card using its Card ID.
       tags:
-      - Card CVV2
+      - Card Details
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - name: cardId
@@ -2856,7 +2898,7 @@ paths:
         Confirms card possession in card-not-present flows (e.g., onboarding, step-up verification, add-card).
         This API is validation-only. It does not return CVV2 to the client and does not modify any counters/state.
       tags:
-      - Card Management
+      - Card Control
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -2982,7 +3024,7 @@ paths:
         Used when the cardholder requests to receive a card at a different address than the default.
         All address fields are optional except cardId and countryId.
       tags:
-      - Card Management
+      - Card Details
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -3146,7 +3188,7 @@ paths:
         Retrieve the delivery address assigned to a specific customer card.
         Used to verify the cardholder's delivery address before dispatch.
       tags:
-      - Card Management
+      - Card Details
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - name: card_Id
@@ -3337,7 +3379,7 @@ paths:
   /holds/debit:
     post:
       tags:
-      - Hold Management
+      - Holds Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -3607,7 +3649,7 @@ paths:
         The hold record is closed and the available balance is adjusted accordingly.
         The hold can no longer be modified or released again.
       tags:
-      - Hold Management
+      - Holds Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -3714,7 +3756,7 @@ paths:
         The system will increase the hold amount and adjust the available balance accordingly.
         The original hold remains active with the new increased amount.
       tags:
-      - Hold Management
+      - Holds Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -3843,7 +3885,7 @@ paths:
         The system will reduce the hold amount and adjust the available balance accordingly.
         The hold remains active with the reduced amount.
       tags:
-      - Hold Management
+      - Holds Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -4358,7 +4400,7 @@ paths:
     post:
       operationId: updateCardStatusById
       tags:
-      - Card Management
+      - Card Control
       summary: Update Card Status by Card ID
       description: 'Update card status using the card ID.
 
@@ -4477,7 +4519,7 @@ paths:
 
         '
       tags:
-      - Card Management
+      - Money Transfer
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -4684,7 +4726,7 @@ paths:
 
         '
       tags:
-      - Card Management
+      - Money Transfer
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -5589,7 +5631,7 @@ paths:
 
         '
       tags:
-      - Card Management
+      - Card Issuance
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -5736,7 +5778,7 @@ paths:
     get:
       operationId: getCardDetails
       tags:
-      - Card Management
+      - Card Details
       summary: Show Card Details by Card ID
       description: 'Retrieve comprehensive card information using the card ID.
 
@@ -5846,7 +5888,7 @@ paths:
     post:
       operationId: listCustomerCards
       tags:
-      - Card Management
+      - Customer Management
       summary: List All Customer Cards
       description: 'Retrieve all cards issued to a customer using their identification document.
 
@@ -6002,9 +6044,13 @@ paths:
     post:
       operationId: getTransactionHistory
       tags:
-      - Transactions
+      - Transactions Management
       summary: Show Transactions History
-      description: 'Retrieve detailed transaction history for a card within a specified date range.
+      description: 'Retrieve detailed transaction history for a card within a specified
+        date range.
+
+
+        > **⚠️ Note:** This endpoint returns only **Approved** transactions.
 
 
         **Date Range:** Specify startDate and endDate to filter transactions
@@ -6298,11 +6344,276 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+  /cards/settled-transactions:
+    post:
+      operationId: getSettledTransactions
+      tags:
+      - Transactions Management
+      summary: Show Settled Transactions
+      description: 'Retrieve settled transaction history for a card within a specified
+        date range. Unlike the general transactions endpoint, this returns only transactions
+        that have been fully settled by the payment network.
+
+
+        > **⚠️ Note:** This endpoint returns only **Approved** transactions that have
+        reached **Settled** status.
+
+
+        **Date Range:** Specify startDate and endDate to filter transactions using
+        ISO 8601 datetime format (YYYY-MM-DDTHH:mm:ss)
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cardId
+              - startDate
+              - endDate
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID'
+                  example: '3280'
+                startDate:
+                  type: string
+                  format: date-time
+                  description: '**Required.** Start date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
+                  example: '2025-07-01T00:00:00'
+                endDate:
+                  type: string
+                  format: date-time
+                  description: '**Required.** End date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
+                  example: '2025-10-01T23:59:59'
+                transactionCount:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  description: '**Optional.** Maximum number of transactions to return (1-100)'
+                  
+            example:
+              cardId: '3280'
+              startDate: '2025-07-01T00:00:00'
+              endDate: '2025-10-01T23:59:59'
+              transactionCount: 1
+      responses:
+        '200':
+          description: Settled transactions successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_SETTLED_TRANSACTIONS_RETRIEVED
+                  params:
+                    type: object
+                    required:
+                    - cardId
+                    - startDate
+                    - endDate
+                    - totalTransactions
+                    - transactions
+                    properties:
+                      cardId:
+                        type: string
+                        description: Card ID
+                        example: '3280'
+                      startDate:
+                        type: string
+                        format: date-time
+                        description: Start date of query
+                        example: '2025-07-01T00:00:00'
+                      endDate:
+                        type: string
+                        format: date-time
+                        description: End date of query
+                        example: '2025-10-01T23:59:59'
+                      totalTransactions:
+                        type: integer
+                        description: Total number of settled transactions
+                        example: 1
+                      transactions:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - transactionId
+                          - transactionKind
+                          - transactionLabel
+                          - transactionType
+                          - transactionStatus
+                          - amount
+                          - ccy
+                          - date
+                          - timestamp
+                          - terminalOwnerTitle
+                          - terminalType
+                          properties:
+                            transactionId:
+                              type: string
+                              description: Unique transaction identifier
+                              example: '250923507004941165'
+                            transactionKind:
+                              type: string
+                              description: Kind of transaction
+                              example: Goods
+                            transactionLabel:
+                              type: string
+                              description: Transaction label
+                              example: Purchase
+                            transactionType:
+                              type: string
+                              enum:
+                              - Debit
+                              - Credit
+                              - Neutral
+                              - Unknown
+                              description: 'Transaction type: Debit (money out), Credit (money in), Neutral'
+                              example: Debit
+                            transactionStatus:
+                              type: string
+                              enum:
+                              - Settled
+                              description: Settlement status (always Settled for this endpoint)
+                              example: Settled
+                            amount:
+                              type: number
+                              description: Transaction amount
+                              example: 40
+                            ccy:
+                              type: string
+                              description: ISO 4217 numeric currency code
+                              example: '840'
+                            date:
+                              type: string
+                              format: date
+                              description: Transaction date
+                              example: '2025-09-23'
+                            timestamp:
+                              type: string
+                              format: date-time
+                              description: Transaction timestamp
+                              example: '2025-09-23T14:05:00.000'
+                            terminalOwnerTitle:
+                              type: string
+                              description: Terminal owner/acquirer name
+                              example: ACQUIRER NAME
+                            terminalType:
+                              type: string
+                              description: Type of terminal
+                              example: Pos
+                            posting:
+                              type: object
+                              description: Posting/settlement details
+                              properties:
+                                sign:
+                                  type: string
+                                  enum:
+                                  - Debit
+                                  - Credit
+                                  - Unknown
+                                  description: 'Posting type: Debit (money out) or Credit (money in)'
+                                  example: Debit
+                                amount:
+                                  type: number
+                                  description: Settled posting amount in local currency
+                                  example: 411.2
+                                ccy:
+                                  type: string
+                                  description: ISO 4217 numeric currency code for posting
+                                  example: '936'
+              examples:
+                successResponse:
+                  summary: Successful settled transactions retrieval
+                  value:
+                    code: SUCCESS_SETTLED_TRANSACTIONS_RETRIEVED
+                    params:
+                      cardId: '3280'
+                      startDate: '2025-07-01T00:00:00'
+                      endDate: '2025-10-01T23:59:59'
+                      totalTransactions: 1
+                      transactions:
+                      - transactionId: '250923507004941165'
+                        transactionKind: Goods
+                        transactionLabel: Purchase
+                        transactionType: Debit
+                        transactionStatus: Settled
+                        amount: 40
+                        ccy: '840'
+                        date: '2025-09-23'
+                        timestamp: '2025-09-23T14:05:00.000'
+                        terminalOwnerTitle: ACQUIRER NAME
+                        terminalType: Pos
+                        posting:
+                          sign: Debit
+                          amount: 411.2
+                          ccy: '936'
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                badRequestExample:
+                  summary: Invalid date format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid startDate format
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – card not found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_READTOKEN_DECLINED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card not found
+              examples:
+                conflictExample:
+                  summary: Card not found
+                  value:
+                    code: ERR_READTOKEN_DECLINED
+                    params:
+                      message: Card not found
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /cards/create-prepaid:
     post:
       operationId: createPrepaidCard
       tags:
-      - Card Management
+      - Card Issuance
       summary: Create Virtual Prepaid Card
       description: "Create a virtual prepaid card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n3. **Create Prepaid Card** using this API (`POST /cards/create-prepaid`)\n   - Provide the customer's document ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2\n   - Optionally enable auto-activation\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve`\n3. **Card Issuance**: Create issuing and financial contracts, issue virtual card\n4. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)\n5. **Notifications**: Use `POST /v1/notification/manage` after card creation if notifications are required\n\n**Note:** By default, card is NOT automatically activated unless `autoActivate` is set to `true`\n"
       parameters:
@@ -6495,7 +6806,7 @@ paths:
     post:
       operationId: createDebitCard
       tags:
-      - Card Management
+      - Card Issuance
       summary: Create Debit Card
       description: "Create a debit card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n3. **Create Debit Card** using this API (`POST /cards/create-debit`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2\n   - Provide the account number\n   - Optionally enable auto-activation\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve`\n3. **Card Issuance**: Create issuing and financial contracts, issue physical card (inactive by default)\n4. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)\n5. **Notifications**: Use `POST /v1/notification/manage` after card creation if notifications are required\n\n**Note:** By default, card is NOT automatically activated unless `autoActivate` is set to `true`\n"
       parameters:
@@ -6699,7 +7010,7 @@ paths:
       description: |
         Update the risk level assigned to a specific customer card.
       tags:
-      - Card Management
+      - Card Control
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -6812,7 +7123,7 @@ paths:
     post:
       operationId: createPreproducedCard
       tags:
-      - Card Management
+      - Card Issuance
       summary: Create Preproduced Card
       description: |
         Create a card under a Preproduced Contract. This API enables banks to create multiple pre-produced cards programmatically under a preproduced contract.
@@ -6952,7 +7263,7 @@ paths:
     post:
       operationId: blockEmvCard
       tags:
-      - Card Management
+      - Card Control
       summary: Block/Unblock EMV Card
       description: |
         Block or unblock the EMV functionality of a card.
@@ -7083,7 +7394,7 @@ paths:
     post:
       operationId: contactlessInterface
       tags:
-      - Card Management
+      - Card Control
       summary: Enable/Disable Contactless Interface
       description: |
         Enable or disable the contactless interface of a card.
@@ -7214,7 +7525,7 @@ paths:
     post:
       operationId: setAtmStatus
       tags:
-      - Limit Management
+      - Limits Management
       summary: Set ATM Status
       description: Enable or disable ATM transaction restriction for a card.
       parameters:
@@ -7348,7 +7659,7 @@ paths:
     post:
       operationId: setPosStatus
       tags:
-      - Limit Management
+      - Limits Management
       summary: Set POS Status
       description: Enable or disable POS transaction restriction for a card.
       parameters:
@@ -7482,7 +7793,7 @@ paths:
     post:
       operationId: setEcommStatus
       tags:
-        - Limit Management
+        - Limits Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'  
@@ -7629,7 +7940,7 @@ paths:
     get:
       operationId: getLastAtc
       tags:
-        - Card Management
+        - Card Details
       summary: Get Last ATC
       description: |
         Retrieve the Last ATC (Application Transaction Counter) for a card.
@@ -7736,7 +8047,7 @@ paths:
     post:
       operationId: resetLastAtc
       tags:
-        - Card Management
+        - Card Control
       summary: Reset Last ATC
       parameters:
       - $ref: '#/components/parameters/apiKey'
@@ -8011,7 +8322,7 @@ paths:
     get:
       operationId: getRestrictedTerminals
       tags:
-        - Limit Management
+        - Limits Management
       summary: Get Restricted Terminals
       description: |
         Check disabled terminals for a card. Returns status for POS, ATM, and E-commerce terminals.
@@ -8140,7 +8451,7 @@ paths:
     get:
       operationId: getPinTrials
       tags:
-        - Card Management
+        - Card Details
       summary: Retrieve PIN Trials Count
       description: |
         Retrieve the PIN trials counter for a card. This shows how many incorrect PIN attempts have been made.
@@ -8386,7 +8697,7 @@ paths:
     post:
       operationId: createSupplementaryCard
       tags:
-      - Card Management
+      - Card Issuance
       summary: Create Supplementary Card
       description: "Create a supplementary card for an existing customer.\n\n**Workflow:**\n\n1. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n2. **Create Supplementary Card** using this API (`POST /cards/create-supplementary`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 1 \n\n---\n\n**Process Flow:**\n1. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve` (must contain SUPP and API)\n2. **Card Issuance**: Create issuing contract, issue supplementary card\n3. **Card Details**: Return card ID for further operations\n\n**Note:** Supplementary cards are linked to existing customer accounts and require special product types containing 'SUPP' and 'API'\n"
       parameters:
@@ -8518,7 +8829,7 @@ paths:
     post:
       operationId: linkSupplementaryCard
       tags:
-      - Card Management
+      - Card Issuance
       summary: Link Supplementary Card
       description: "Link a supplementary card to a main card for shared limits and controls.\n\n**Process Flow:**\n1. **Card Verification**: Both cards must exist in the system\n2. **Linking Process**: Establish main-supplementary relationship\n3. **Confirmation**: Return success confirmation\n\n**Note:** The supplementary card will be linked to the main card and share limits and controls"
       parameters:
@@ -8640,7 +8951,7 @@ paths:
       summary: Retrieve Card Limits
       description: "Retrieve the list of limits and restrictions configured on a card/token.\n        \n**Pre-requisite:** The target CardID must exist.\n"
       tags:
-      - Limit Management
+      - Limits Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - name: card_Id
@@ -8830,7 +9141,7 @@ paths:
 
         '
       tags:
-      - Limit Management
+      - Limits Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -8971,7 +9282,7 @@ paths:
 
         '
       tags:
-      - Limit Management
+      - Limits Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -9095,7 +9406,7 @@ paths:
   /cards/renew:
     post:
       tags:
-        - Card Management
+        - Card Lifecycle
       summary: Renew Card
       description: Renew an expired card with a new expiry date while keeping the same PAN
       parameters:
@@ -9197,7 +9508,7 @@ paths:
   /cards/reissue:
     post:
       tags:
-        - Card Management
+        - Card Lifecycle
       summary: Reissue Card
       description: Reissue a damaged card with the same PAN and expiry date
       parameters:
@@ -9305,7 +9616,7 @@ paths:
   /cards/replace:
     post:
       tags:
-        - Card Management
+        - Card Lifecycle
       summary: Replace Card
       description: Replace a lost, stolen, or compromised card with a new PAN and new expiry date
       parameters:
@@ -9404,6 +9715,203 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+  /account-to-card-transfer:
+    post:
+      operationId: accountToCardTransfer
+      summary: Account to Card Transfer
+      description: Transfer funds from a customer bank account to a card.
+      tags:
+      - Money Transfer
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cardId
+              - sourceAccount
+              - amount
+              - ccy
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (Token ID) — numeric only'
+                  example: '3404'
+                sourceAccount:
+                  type: string
+                  description: '**Required.** Source account number (customer bank account) — alphanumeric only'
+                  example: '100000000001234'
+                amount:
+                  type: string
+                  description: '**Required.** Transfer amount — must include two decimal digits (e.g., 100.00)'
+                  example: '100.00'
+                ccy:
+                  type: string
+                  description: '**Required.** ISO 4217 numeric currency code — must be exactly 3 digits'
+                  example: '936'
+              additionalProperties: false
+            example:
+              cardId: '3404'
+              sourceAccount: '100000000001234'
+              amount: '100.00'
+              ccy: '936'
+      responses:
+        '200':
+          description: Transfer completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_ACCOUNT_TO_CARD_TRANSFER
+                  params:
+                    type: object
+                    properties:
+                      tranId:
+                        type: string
+                        description: Transaction ID from the processing system
+                        example: '123456789'
+                      operDay:
+                        type: string
+                        description: Operational day of the transaction
+                        example: '2026-02-27'
+                      result:
+                        type: string
+                        description: Transaction result status
+                        example: Approved
+                      approvalCode:
+                        type: string
+                        description: Approval code for the transaction
+                        example: 'A12345'
+              examples:
+                success:
+                  summary: Transfer approved
+                  value:
+                    code: SUCCESS_ACCOUNT_TO_CARD_TRANSFER
+                    params:
+                      tranId: '123456789'
+                      operDay: '2026-02-27'
+                      result: Approved
+                      approvalCode: A12345
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                missingField:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: cardId'
+                invalidCardId:
+                  summary: Invalid card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId format. Card ID must contain only numbers.
+                invalidAmount:
+                  summary: Invalid amount format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid amount format. Must include two decimal digits.
+                invalidCurrency:
+                  summary: Invalid currency code
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid ccy format. Currency code must be exactly 3 digits.
+                unknownField:
+                  summary: Unknown field in request
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Unknown field: extraField'
+                emptyBody:
+                  summary: Empty request body
+                  value:
+                    code: ERR_BODY_EMPTY
+                    params:
+                      message: Request body is required
+                invalidJson:
+                  summary: Invalid JSON format
+                  value:
+                    code: ERR_INVALID_JSON
+                    params:
+                      message: Invalid JSON format in request body
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Business logic conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                accountNotFound:
+                  summary: Source account not found
+                  value:
+                    code: ERR_ACCOUNT_NOT_FOUND
+                    params:
+                      message: Source account not found
+                insufficientFunds:
+                  summary: Insufficient funds in source account
+                  value:
+                    code: ERR_INSUFFICIENT_FUNDS
+                    params:
+                      message: Insufficient funds in source account
+                noAccountLinked:
+                  summary: Card has no linked financial contract
+                  value:
+                    code: ERR_NO_ACCOUNT_LINKED
+                    params:
+                      message: Card transfer configuration incomplete
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 components:
   responses:
     LambdaTimeout:
