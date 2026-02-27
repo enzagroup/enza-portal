@@ -4529,7 +4529,7 @@ paths:
 
         '
       tags:
-      - Money Transfer
+      - Card Control
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -4736,7 +4736,7 @@ paths:
 
         '
       tags:
-      - Money Transfer
+      - Card Control
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
