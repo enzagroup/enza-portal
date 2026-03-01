@@ -6692,11 +6692,11 @@ paths:
                     params:
                       message: Invalid temporaryDisableStartTime format. Use YYYY-MM-DDTHH:mm:ss
                 invalidTimeRange:
-                  summary: Start time after end time
+                  summary: Invalid time range
                   value:
-                    code: ERR_VALIDATION_FAILED
+                    code: ERR_INVALID_TIME_RANGE
                     params:
-                      message: temporaryDisableStartTime must be before temporaryDisableEndTime
+                      message: Invalid time range provided
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -6715,7 +6715,7 @@ paths:
                 properties:
                   code:
                     type: string
-                    example: ERR_CARD_OR_RESTRICTION_NOT_FOUND
+                    example: ERR_CARD_NOT_FOUND
                   params:
                     type: object
                     required:
@@ -6723,26 +6723,26 @@ paths:
                     properties:
                       message:
                         type: string
-                        example: Card or restriction not found
+                        example: Card not found
               examples:
                 cardNotFound:
                   summary: Card not found
                   value:
-                    code: ERR_CARD_OR_RESTRICTION_NOT_FOUND
+                    code: ERR_CARD_NOT_FOUND
                     params:
-                      message: Card or restriction not found
+                      message: Card not found
                 restrictionNotFound:
                   summary: Restriction not found
                   value:
-                    code: ERR_CARD_OR_RESTRICTION_NOT_FOUND
+                    code: ERR_RESTRICTION_NOT_FOUND
                     params:
-                      message: Card or restriction not found
+                      message: Restriction not found
                 operationDeclined:
                   summary: Operation declined
                   value:
                     code: ERR_OPERATION_DECLINED
                     params:
-                      message: Operation declined by processor
+                      message: PartyNotExists
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
