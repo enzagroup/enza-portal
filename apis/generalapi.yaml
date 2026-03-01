@@ -311,10 +311,6 @@ paths:
                   type: string
                   description: '**Optional.** Residence country ID (e.g., 826 for UK)'
                   example: '826'
-                branch:
-                  type: string
-                  description: '**Optional.** Branch ID'
-                  example: '49'
                 birthplaceCity:
                   type: string
                   description: '**Optional.** Birthplace city title'
@@ -387,7 +383,6 @@ paths:
                   gender: Male
                   employer: Tech Corp
                   residenceCountryCode: '826'
-                  branch: '49'
                   birthplaceCity: London
                   birthplaceCountryCode: '826'
                   customerUuid: '550e8400-e29b-41d4-a716-446655440000'
@@ -414,7 +409,6 @@ paths:
                   employer: Finance Inc
                   mobilePhone: '9991234567'
                   residenceCountryCode: '826'
-                  branch: '49'
                   birthplaceCity: London
                   birthplaceCountryCode: '826'
                   customerUuid: '550e8400-e29b-41d4-a716-446655440001'
@@ -441,7 +435,6 @@ paths:
                   employer: Finance Inc
                   mobilePhone: '9991234567'
                   residenceCountryCode: '826'
-                  branch: '49'
                   birthplaceCity: London
                   birthplaceCountryCode: '826'
                   customerUuid: '550e8400-e29b-41d4-a716-446655440002'
@@ -1012,10 +1005,6 @@ paths:
                         type: string
                         description: Customer residence country code
                         example: '826'
-                      branch:
-                        type: string
-                        description: Customer branch ID
-                        example: '49'
                       email:
                         type: string
                         format: email
@@ -1121,7 +1110,6 @@ paths:
                       gender: Female
                       employer: null
                       residenceCountryCode: '454'
-                      branch: null
                       email: agg@gmail.com
                       mobilePhone: 01158900152
                       customerUuid: '550e8400-e29b-41d4-a716-446655440000'
@@ -1751,10 +1739,6 @@ paths:
                   type: string
                   description: '**Optional:** Residence country ID (numeric only, e.g., 826 for UK)'
                   example: '826'
-                branch:
-                  type: string
-                  description: '**Optional:** Branch ID (numeric only)'
-                  example: '49'
                 birthplaceCity:
                   type: string
                   description: '**Optional:** Birthplace city title'
@@ -1835,7 +1819,6 @@ paths:
                   zip: WC1X 9NX
                   addressLine: 'Suite 200, Baker Street'
                   residenceCountryCode: '826'
-                  branch: '49'
                   birthplaceCity: London
                   birthplaceCountryCode: '826'
                   customerUuid: '550e8400-e29b-41d4-a716-446655440003'
@@ -1941,12 +1924,6 @@ paths:
                     code: ERR_INVALID_COUNTRY_CODE
                     params:
                       message: 'Invalid country code provided. Please use a valid numeric country ID (e.g., 826 for UK)'
-                invalidBranchId:
-                  summary: Invalid branch ID
-                  value:
-                    code: ERR_INVALID_BRANCH_ID
-                    params:
-                      message: 'Invalid branch ID provided. Please use a valid branch ID for your institution'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '409':
