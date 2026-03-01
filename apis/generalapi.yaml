@@ -6596,6 +6596,157 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+  /cards/temporary-disable-restriction:
+    post:
+      operationId: temporaryDisableRestriction
+      tags:
+      - Limit Management
+      summary: Temporary Disable Restriction
+      description: 'Temporarily disable a restriction on a specific card to allow transaction types that were previously blocked.
+        '
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (Token Id) - the card to apply the restriction change on. Must be 1-19 digits, cannot be all zeros, and cannot have leading zeros.'
+                  example: '3280'
+                restrictionRid:
+                  type: string
+                  description: '**Required.** Reference to the restriction (e.g., CashTEST, Ecommerce restriction)'
+                  example: 'CashTEST'
+                temporaryDisableStartTime:
+                  type: string
+                  format: date-time
+                  description: '**Required.** Beginning time of the disabled hold on the restriction (ISO 8601 format without timezone)'
+                  example: '2026-02-18T14:24:41'
+                temporaryDisableEndTime:
+                  type: string
+                  format: date-time
+                  description: '**Required.** End time of the disabled hold on the restriction (ISO 8601 format without timezone)'
+                  example: '2026-03-18T14:24:47'
+            example:
+              cardId: '3280'
+              restrictionRid: 'CashTEST'
+              temporaryDisableStartTime: '2026-02-18T14:24:41'
+              temporaryDisableEndTime: '2026-03-18T14:24:47'
+      responses:
+        '200':
+          description: Restriction temporarily disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_RESTRICTION_TEMPORARILY_DISABLED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        description: Success message
+                        example: 'Successfully disabled restriction'
+              examples:
+                successResponse:
+                  summary: Successful restriction temporary disable
+                  value:
+                    code: SUCCESS_RESTRICTION_TEMPORARILY_DISABLED
+                    params:
+                      message: 'Successfully disabled restriction'
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                invalidCardIdAllZeros:
+                  summary: Card ID is all zeros
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId. Card ID cannot be all zeros
+                invalidCardIdLeadingZero:
+                  summary: Card ID has leading zeros
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId. Card ID cannot have leading zeros
+                invalidDateFormat:
+                  summary: Invalid datetime format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid temporaryDisableStartTime format. Use YYYY-MM-DDTHH:mm:ss
+                invalidTimeRange:
+                  summary: Start time after end time
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: temporaryDisableStartTime must be before temporaryDisableEndTime
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Conflict – card or restriction not found or operation declined
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CARD_OR_RESTRICTION_NOT_FOUND
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card or restriction not found
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_OR_RESTRICTION_NOT_FOUND
+                    params:
+                      message: Card or restriction not found
+                restrictionNotFound:
+                  summary: Restriction not found
+                  value:
+                    code: ERR_CARD_OR_RESTRICTION_NOT_FOUND
+                    params:
+                      message: Card or restriction not found
+                operationDeclined:
+                  summary: Operation declined
+                  value:
+                    code: ERR_OPERATION_DECLINED
+                    params:
+                      message: Operation declined by processor
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
   /cards/create-prepaid:
     post:
       operationId: createPrepaidCard
