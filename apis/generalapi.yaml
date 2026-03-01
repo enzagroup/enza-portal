@@ -185,7 +185,7 @@ paths:
   /preproduced/contracts/retrieve:
     get:
       operationId: retrievePreproducedContracts
-      summary: GET Preproduced Contracts
+      summary: Get Preproduced Contracts
       description: Retrieve a list of preproduced contracts under the bank's corporate customer. These contracts can be used to create preproduced cards.
       tags:
       - Preproduced Card
@@ -5766,7 +5766,7 @@ paths:
       operationId: getCardDetails
       tags:
       - Card Details
-      summary: GET Card Details by Card ID
+      summary: Get Card Details by Card ID
       description: 'Retrieve comprehensive card information using the card ID.
 
         '
@@ -8439,7 +8439,7 @@ paths:
       operationId: getPinTrials
       tags:
         - Card Details
-      summary: GET PIN Trials Count
+      summary: Get PIN Trials Count
       description: |
         Retrieve the PIN trials counter for a card. This shows how many incorrect PIN attempts have been made.
       parameters:
@@ -9702,7 +9702,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /account-to-card-transfer:
+  /accounts/account-to-card-transfer:
     post:
       operationId: accountToCardTransfer
       summary: Account to Card Transfer
