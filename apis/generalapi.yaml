@@ -6600,7 +6600,7 @@ paths:
     post:
       operationId: temporaryDisableRestriction
       tags:
-      - Limit Management
+      - Limits Management
       summary: Temporary Disable Restriction
       description: 'Temporarily disable a restriction on a specific card to allow transaction types that were previously blocked.
         '
