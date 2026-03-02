@@ -5824,6 +5824,14 @@ paths:
                         type: string
                         description: Currency code or symbol
                         example: USD
+                      productType:
+                        type: string
+                        description: Contract type/product RID from the issuing contract
+                        example: PhysicalDebitIssuingContractMCAPI
+                      mbr:
+                        type: string
+                        description: Card member reference number
+                        example: '0'
               examples:
                 successResponse:
                   summary: Successful card details retrieval
@@ -5835,6 +5843,8 @@ paths:
                       expiryDate: '2025-12-31'
                       availableBalance: '1500.00'
                       currency: USD
+                      productType: PhysicalDebitIssuingContractMCAPI
+                      mbr: '0'
         '400':
           description: Bad request – validation failed
           content:
@@ -6338,8 +6348,7 @@ paths:
       - Transactions Management
       summary: Show Settled Transactions
       description: 'Retrieve settled transaction history for a card within a specified
-        date range. Unlike the general transactions endpoint, this returns only transactions
-        that have been fully settled by the payment network.
+        date range.
 
 
         > **⚠️ Note:** This endpoint returns only **Approved** transactions that have
@@ -6358,14 +6367,10 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-              - cardId
-              - startDate
-              - endDate
               properties:
                 cardId:
                   type: string
-                  description: '**Required.** Card ID'
+                  description: '**Required.** Card ID (Token Id) - the card to apply the restriction change on. Must be 1-19 digits, cannot be all zeros, and cannot have leading zeros.'
                   example: '3280'
                 startDate:
                   type: string
@@ -6470,17 +6475,18 @@ paths:
                             transactionStatus:
                               type: string
                               enum:
+                              - Presentment
                               - Settled
-                              description: Settlement status (always Settled for this endpoint)
-                              example: Settled
+                              description: Transaction status (Presentment or Settled)
+                              example: Presentment
                             amount:
                               type: number
                               description: Transaction amount
                               example: 40
                             ccy:
                               type: string
-                              description: ISO 4217 numeric currency code
-                              example: '840'
+                              description: ISO 4217 alphabetic currency code
+                              example: 'SGD'
                             date:
                               type: string
                               format: date
@@ -6498,6 +6504,11 @@ paths:
                             terminalType:
                               type: string
                               description: Type of terminal
+                              enum:
+                              - Pos
+                              - Ecom
+                              - Man
+                              - Adm
                               example: Pos
                             posting:
                               type: object
@@ -6515,10 +6526,14 @@ paths:
                                   type: number
                                   description: Settled posting amount in local currency
                                   example: 411.2
+                                fees:
+                                  type: number
+                                  description: Transaction fees (optional)
+                                  example: 1.24
                                 ccy:
                                   type: string
-                                  description: ISO 4217 numeric currency code for posting
-                                  example: '936'
+                                  description: ISO 4217 alphabetic currency code for posting
+                                  example: 'USD'
               examples:
                 successResponse:
                   summary: Successful settled transactions retrieval
@@ -6530,21 +6545,22 @@ paths:
                       endDate: '2025-10-01T23:59:59'
                       totalTransactions: 1
                       transactions:
-                      - transactionId: '250923507004941165'
+                      - transactionId: '260108373853696586'
                         transactionKind: Goods
                         transactionLabel: Purchase
                         transactionType: Debit
-                        transactionStatus: Settled
-                        amount: 40
-                        ccy: '840'
-                        date: '2025-09-23'
-                        timestamp: '2025-09-23T14:05:00.000'
-                        terminalOwnerTitle: ACQUIRER NAME
+                        transactionStatus: Presentment
+                        amount: 100
+                        currency: 'SGD'
+                        date: '2026-01-08'
+                        timestamp: '2026-01-08T10:23:05.000'
+                        terminalOwnerTitle: HEYZIEL
                         terminalType: Pos
                         posting:
                           sign: Debit
-                          amount: 411.2
-                          ccy: '936'
+                          amount: 82.48
+                          fees: 1.24
+                          currency: 'USD'
         '400':
           description: Bad request – validation failed
           content:
