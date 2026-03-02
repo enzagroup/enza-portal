@@ -4489,22 +4489,7 @@ paths:
     post:
       operationId: topUpCard
       summary: Top Up Card
-      description: 'Load funds instantly onto a card. This operation credits the specified amount to the card''s available balance, enabling immediate use for transactions.
-
-
-        **Transaction Flow:**
-
-        1. Validate card existence and status
-
-        2. Verify source account balance
-
-        3. Execute real-time fund transfer
-
-        4. Update card balance immediately
-
-        5. Return transaction confirmation with approval code
-
-        '
+      description: 'Load funds instantly onto a card. This operation credits the specified amount to the card''s available balance, enabling immediate use for transactions.'
       tags:
       - Card Control
       parameters:
@@ -4576,10 +4561,7 @@ paths:
                   value:
                     code: SUCCESS_TOPUP_COMPLETED
                     params:
-                      transactionId: '251026743389956338'
-                      approvalCode: 6Q212F
-                      amount: '100.12'
-                      currency: '936'
+                      message: Successfully topped up the card
         '400':
           description: Bad request – validation failed
           content:
@@ -4783,10 +4765,7 @@ paths:
                   value:
                     code: SUCCESS_REVERSE_TOPUP_COMPLETED
                     params:
-                      transactionId: '251218316432285040'
-                      approvalCode: BLQP9Y
-                      amount: '100.12'
-                      currency: '936'
+                      message: Successfully reversed the top-up
         '400':
           description: Bad request – validation failed
           content:
@@ -9885,11 +9864,6 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-              - cardId
-              - sourceAccount
-              - amount
-              - ccy
               properties:
                 cardId:
                   type: string
@@ -9952,10 +9926,7 @@ paths:
                   value:
                     code: SUCCESS_ACCOUNT_TO_CARD_TRANSFER
                     params:
-                      tranId: '123456789'
-                      operDay: '2026-02-27'
-                      result: Approved
-                      approvalCode: A12345
+                      message: Transfer completed successfully
         '400':
           description: Validation error
           content:
