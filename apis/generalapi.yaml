@@ -4006,7 +4006,7 @@ paths:
       - name: accountNumber
         in: path
         required: true
-        description:Account Number (alphanumeric, hyphens, underscores allowed, max 50 chars)
+        description: Account Number (alphanumeric, hyphens, underscores allowed, max 50 chars)
         schema:
           type: string
         example: '100000000001488'
