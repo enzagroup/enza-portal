@@ -3992,6 +3992,122 @@ paths:
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
 
+  /holds/{accountNumber}:
+    get:
+      operationId: retrieveHolds
+      summary: Retrieve Active Holds
+      description: |
+        Retrieve all active holds placed on a customer's contract.
+        Returns hold details including holdId, holdSign, holdAmount, and holdCurrencyAccount.
+      tags:
+      - Holds Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - name: accountNumber
+        in: path
+        required: true
+        description:Account Number (alphanumeric, hyphens, underscores allowed, max 50 chars)
+        schema:
+          type: string
+        example: '100000000001488'
+      responses:
+        '200':
+          description: Holds retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_HOLDS_RETRIEVED
+                  params:
+                    type: object
+                    properties:
+                      accountNumber:
+                        type: string
+                        example: '100000000001488'
+                      totalHolds:
+                        type: integer
+                        example: 2
+                      holds:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            holdId:
+                              type: string
+                              description: Unique identifier for each hold
+                              example: '10516'
+                            holdSign:
+                              type: string
+                              description: Sign of the hold (-1 for debit, 1 for credit)
+                              example: '-1'
+                            holdAmount:
+                              type: string
+                              description: Amount of the hold
+                              example: '1'
+                            holdCurrencyAccount:
+                              type: string
+                              description: Currency account code
+                              example: 'USD'
+              examples:
+                successWithHolds:
+                  summary: Holds retrieved successfully
+                  value:
+                    code: SUCCESS_HOLDS_RETRIEVED
+                    params:
+                      accountNumber: '100000000001488'
+                      totalHolds: 2
+                      holds:
+                        - holdId: '10516'
+                          holdSign: '-1'
+                          holdAmount: '1'
+                          holdCurrencyAccount: 'USD'
+                        - holdId: '10517'
+                          holdSign: '1'
+                          holdAmount: '50'
+                          holdCurrencyAccount: 'EUR'
+                successNoHolds:
+                  summary: No holds found
+                  value:
+                    code: SUCCESS_HOLDS_RETRIEVED
+                    params:
+                      accountNumber: '100000000001488'
+                      totalHolds: 0
+                      holds: []
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Conflict - Contract not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                contractNotFound:
+                  summary: Contract not found
+                  value:
+                    code: ERR_CONTRACT_NOT_FOUND
+                    params:
+                      message: Contract not found
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
   /pin/set-pin-by-pan:
     post:
       operationId: setCardPin
@@ -8064,11 +8180,9 @@ paths:
                 internalServerError:
                   summary: Internal server error
                   value:
-                    code: ERR_INTERNAL_SERVER_ERROR
-                    params:
-                      message: An unexpected error occurred.
         '504':
           $ref: '#/components/responses/LambdaTimeout'
+
   /cards/last-atc:
     get:
       operationId: getLastAtc
@@ -8575,6 +8689,135 @@ paths:
                     code: ERR_CARD_NOT_FOUND
                     params:
                       message: Card not found
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
+  /cards/modify-embossed-name:
+    post:
+      operationId: modifyCardEmbossedName
+      summary: Modify Card Embossed Name
+      description: |
+        Modify the embossed name on a customer's card. The embossed name is updated in the card's data.
+      tags:
+      - Card Control
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: 'Target Card ID - numeric only'
+                  example: '2973'
+                embossedName:
+                  type: string
+                  description: 'The new embossed name - English letters only, will be converted to uppercase'
+                  example: 'YEHIA salamaa'
+            examples:
+              validRequest:
+                summary: Valid request
+                value:
+                  cardId: '2973'
+                  embossedName: 'YEHIA salamaa'
+      responses:
+        '200':
+          description: Embossed name modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_EMBOSSED_NAME_MODIFIED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Card embossed name modified successfully
+              examples:
+                success:
+                  summary: Embossed name modified successfully
+                  value:
+                    code: SUCCESS_EMBOSSED_NAME_MODIFIED
+                    params:
+                      message: Card embossed name modified successfully
+        '400':
+          description: Bad request - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                invalidCardId:
+                  summary: Invalid Card ID
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId format. Card ID must contain only numbers (0-9) and be up to 19 digits long
+                leadingZeros:
+                  summary: Leading Zeros Not Allowed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId format. Card ID cannot have leading zeros
+                allZeros:
+                  summary: All Zeros Not Allowed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId format. Card ID cannot be all zeros
+                emptyEmbossedName:
+                  summary: Empty Embossed Name
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Empty Embossed Name
+                invalidFormat:
+                  summary: Invalid Embossed Name Format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid Embossed name format
+                englishLettersOnly:
+                  summary: Accept English letters only
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Accept English letters only
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Conflict - Card not found or operation declined
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Wrong Card ID, please use a valid Card ID
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
