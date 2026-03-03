@@ -8694,7 +8694,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
-  /cards/modify-embossed-name:
+  /cards/embossed-name:
     post:
       operationId: modifyCardEmbossedName
       summary: Modify Card Embossed Name
