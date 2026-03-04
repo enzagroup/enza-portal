@@ -5915,6 +5915,10 @@ paths:
                         type: string
                         description: Available balance on the card
                         example: '1500.00'
+                      accountNumber:
+                       type: string
+                       description: Account number
+                       example: 102339404   
                       currency:
                         type: string
                         description: Currency code or symbol
@@ -5937,6 +5941,7 @@ paths:
                       status: Active
                       expiryDate: '2025-12-31'
                       availableBalance: '1500.00'
+                      accountNumber: 102339404
                       currency: USD
                       productType: PhysicalDebitIssuingContractMCAPI
                       mbr: '0'
