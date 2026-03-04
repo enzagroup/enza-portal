@@ -8187,6 +8187,269 @@ paths:
                   value:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
+  /cards/remove-temporary-disable-restriction:
+    post:
+      operationId: removeTemporaryDisableRestriction
+      tags:
+      - Limits Management
+      summary: Remove Temporary Disable Restriction
+      description: 'Removes the temporary disable status and restores the original restriction. No time parameters required - the restriction is immediately re-applied.'
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID - the card to apply the restriction change on. Must be 1-19 digits, cannot be all zeros, and cannot have leading zeros.'
+                  example: '3280'
+                restrictionRid:
+                  type: string
+                  description: '**Required.** Reference to the restriction (e.g., CashTEST, Ecommerce restriction)'
+                  example: 'CashTEST'
+            example:
+              cardId: '3280'
+              restrictionRid: 'CashTEST'
+      responses:
+        '200':
+          description: Restriction restored successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_RESTRICTION_RESTORED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        description: Success message
+                        example: 'Successfully restored restriction'
+              examples:
+                successResponse:
+                  summary: Successful restriction restore
+                  value:
+                    code: SUCCESS_RESTRICTION_RESTORED
+                    params:
+                      message: 'Successfully restored restriction'
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                invalidCardIdAllZeros:
+                  summary: Card ID is all zeros
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId. Card ID cannot be all zeros
+                invalidCardIdLeadingZero:
+                  summary: Card ID has leading zeros
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId. Card ID cannot have leading zeros
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Conflict – card or restriction not found or operation declined
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_CARD_NOT_FOUND
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card not found
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                restrictionNotFound:
+                  summary: Restriction not found
+                  value:
+                    code: ERR_RESTRICTION_NOT_FOUND
+                    params:
+                      message: Restriction not found
+                operationDeclined:
+                  summary: Operation declined
+                  value:
+                    code: ERR_OPERATION_DECLINED
+                    params:
+                      message: PartyNotExists
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
+  /accounts/unlink-card-from-account:
+    post:
+      operationId: unlinkCardFromAccount
+      tags:
+      - Account Management
+      summary: Unlink Card from Account
+      description: 'Unlink (remove) a card from a account. This operation removes the existing Access link between a card and an account, preventing the card from authorizing transactions on that account.'
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID - the card to unlink from account. Must be numeric, 1-19 digits, no leading zeros.'
+                  example: '6280'
+                accountNumber:
+                  type: string
+                  description: '**Required.** Account number to unlink the card from (e.g., 100000000001488)'
+                  example: '100000000001488'
+            example:
+              cardId: '6280'
+              accountNumber: '100000000001488'
+      responses:
+        '200':
+          description: Card successfully unlinked from account
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CARD_UNLINKED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card successfully unlinked from account
+              examples:
+                successUnlink:
+                  summary: Successful unlink
+                  value:
+                    code: SUCCESS_CARD_UNLINKED
+                    params:
+                      message: Card successfully unlinked from account
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingCardId:
+                  summary: Missing card ID
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing or invalid required field: cardId'
+                missingAccountNumber:
+                  summary: Missing account number
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing or invalid required field: accountNumber'
+                invalidCardIdLeadingZero:
+                  summary: Card ID has leading zeros
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Invalid cardId format. Card ID cannot have leading zeros'
+                invalidCardIdAllZeros:
+                  summary: Card ID is all zeros
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Invalid cardId format. Card ID cannot be all zeros'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Conflict – card, account or link not found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                contractNotFound:
+                  summary: Account not found
+                  value:
+                    code: ERR_CONTRACT_NOT_FOUND
+                    params:
+                      message: Contract not found
+                linkNotFound:
+                  summary: Link does not exist
+                  value:
+                    code: ERR_LINK_NOT_FOUND
+                    params:
+                      message: Card is not linked to this account
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
 
   /cards/last-atc:
     get:
