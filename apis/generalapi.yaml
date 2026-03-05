@@ -8437,9 +8437,9 @@ paths:
                 contractNotFound:
                   summary: Account not found
                   value:
-                    code: ERR_CONTRACT_NOT_FOUND
+                    code: ERR_ACCOUNT_NOT_FOUND
                     params:
-                      message: Contract not found
+                      message: Account not found
                 linkNotFound:
                   summary: Link does not exist
                   value:
