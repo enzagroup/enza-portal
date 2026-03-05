@@ -2562,7 +2562,7 @@ paths:
                   value:
                     code: ERR_VALIDATION_DECLINED
                     params:
-                      message: Contract not found
+                      message: Account not found
                 linkingDeclined:
                   summary: Linking Operation Declined
                   value:
@@ -3469,12 +3469,12 @@ paths:
                       message:
                         type: string
               examples:
-                contractNotFound:
-                  summary: Contract not found
+                accountNotFound:
+                  summary: Account not found
                   value:
-                    code: ERR_CONTRACT_NOT_FOUND
+                    code: ERR_ACCOUNT_NOT_FOUND
                     params:
-                      message: Cannot find contract
+                      message: Cannot find account
                 currencyMismatch:
                   summary: Currency mismatch
                   value:
@@ -3613,7 +3613,7 @@ paths:
   #                 value:
   #                   code: ERR_CONTRACT_NOT_FOUND
   #                   params:
-  #                     message: Cannot find contract
+  #                     message: Cannot find account
   #               currencyMismatch:
   #                 summary: Currency mismatch
   #                 value:
@@ -3832,12 +3832,12 @@ paths:
                     code: ERR_HOLD_NOT_FOUND
                     params:
                       message: Hold not found
-                contractNotFound:
-                  summary: Contract not found
+                accountNotFound:
+                  summary: Account not found
                   value:
-                    code: ERR_CONTRACT_NOT_FOUND
+                    code: ERR_ACCOUNT_NOT_FOUND
                     params:
-                      message: Contract #6789 not found for institution #160
+                      message: Account #6789 not found for institution #160
                 holdAlreadyClosed:
                   summary: Hold already closed
                   value:
@@ -3961,12 +3961,12 @@ paths:
                     code: ERR_HOLD_NOT_FOUND
                     params:
                       message: Hold not found
-                contractNotFound:
-                  summary: Contract not found
+                accountNotFound:
+                  summary: Account not found
                   value:
-                    code: ERR_CONTRACT_NOT_FOUND
+                    code: ERR_ACCOUNT_NOT_FOUND
                     params:
-                      message: Contract #6789 not found for institution #160
+                      message: Account #6789 not found for institution #160
                 holdAlreadyClosed:
                   summary: Hold already closed
                   value:
@@ -4083,7 +4083,7 @@ paths:
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
         '409':
-          description: Conflict - Contract not found
+          description: Conflict - Account not found
           content:
             application/json:
               schema:
@@ -4097,17 +4097,16 @@ paths:
                       message:
                         type: string
               examples:
-                contractNotFound:
-                  summary: Contract not found
+                accountNotFound:
+                  summary: Account not found
                   value:
-                    code: ERR_CONTRACT_NOT_FOUND
+                    code: ERR_ACCOUNT_NOT_FOUND
                     params:
-                      message: Contract not found
+                      message: Cannot find account
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-
   /pin/set-pin-by-pan:
     post:
       operationId: setCardPin
@@ -4498,6 +4497,108 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '403':
           $ref: '#/components/responses/Forbidden'
+
+  /pin/verify:
+    post:
+      operationId: verifyPin
+      summary: Verify Card PIN
+      description: 'Verifies that a cardholder''s entered PIN is correct by comparing a provided ISO-0 PIN block against the card''s stored PinBlock in TX. This API is validation-only and does not change any card state or counters.'
+      tags:
+      - PIN Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: 'Target Card ID whose PIN must be verified'
+                  example: '3404'
+                pinBlock:
+                  type: string
+                  description: 'ISO-0 PIN block (16 hex characters)'
+                  example: '5621E1B73F93A045'
+            examples:
+              verifyPinMatch:
+                summary: Verify PIN - Match
+                value:
+                  cardId: '3404'
+                  pinBlock: '5621E1B73F93A045'
+              verifyPinMismatch:
+                summary: Verify PIN - Mismatch
+                value:
+                  cardId: '3404'
+                  pinBlock: '0000000000000000'
+      responses:
+        '200':
+          description: PIN verification result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum:
+                    - SUCCESS_PIN_VERIFIED
+                    - ERR_PIN_MISMATCH
+                  params:
+                    type: object
+                    properties:
+                      isMatched:
+                        type: boolean
+                      message:
+                        type: string
+              examples:
+                pinMatched:
+                  summary: PIN Matched
+                  value:
+                    code: SUCCESS_PIN_VERIFIED
+                    params:
+                      isMatched: true
+                      message: PIN verified
+                pinMismatch:
+                  summary: PIN Mismatch
+                  value:
+                    code: ERR_PIN_MISMATCH
+                    params:
+                      isMatched: false
+                      message: Invalid PIN
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Conflict - Card not found or PIN not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                cardNotFound:
+                  summary: Card Not Found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                invalidPinBlock:
+                  summary: Invalid PIN Block
+                  value:
+                    code: ERR_INVALID_PIN_BLOCK
+                    params:
+                      message: Invalid PIN block format
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
   
   /cards/update-status-by-id:
     post:
@@ -6883,7 +6984,7 @@ paths:
               properties:
                 productType:
                   type: string
-                  description: '**Required.** Issuing product. Obtain via `GET /products/retrieve`. Pass the product name exactly as returned (including API suffix).'
+                  description: '**Required.** Product type for the prepaid card (e.g., VisaPrepaidClassicVirtualAPI)'
                   example: VisaPrepaidClassicVirtualAPI
                 nationalId:
                   type: string
@@ -6897,33 +6998,25 @@ paths:
                   type: string
                   description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
                   example: ID123456
-                autoActivate:
-                  type: boolean
-                  description: '**Optional.** Automatically activate card after creation (default: false)'
-                  example: false
-                  default: false
             examples:
               withNationalId:
                 summary: Create card with National ID
                 value:
                   productType: VisaPrepaidClassicVirtualAPI
                   nationalId: '1234567890'
-                  autoActivate: false
               withPassport:
-                summary: Create card with Passport and auto-activation
+                summary: Create card with Passport
                 value:
                   productType: VisaPrepaidClassicVirtualAPI
                   passport: AB1234567
-                  autoActivate: true
               withIdentityId:
                 summary: Create card with Identity ID
                 value:
                   productType: VisaPrepaidClassicVirtualAPI
                   identityId: ID123456
-                  autoActivate: false
       responses:
         '200':
-          description: Card successfully created (and activated if autoActivate was true)
+          description: Card successfully created
           content:
             application/json:
               schema:
@@ -7095,11 +7188,6 @@ paths:
                   type: string
                   description: '**Required.** External account number (DHI reference) to link with the financial contract'
                   example: DHI123456789
-                autoActivate:
-                  type: boolean
-                  description: '**Optional.** Automatically activate card after creation (default: false)'
-                  example: false
-                  default: false
             examples:
               withNationalId:
                 summary: Create debit card with National ID
@@ -7107,24 +7195,21 @@ paths:
                   productType: VisaDebitPhysicalAPI
                   nationalId: '1234567890'
                   accountNumber: DHI123456789
-                  autoActivate: false
               withPassport:
-                summary: Create debit card with Passport and auto-activation
+                summary: Create debit card with Passport
                 value:
                   productType: VisaDebitPhysicalAPI
                   passport: AB1234567
                   accountNumber: DHI987654321
-                  autoActivate: true
               withIdentityId:
                 summary: Create debit card with Identity ID
                 value:
                   productType: VisaDebitPhysicalAPI
                   identityId: ID123456
                   accountNumber: DHI567890123
-                  autoActivate: false
       responses:
         '200':
-          description: Debit card successfully created (and activated if autoActivate was true)
+          description: Debit card successfully created
           content:
             application/json:
               schema:
@@ -7470,18 +7555,18 @@ paths:
                     params:
                       message: "Missing required field: contractRid"
         '409':
-          description: Conflict - Invalid contract, invalid product, or contract not active
+          description: Conflict - Invalid account, invalid product, or account not active
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictError'
               examples:
                 invalidContract:
-                  summary: Invalid preproduced contract
+                  summary: Invalid preproduced account
                   value:
                     code: ERR_INVALID_CONTRACT
                     params:
-                      message: Invalid preproduced contract. Contract not found.
+                      message: Invalid preproduced account. Account not found.
                 invalidProduct:
                   summary: Invalid token product
                   value:
@@ -8434,7 +8519,7 @@ paths:
                     code: ERR_CARD_NOT_FOUND
                     params:
                       message: Card not found
-                contractNotFound:
+                accountNotFound:
                   summary: Account not found
                   value:
                     code: ERR_ACCOUNT_NOT_FOUND
