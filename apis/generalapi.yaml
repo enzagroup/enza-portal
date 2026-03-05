@@ -4581,7 +4581,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/errorResponse'
               examples:
                 cardNotFound:
                   summary: Card Not Found
