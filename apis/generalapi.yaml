@@ -10633,6 +10633,578 @@ paths:
                       message: Card transfer configuration incomplete
         '500':
           $ref: '#/components/responses/InternalServerError'
+  /accounts/account-to-account-transfer:
+    post:
+      operationId: accountToAccountTransfer
+      summary: Account to Account Transfer
+      description: Execute a payment transfer from one account (payer) to another account (payee) using account numbers.
+      tags:
+      - Money Transfer
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sourceAccount:
+                  type: string
+                  description: '**Required.** Source account number (funds will be debited from this account) — numeric only, max 20 digits, cannot be all zeros'
+                  example: '100000000001344'
+                destinationAccount:
+                  type: string
+                  description: '**Required.** Destination account number (funds will be credited to this account) — numeric only, max 20 digits, cannot be all zeros'
+                  example: '100000000001488'
+                ccy:
+                  type: string
+                  description: '**Required.** ISO 4217 numeric currency code'
+                  example: '840'
+                amount:
+                  type: string
+                  description: '**Required.** Transfer amount — must be a valid number with up to 2 decimal places'
+                  example: '5.00'
+              additionalProperties: false
+            example:
+              sourceAccount: '100000000001344'
+              destinationAccount: '100000000001488'
+              ccy: '840'
+              amount: '5.00'
+      responses:
+        '200':
+          description: Transfer completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_TRANSFER_COMPLETED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        description: Success message
+                        example: Transfer completed successfully
+              examples:
+                success:
+                  summary: Transfer approved
+                  value:
+                    code: SUCCESS_TRANSFER_COMPLETED
+                    params:
+                      message: Transfer completed successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                      message:
+                        type: string
+              examples:
+                missingSourceAccount:
+                  summary: Missing source account
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: sourceAccount
+                      message: Source account number is required
+                invalidSourceAccount:
+                  summary: Invalid source account format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Source account number cannot be all zeros
+                invalidDestinationAccount:
+                  summary: Invalid destination account format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Destination account number cannot be all zeros
+                invalidAmount:
+                  summary: Invalid amount format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: amount
+                      message: Amount must be a valid number with up to 2 decimal places
+                invalidCurrency:
+                  summary: Invalid currency code
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: ccy
+                      message: Currency code must contain only numbers
+                emptyBody:
+                  summary: Empty request body
+                  value:
+                    code: ERR_BODY_EMPTY
+                    params:
+                      message: Request body is required
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Business logic conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                payerAccountNotFound:
+                  summary: Payer account not found
+                  value:
+                    code: ERR_ACCOUNT_NOT_FOUND
+                    params:
+                      message: Payer account not found
+                payeeAccountNotFound:
+                  summary: Payee account not found
+                  value:
+                    code: ERR_ACCOUNT_NOT_FOUND
+                    params:
+                      message: Payee account not found
+                insufficientFunds:
+                  summary: Insufficient funds in payer account
+                  value:
+                    code: ERR_INSUFFICIENT_FUNDS
+                    params:
+                      message: Insufficient balance in payer account
+                paymentFailed:
+                  summary: Payment transaction failed
+                  value:
+                    code: ERR_PAYMENT_FAILED
+                    params:
+                      message: Payment failed
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                currencyNotFound:
+                  summary: Currency not found
+                  value:
+                    code: ERR_CURRENCY_NOT_FOUND
+                    params:
+                      message: Currency not found
+                internalError:
+                  summary: Internal error
+                  value:
+                    code: ERR_INTERNAL
+                    params:
+                      message: An internal error occurred
+                      details: Error details
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                timeout:
+                  summary: Network timeout
+                  value:
+                    code: ERR_TIMEOUT
+                    params:
+                      message: Network timeout while connecting to backend system
+  /accounts/card-to-account-transfer:
+    post:
+      operationId: cardToAccountTransfer
+      summary: Card to Account Transfer
+      description: |
+        Transfers funds from a Card (identified by CardId) to a destination account.
+        The CardId is first resolved to its financial contract RID, then the payment is executed.
+      tags:
+        - Money Transfer
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Source Card ID — numeric only, no leading zeros, not all zeros'
+                  example: '3280'
+                destinationAccount:
+                  type: string
+                  description: '**Required.** Destination account number — numeric only, max 20 digits, cannot be all zeros'
+                  example: '100000000001488'
+                ccy:
+                  type: string
+                  description: '**Required.** ISO 4217 numeric currency code'
+                  example: '840'
+                amount:
+                  type: string
+                  description: '**Required.** Transfer amount — must be a valid number with up to 2 decimal places'
+                  example: '5.00'
+              additionalProperties: false
+            example:
+              cardId: '3280'
+              destinationAccount: '100000000001488'
+              ccy: '840'
+              amount: '5.00'
+      responses:
+        '200':
+          description: Transfer completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CARD_TO_ACCOUNT_TRANSFER
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        description: Success message
+                        example: Transfer completed successfully
+              examples:
+                success:
+                  summary: Transfer approved
+                  value:
+                    code: SUCCESS_CARD_TO_ACCOUNT_TRANSFER
+                    params:
+                      message: Transfer completed successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                missingCardId:
+                  summary: Missing cardId
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: "Missing required field: cardId"
+                invalidCardId:
+                  summary: Invalid cardId format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Card ID must be numeric, no leading zeros, not all zeros
+                invalidDestinationAccount:
+                  summary: Invalid destination account format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Destination account must be numeric, 1-20 digits, not all zeros
+        '409':
+          description: Business logic conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                destinationAccountNotFound:
+                  summary: Destination account not found
+                  value:
+                    code: ERR_ACCOUNT_NOT_FOUND
+                    params:
+                      message: Destination account not found
+                insufficientFunds:
+                  summary: Insufficient funds
+                  value:
+                    code: ERR_INSUFFICIENT_FUNDS
+                    params:
+                      message: Insufficient funds in card account
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                timeout:
+                  summary: Network timeout
+                  value:
+                    code: ERR_TIMEOUT
+                    params:
+                      message: Network timeout while connecting to backend system
+  /accounts/card-to-card-transfer:
+    post:
+      operationId: cardToCardTransfer
+      summary: Card to Card Transfer
+      description: |
+        Transfers funds from one Card to another Card using CardIds.
+        Both cards are resolved to their financial contract RIDs, then the payment is executed.
+      tags:
+        - Money Transfer
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sourceCardId:
+                  type: string
+                  description: '**Required.** Source Card ID (payer) — numeric only, no leading zeros, not all zeros'
+                  example: '3280'
+                destinationCardId:
+                  type: string
+                  description: '**Required.** Destination Card ID (payee) — numeric only, no leading zeros, not all zeros'
+                  example: '3435'
+                ccy:
+                  type: string
+                  description: '**Required.** ISO 4217 numeric currency code'
+                  example: '840'
+                amount:
+                  type: string
+                  description: '**Required.** Transfer amount — must include exactly 2 decimal digits (e.g., 5.00)'
+                  example: '5.00'
+              additionalProperties: false
+            example:
+              sourceCardId: '3280'
+              destinationCardId: '3435'
+              ccy: '840'
+              amount: '5.00'
+      responses:
+        '200':
+          description: Transfer completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_CARD_TO_CARD_TRANSFER
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        description: Success message
+                        example: Transfer completed successfully
+              examples:
+                success:
+                  summary: Transfer approved
+                  value:
+                    code: SUCCESS_CARD_TO_CARD_TRANSFER
+                    params:
+                      message: Transfer completed successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                      message:
+                        type: string
+              examples:
+                missingSourceCardId:
+                  summary: Missing source card ID
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: sourceCardId
+                      message: Source Card ID is required
+                invalidSourceCardId:
+                  summary: Invalid source card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid sourceCardId format. Card ID must be numeric, no leading zeros, not all zeros
+                invalidDestinationCardId:
+                  summary: Invalid destination card ID format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid destinationCardId format. Card ID must be numeric, no leading zeros, not all zeros
+        '409':
+          description: Business logic conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                sourceCardNotFound:
+                  summary: Source card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Source card not found
+                destinationCardNotFound:
+                  summary: Destination card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Destination card not found
+                insufficientFunds:
+                  summary: Insufficient funds
+                  value:
+                    code: ERR_INSUFFICIENT_FUNDS
+                    params:
+                      message: Insufficient funds in source card account
+                incompleteConfiguration:
+                  summary: Card configuration incomplete
+                  value:
+                    code: ERR_INCOMPLETE_CONF
+                    params:
+                      message: Card transfer configuration incomplete
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                timeout:
+                  summary: Network timeout
+                  value:
+                    code: ERR_TIMEOUT
+                    params:
+                      message: Network timeout while connecting to backend system
 components:
   responses:
     LambdaTimeout:
