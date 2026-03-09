@@ -10868,7 +10868,6 @@ paths:
       summary: Card to Account Transfer
       description: |
         Transfers funds from a Card (identified by CardId) to a destination account.
-        The CardId is first resolved to its financial contract RID, then the payment is executed.
       tags:
         - Money Transfer
       parameters:
@@ -11035,7 +11034,6 @@ paths:
       summary: Card to Card Transfer
       description: |
         Transfers funds from one Card to another Card using CardIds.
-        Both cards are resolved to their financial contract RIDs, then the payment is executed.
       tags:
         - Money Transfer
       parameters:
