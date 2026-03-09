@@ -3302,7 +3302,7 @@ paths:
       - Card Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - name: card_Id
+      - name: cardId
         in: path
         description: '**Required.** Target Card ID'
         required: true
