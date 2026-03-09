@@ -3299,7 +3299,7 @@ paths:
         Remove the delivery address assigned to a specific customer card.
         Used when the address was added by mistake or card is switched to branch pickup.
       tags:
-      - Card Management
+      - Card Details
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - name: cardId
