@@ -3292,77 +3292,77 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-    # delete:
-    #   operationId: deleteDeliveryAddress
-    #   summary: Delete Card Delivery Address
-    #   description: |
-    #     Remove the delivery address assigned to a specific customer card.
-    #     Used when the address was added by mistake or card is switched to branch pickup.
-    #   tags:
-    #   - Card Management
-    #   parameters:
-    #   - $ref: '#/components/parameters/apiKey'
-    #   - name: card_Id
-    #     in: path
-    #     description: '**Required.** Target Card ID'
-    #     required: true
-    #     schema:
-    #       type: string
-    #       example: '2973'
-    #   responses:
-    #     '200':
-    #       description: Delivery address deleted successfully
-    #       content:
-    #         application/json:
-    #           schema:
-    #             type: object
-    #             required:
-    #             - code
-    #             - params
-    #             properties:
-    #               code:
-    #                 type: string
-    #                 example: SUCCESS_DELIVERY_ADDRESS_DELETED
-    #               params:
-    #                 type: object
-    #                 properties:
-    #                   message:
-    #                     type: string
-    #                     example: Delivery Address removed successfully
-    #           examples:
-    #             success:
-    #               summary: Address Deleted
-    #               value:
-    #                 code: SUCCESS_DELIVERY_ADDRESS_DELETED
-    #                 params:
-    #                   message: Delivery Address removed successfully
-    #     '400':
-    #       description: Bad request – validation failed
-    #       content:
-    #         application/json:
-    #           schema:
-    #             $ref: '#/components/schemas/ValidationError'
-    #     '401':
-    #       $ref: '#/components/responses/Unauthorized'
-    #     '409':
-    #       description: Conflict – card not found
-    #       content:
-    #         application/json:
-    #           schema:
-    #             $ref: '#/components/schemas/ConflictError'
-    #           examples:
-    #             cardNotFound:
-    #               summary: Card Not Found
-    #               value:
-    #                 code: ERR_CARD_NOT_FOUND
-    #                 params:
-    #                   message: Wrong Card ID, please use a valid Card ID
-    #     '500':
-    #       $ref: '#/components/responses/InternalServerError'
-    #     '504':
-    #       $ref: '#/components/responses/LambdaTimeout'
-    #     '405':
-    #       $ref: '#/components/responses/MethodNotAllowed'
+    delete:
+      operationId: deleteDeliveryAddress
+      summary: Delete Card Delivery Address
+      description: |
+        Remove the delivery address assigned to a specific customer card.
+        Used when the address was added by mistake or card is switched to branch pickup.
+      tags:
+      - Card Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - name: card_Id
+        in: path
+        description: '**Required.** Target Card ID'
+        required: true
+        schema:
+          type: string
+          example: '2973'
+      responses:
+        '200':
+          description: Delivery address deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_DELIVERY_ADDRESS_DELETED
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Delivery Address removed successfully
+              examples:
+                success:
+                  summary: Address Deleted
+                  value:
+                    code: SUCCESS_DELIVERY_ADDRESS_DELETED
+                    params:
+                      message: Delivery Address removed successfully
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – card not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                cardNotFound:
+                  summary: Card Not Found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Wrong Card ID, please use a valid Card ID
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
   /holds/debit:
     post:
       tags:
@@ -8283,6 +8283,7 @@ paths:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
