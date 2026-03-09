@@ -6269,14 +6269,14 @@ paths:
                   example: '12345'
                 startDate:
                   type: string
-                  format: date
-                  description: '**Required.** Start date in YYYY-MM-DD format'
-                  example: '2025-01-01'
+                  format: date-time
+                  description: '**Required.** Start date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
+                  example: '2025-07-01T00:00:00'
                 endDate:
                   type: string
-                  format: date
-                  description: '**Required.** End date in YYYY-MM-DD format'
-                  example: '2025-01-31'
+                  format: date-time
+                  description: '**Required.** End date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
+                  example: '2025-10-01T23:59:59'
                 transactionCount:
                   type: integer
                   minimum: 1
@@ -6285,8 +6285,8 @@ paths:
                   example: 2
             example:
               cardId: '12345'
-              startDate: '2025-01-01'
-              endDate: '2025-01-31'
+              startDate: '2025-01-01T00:00:00'
+              endDate: '2025-01-31T23:59:59'
               transactionCount: 2
       responses:
         '200':
@@ -6317,14 +6317,14 @@ paths:
                         example: '3280'
                       startDate:
                         type: string
-                        format: date
+                        format: date-time
                         description: Start date of query
-                        example: '2025-07-01'
+                        example: '2025-07-01T00:00:00'
                       endDate:
                         type: string
-                        format: date
+                        format: date-time
                         description: End date of query
-                        example: '2025-10-02'
+                        example: '2025-10-02T23:59:59'
                       totalTransactions:
                         type: integer
                         description: Total number of transactions
@@ -6384,9 +6384,9 @@ paths:
                               example: USD
                             date:
                               type: string
-                              format: date
+                              format: date-time
                               description: Transaction date
-                              example: '2025-10-02'
+                              example: '2025-10-02T00:00:00'
                             timestamp:
                               type: string
                               format: date-time
@@ -8407,15 +8407,16 @@ paths:
       - Account Management
       summary: Unlink Card from Account
       description: 'Unlink (remove) a card from a account. This operation removes the existing Access link between a card and an account, preventing the card from authorizing transactions on that account.'
+      
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
-              required:
               properties:
                 cardId:
                   type: string
