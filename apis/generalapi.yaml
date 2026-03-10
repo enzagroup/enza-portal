@@ -9173,6 +9173,134 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
+  /cards/set-credit-limit:
+    post:
+      operationId: setCardCreditLimit
+      summary: Set Card Credit Limit
+      description: |
+        Change credit limit for an existing credit card using credit cardID
+      tags:
+      - Card Control
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: 'Targeted credit card ID - numeric only'
+                  example: '7274'
+                cclBaseAmt:
+                  type: number
+                  description: 'New credit limit to be set'
+                  example: 50000
+            examples:
+              validRequest:
+                summary: Valid request
+                value:
+                  cardId: '7274'
+                  cclBaseAmt: 50000
+      responses:
+        '200':
+          description: Credit limit updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Credit limit updated successfully
+              examples:
+                success:
+                  summary: Credit limit updated successfully
+                  value:
+                    code: SUCCESS
+                    params:
+                      message: Credit limit updated successfully
+        '400':
+          description: Bad request - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                invalidCardId:
+                  summary: Invalid Card ID
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId format. Card ID must contain only numbers (0-9) and be up to 19 digits long
+                leadingZeros:
+                  summary: Leading Zeros Not Allowed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId format. Card ID cannot have leading zeros
+                allZeros:
+                  summary: All Zeros Not Allowed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid cardId format. Card ID cannot be all zeros
+                invalidCreditLimit:
+                  summary: Invalid Credit Limit
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Please use a valid credit limit
+                negativeCreditLimit:
+                  summary: Negative Credit Limit Not Allowed
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid credit limit. Credit limit value cannot be negative
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Conflict - Card not found or operation declined
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                cardNotFound:
+                  summary: Card not found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Card not found
+                creditLimitUpdateFailed:
+                  summary: Credit limit update failed
+                  value:
+                    code: ERR_CREDIT_LIMIT_UPDATE_FAILED
+                    params:
+                      message: Credit limit update failed
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
 
   /cards/pin-trials:
     get:
@@ -10469,7 +10597,7 @@ paths:
                   example: '100000000001234'
                 amount:
                   type: string
-                  description: '**Required.** Transfer amount — must include two decimal digits (e.g., 100.00)'
+                  description: '**Required.** Transfer amount — accepts both formats: Integer (1, 100, 5000) or Decimal (1.5, 100.50, 5000.99)'
                   example: '100.00'
                 ccy:
                   type: string
@@ -10662,7 +10790,7 @@ paths:
                   example: '840'
                 amount:
                   type: string
-                  description: '**Required.** Transfer amount — must be a valid number with up to 2 decimal places'
+                  description: '**Required.** Transfer amount — accepts both formats: Integer (1, 100, 5000) or Decimal (1.5, 100.50, 5000.99)'
                   example: '5.00'
               additionalProperties: false
             example:
@@ -10892,7 +11020,7 @@ paths:
                   example: '840'
                 amount:
                   type: string
-                  description: '**Required.** Transfer amount — must be a valid number with up to 2 decimal places'
+                  description: '**Required.** Transfer amount — accepts both formats: Integer (1, 100, 5000) or Decimal (1.5, 100.50, 5000.99)'
                   example: '5.00'
               additionalProperties: false
             example:
@@ -11058,7 +11186,7 @@ paths:
                   example: '840'
                 amount:
                   type: string
-                  description: '**Required.** Transfer amount — must include exactly 2 decimal digits (e.g., 5.00)'
+                  description: '**Required.** Transfer amount — accepts both formats: Integer (1, 100, 5000) or Decimal (1.5, 100.50, 5000.99)'
                   example: '5.00'
               additionalProperties: false
             example:
@@ -11175,6 +11303,211 @@ paths:
                     code: ERR_INCOMPLETE_CONF
                     params:
                       message: Card transfer configuration incomplete
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                timeout:
+                  summary: Network timeout
+                  value:
+                    code: ERR_TIMEOUT
+                    params:
+                      message: Network timeout while connecting to backend system
+  /accounts/pan-to-pan-transfer:
+    post:
+      operationId: panToPanTransfer
+      summary: PAN to PAN Transfer
+      description: |
+        Transfers funds from one card to another card using PAN (Primary Account Number) values.
+      tags:
+        - Money Transfer
+      parameters:
+        - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/contentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sourcePan:
+                  type: string
+                  description: '**Required.** Source card PAN (payer) — numeric only, up to 19 digits'
+                  example: '4373580001009267'
+                destinationPan:
+                  type: string
+                  description: '**Required.** Destination card PAN (payee) — numeric only, up to 19 digits'
+                  example: '4373580001009002'
+                mbr:
+                  type: string
+                  description: '**Required.** Card member/sequence number (usually 0)'
+                  example: '0'
+                ccy:
+                  type: string
+                  description: '**Required.** ISO 4217 numeric currency code (3 digits, e.g., 840 for USD)'
+                  example: '840'
+                amount:
+                  type: string
+                  description: '**Required.** Transfer amount — accepts both formats: Integer (1, 100, 5000) or Decimal (1.5, 100.50, 5000.99)'
+                  example: '1.00'
+              additionalProperties: false
+            example:
+              sourcePan: '4373580001009267'
+              destinationPan: '4373580001009002'
+              mbr: '0'
+              ccy: '840'
+              amount: '1.00'
+      responses:
+        '200':
+          description: Transfer completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        description: Success message
+                        example: PAN to PAN transfer completed successfully
+              examples:
+                success:
+                  summary: Transfer approved
+                  value:
+                    code: SUCCESS
+                    params:
+                      message: PAN to PAN transfer completed successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                      message:
+                        type: string
+              examples:
+                missingSourcePan:
+                  summary: Missing source PAN
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: sourcePan
+                      message: Missing required field:sourcePan
+                missingDestinationPan:
+                  summary: Missing destination PAN
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      field: destinationPan
+                      message: Missing required field:destinationPan
+                invalidSourcePan:
+                  summary: Invalid source PAN format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid PAN format. PAN must contain only numbers (0-9) and be up to 19 digits long
+                invalidAmount:
+                  summary: Invalid amount format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid amount format. Must include exactly 2 decimal digits (e.g. 100.00).
+        '409':
+          description: Business logic conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                  params:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+              examples:
+                sourcePanNotFound:
+                  summary: Source PAN not found
+                  value:
+                    code: ERR_SOURCE_PAN_NOT_FOUND
+                    params:
+                      message: Source PAN not found
+                destinationPanNotFound:
+                  summary: Destination PAN not found
+                  value:
+                    code: ERR_DESTINATION_PAN_NOT_FOUND
+                    params:
+                      message: Destination PAN not found
+                sourceCardInactive:
+                  summary: Source card not active
+                  value:
+                    code: ERR_SOURCE_CARD_INACTIVE
+                    params:
+                      message: Source card is not active
+                destinationCardInactive:
+                  summary: Destination card not active
+                  value:
+                    code: ERR_DESTINATION_CARD_INACTIVE
+                    params:
+                      message: Destination card is not active
+                insufficientFunds:
+                  summary: Insufficient funds
+                  value:
+                    code: ERR_INSUFFICIENT_FUNDS
+                    params:
+                      message: Insufficient funds in payer card
+                contractBlocked:
+                  summary: Contract is blocked
+                  value:
+                    code: ERR_CONTRACT_BLOCKED
+                    params:
+                      message: Contract is blocked - all transactions prohibited
+                contractRestricted:
+                  summary: Contract has usage restrictions
+                  value:
+                    code: ERR_CONTRACT_RESTRICTED
+                    params:
+                      message: Contract has usage restrictions
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
