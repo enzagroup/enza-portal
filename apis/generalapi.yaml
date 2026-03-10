@@ -9196,9 +9196,9 @@ paths:
                   description: 'Targeted credit card ID - numeric only'
                   example: '7274'
                 cclBaseAmt:
-                  type: number
-                  description: 'New credit limit to be set'
-                  example: 50000
+                  type: string
+                  description: '**Required.** New credit limit to be set — accepts both formats: Integer (1, 100, 5000) or Decimal (1.5, 100.50, 5000.99)'
+                  example: '50000'
             examples:
               validRequest:
                 summary: Valid request
