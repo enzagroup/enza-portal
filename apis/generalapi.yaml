@@ -9180,7 +9180,7 @@ paths:
       description: |
         Change credit limit for an existing credit card using credit cardID
       tags:
-      - Card Control
+      - Credit Card Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
