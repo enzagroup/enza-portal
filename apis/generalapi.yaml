@@ -9204,7 +9204,7 @@ paths:
                 summary: Valid request
                 value:
                   cardId: '7274'
-                  cclBaseAmt: 50000
+                  cclBaseAmt: '50000'
       responses:
         '200':
           description: Credit limit updated successfully
