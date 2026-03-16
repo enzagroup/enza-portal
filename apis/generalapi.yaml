@@ -5994,6 +5994,7 @@ paths:
                     - expiryDate
                     - availableBalance
                     - currency
+                    - cardHolderName
                     properties:
                       maskedPan:
                         type: string
@@ -6028,6 +6029,10 @@ paths:
                         type: string
                         description: Card member reference number
                         example: '0'
+                      cardHolderName:
+                        type: string
+                        description: Name of the card holder
+                        example: 'John Smith'
               examples:
                 successResponse:
                   summary: Successful card details retrieval
@@ -6042,6 +6047,7 @@ paths:
                       currency: USD
                       productType: PhysicalDebitIssuingContractMCAPI
                       mbr: '0'
+                      cardHolderName: 'John Smith'
         '400':
           description: Bad request – validation failed
           content:
