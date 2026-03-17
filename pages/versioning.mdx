@@ -1,0 +1,57 @@
+# Versioning Policy
+
+This document outlines how enza manages versioning for the TX API and its documentation.
+
+---
+
+## API Version
+
+The public API version is defined in the URL path. This ensures clear separation between different API generations and prevents breaking changes from affecting existing integrations.
+
+| Version | URL Path | Status |
+|---------|----------|--------|
+| v1 | `/TX/v1` | Current |
+
+### When We Create a New API Version
+
+A new major version (e.g., `/TX/v2`) is created **only** for breaking changes such as:
+
+- Removing or renaming endpoints
+- Changing request/response structures
+- Modifying authentication requirements
+- Altering core business logic behavior
+
+We maintain older API versions for a reasonable deprecation period to ensure you have time to migrate.
+
+---
+
+## Documentation Version
+
+The OpenAPI specification uses [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATCH`):
+
+| Version Change | Description | Example |
+|----------------|-------------|---------|
+| **Patch** `1.0.0` → `1.0.1` | Bug fixes, typo corrections, clarifications | `1.0.1` |
+| **Minor** `1.0.0` → `1.1.0` | New endpoints, non-breaking additions | `1.1.0` |
+| **Major** `1.0.0` → `2.0.0` | Breaking documentation changes, new API version line | `2.0.0` |
+
+---
+
+## Changelog
+
+Every documentation and API release is recorded in the [Changelog](/changelog). We use the following format:
+
+- `v1.0.0` — Major documentation releases
+- `v1.0.1` — Patch releases
+- `v1.1.0` — Minor releases with new features
+- `v2.0.0` — New API version line
+
+---
+
+## Support Policy
+
+| API Version | Support Status | Notes |
+|-------------|----------------|-------|
+| v1 | Active | Current stable version |
+
+For questions about versioning or migration, contact your assigned Product Manager or our support team. 
