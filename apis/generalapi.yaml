@@ -2779,7 +2779,7 @@ paths:
           $ref: '#/components/responses/LambdaTimeout'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /cards/get-cvv2/{cardId}:
+  /cards/get-cvv2/by_card_id/{cardId}:
     get:
       operationId: getCVV2ByCardId
       summary: Retrieve CVV2 by Card ID
