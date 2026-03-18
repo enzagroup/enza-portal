@@ -9426,7 +9426,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
-  /pin/set-pin:
+  /pin/set-pin-by-card-id:
     post:
       operationId: setPinById
       tags:
