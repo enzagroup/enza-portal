@@ -47,7 +47,9 @@ tags:
 - name: Limits Management
   description: Manage card limits and restrictions
 - name: Holds Management
-  description: '# Holds Management
+  description: Holds Management
+- name: Credit Card Management
+  description: '# Manage credit card operation
 
 
     Manage reserved funds and blocked amounts on customer accounts securely. This
@@ -1455,7 +1457,7 @@ paths:
   /accounts/cards/{accountNumber}:
     get:
       operationId: getCardsByAccount
-      summary: GET Account Cards
+      summary: Get Account Cards
       description: |
         Retrieve all cards linked to a customer account.
       tags:
