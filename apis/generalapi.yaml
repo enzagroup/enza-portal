@@ -4619,7 +4619,110 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-  
+
+  /pin/reveal:
+    post:
+      operationId: revealPin
+      summary: Reveal Card PIN
+      description: 'Reveals the PIN for a card using Card ID and RSA Public Key.'
+      tags:
+      - PIN Management
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: 'Card ID (Token ID) - numeric only, 1-19 digits'
+                  example: '3404'
+                publicKey:
+                  type: string
+                  description: '1024-bit RSA Public Key in hex format (approximately 200+ hex characters)'
+                  example: '30819F300D06092A864886F70D010101050003818D0030818902818100...'
+            examples:
+              revealPinRequest:
+                summary: Reveal PIN Request
+                value:
+                  cardId: '3404'
+                  publicKey: '30819F300D06092A864886F70D010101050003818D0030818902818100A1B2C3D4...'
+      responses:
+        '200':
+          description: PIN revealed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_PIN_REVEALED
+                  params:
+                    type: object
+                    properties:
+                      cardId:
+                        type: string
+                        description: Card ID
+                      wrappedKey:
+                        type: string
+                        description: RSA-encrypted ZPK (session key) in hex format
+                      encryptedPin:
+                        type: string
+                        description: PIN block encrypted under ZPK in hex format
+                      message:
+                        type: string
+              examples:
+                pinRevealed:
+                  summary: PIN Revealed Successfully
+                  value:
+                    code: SUCCESS_PIN_REVEALED
+                    params:
+                      cardId: '3404'
+                      wrappedKey: '155E104637A96006A06B18AA84C56D0C2B1AE91807DFDCE9B7A9EBE3DCDB79E7...'
+                      encryptedPin: 'F4C21D19817BA72C'
+                      message: PIN revealed successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '409':
+          description: Conflict - Card not found, PIN not set, or invalid public key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                cardNotFound:
+                  summary: Card Not Found
+                  value:
+                    code: ERR_CARD_NOT_FOUND
+                    params:
+                      message: Wrong Card ID. Please use a valid Card ID.
+                pinNotSet:
+                  summary: PIN Not Set
+                  value:
+                    code: ERR_PIN_NOT_SET
+                    params:
+                      message: There is no PIN configured for this card.
+                invalidPublicKey:
+                  summary: Invalid Public Key
+                  value:
+                    code: ERR_INVALID_PUBLIC_KEY
+                    params:
+                      message: Invalid Public Key format/length.
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+
   /cards/update-status-by-id:
     post:
       operationId: updateCardStatusById
