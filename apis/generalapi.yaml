@@ -4620,7 +4620,7 @@ paths:
         '504':
           $ref: '#/components/responses/LambdaTimeout'
 
-  /pin/reveal:
+  /pin/reveals:
     post:
       operationId: revealPin
       summary: Reveal Card PIN
