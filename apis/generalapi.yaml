@@ -5882,12 +5882,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConflictError'
               examples:
-                customerNotFound:
-                  summary: Customer not found
+                missingField:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: primaryCustomerIdNumber'
+                primaryCustomerNotFound:
+                  summary: Primary customer not found
                   value:
                     code: ERR_CUSTOMER_NOT_FOUND
                     params:
-                      message: Customer doesn't exist!
+                      message: Primary customer not found
+                secondaryCustomerNotFound:
+                  summary: Secondary customer not found
+                  value:
+                    code: ERR_CUSTOMER_NOT_FOUND
+                    params:
+                      message: Secondary customer not found
                 accountNotFound:
                   summary: Account not found
                   value:
@@ -7437,6 +7449,251 @@ paths:
                     code: ERR_ACTIVATE_CARD_DECLINED
                     params:
                       message: Card activation declined
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_INTERNAL_SERVER_ERROR
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: An unexpected error occurred.
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /cards/joint-account:
+    post:
+      operationId: createJointAccount
+      tags:
+      - Card Issuance
+      summary: Create Joint Account with Cards
+      description: "Create a joint account for two existing customers with debit cards for both.\n\n## Overview\n\nThis API creates a shared financial account (joint account) for two existing customers and issues a debit card for each customer linked to the shared account.\n\n## ⚠️ Important: Both Customers Must Exist First\n\n**This API only works for existing customers.** If either customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Verify Both Customers Exist** using `POST /customers/search`\n   - Search by identification number (nationalId, passport, or identityId)\n   - If either customer **does NOT exist** → Use `POST /customers/create` to create them first\n   - If both customers **exist** → Proceed to step 2\n\n2. **Retrieve Product Types** using `GET /products/retrieve`\n   - Select an **Account Type RID** from the financial contract types\n   - Select a **Card Product RID** from the issuing products\n\n3. **Create Joint Account** using this API (`POST /cards/joint-account`)\n   - Provide both customers' identification numbers\n   - Provide the account type RID and card product RID\n   - Provide the shared CBS account number\n\n---\n\n**Process Flow:**\n1. **Customer 1 Verification**: Validate first customer exists\n2. **Customer 2 Verification**: Validate second customer exists\n3. **Shared Financial Contract**: Create joint account with shared account number\n4. **Issuing Contract 1**: Create card for customer 1 linked to shared account\n5. **Issuing Contract 2**: Create card for customer 2 linked to shared account\n6. **Card Details**: Retrieve and return masked PAN and expiry dates for both cards\n\n**Note:** Both cards are created in active status and linked to the same shared financial account.\n"
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - primaryCustomerIdNumber
+              - secondaryCustomerIdNumber
+              - accountTypeRid
+              - cardProductRid
+              - sharedAccountNumber
+              properties:
+                primaryCustomerIdNumber:
+                  type: string
+                  description: '**Required.** Primary customer identification number (National ID, Passport, or Identity ID)'
+                  example: '1234567890'
+                secondaryCustomerIdNumber:
+                  type: string
+                  description: '**Required.** Secondary customer identification number (National ID, Passport, or Identity ID)'
+                  example: '0987654321'
+                accountTypeRid:
+                  type: string
+                  description: '**Required.** Financial Contract Type RID. Obtain via `GET /products/retrieve` from contract types list.'
+                  example: SAVINGS_ACCOUNT
+                cardProductRid:
+                  type: string
+                  description: '**Required.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
+                  example: VisaDebitPhysicalAPI
+                sharedAccountNumber:
+                  type: string
+                  pattern: '^[0-9]{1,19}$'
+                  description: '**Required.** Shared CBS account number (numeric only, max 19 digits, no leading zeros)'
+                  example: '1234567890123'
+            examples:
+              createJointAccount:
+                summary: Create joint account for two customers
+                value:
+                  primaryCustomerIdNumber: '1234567890'
+                  secondaryCustomerIdNumber: '0987654321'
+                  accountTypeRid: SAVINGS_ACCOUNT
+                  cardProductRid: VisaDebitPhysicalAPI
+                  sharedAccountNumber: '1234567890123'
+      responses:
+        '200':
+          description: Joint account created successfully with cards for both customers
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_JOINT_ACCOUNT_CREATED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    - sharedAccountNumber
+                    - primaryCustomer
+                    - secondaryCustomer
+                    properties:
+                      message:
+                        type: string
+                        example: Joint account created successfully
+                      sharedAccountNumber:
+                        type: string
+                        description: Shared account number
+                        example: '1234567890123'
+                      primaryCustomer:
+                        type: object
+                        required:
+                        - personId
+                        - cardId
+                        - panMasked
+                        - expiryDate
+                        properties:
+                          personId:
+                            type: string
+                            description: Primary customer person ID in TX system
+                            example: '5517'
+                          cardId:
+                            type: string
+                            description: Primary customer card ID
+                            example: '7775'
+                          panMasked:
+                            type: string
+                            description: Primary customer masked PAN (first 6 and last 4 digits visible)
+                            example: 534152******2180
+                          expiryDate:
+                            type: string
+                            description: Primary customer card expiry date (MM/YY format)
+                            example: 03/27
+                      secondaryCustomer:
+                        type: object
+                        required:
+                        - personId
+                        - cardId
+                        - panMasked
+                        - expiryDate
+                        properties:
+                          personId:
+                            type: string
+                            description: Secondary customer person ID in TX system
+                            example: '5537'
+                          cardId:
+                            type: string
+                            description: Secondary customer card ID
+                            example: '7776'
+                          panMasked:
+                            type: string
+                            description: Secondary customer masked PAN (first 6 and last 4 digits visible)
+                            example: 534152******2181
+                          expiryDate:
+                            type: string
+                            description: Secondary customer card expiry date (MM/YY format)
+                            example: 03/27
+              examples:
+                successResponse:
+                  summary: Joint account created successfully
+                  value:
+                    code: SUCCESS_JOINT_ACCOUNT_CREATED
+                    params:
+                      message: Joint account created successfully
+                      sharedAccountNumber: '1234567890123'
+                      primaryCustomer:
+                        personId: '5517'
+                        cardId: '7775'
+                        panMasked: 534152******2180
+                        expiryDate: 03/27
+                      secondaryCustomer:
+                        personId: '5537'
+                        cardId: '7776'
+                        panMasked: 534152******2181
+                        expiryDate: 03/27
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingField:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: customer1IdentificationNumber'
+                invalidAccountNumber:
+                  summary: Invalid account number format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid sharedAccountNumber format. Account number must contain only numbers (0-9) and be up to 19 digits long
+                leadingZeros:
+                  summary: Account number with leading zeros
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid sharedAccountNumber format. Account number cannot have leading zeros
+                invalidAccountType:
+                  summary: Invalid account type RID
+                  value:
+                    code: ERR_INVALID_ACCOUNT_TYPE
+                    params:
+                      message: Invalid Account Type RID. Use Retrieve Account Types API
+                invalidCardProduct:
+                  summary: Invalid card product RID
+                  value:
+                    code: ERR_INVALID_CARD_PRODUCT
+                    params:
+                      message: Invalid Card Product RID. Use Card Products API
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – customer not found or account already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                primaryCustomerNotFound:
+                  summary: Primary customer not found
+                  value:
+                    code: ERR_CUSTOMER_NOT_FOUND
+                    params:
+                      message: Primary customer not found
+                secondaryCustomerNotFound:
+                  summary: Secondary customer not found
+                  value:
+                    code: ERR_CUSTOMER_NOT_FOUND
+                    params:
+                      message: Secondary customer not found
+                accountAlreadyExists:
+                  summary: Account already exists
+                  value:
+                    code: ERR_ACCOUNT_ALREADY_EXISTS
+                    params:
+                      message: Account already exists
         '500':
           description: Internal server error
           content:
