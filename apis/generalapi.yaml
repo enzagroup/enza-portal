@@ -4,7 +4,7 @@ info:
   description: "## Overview\n\nWelcome to the enza REST API Developer Portal. Our API provides seamless integration . This portal offers all the necessary tools, detailed documentation, and API endpoints required to empower your financial operations with real-time card issuance capabilities.\n\nFollow this guide to:\n- Understand API authentication and security requirements\n- Generate and configure the credentials required to access the enza Developers API\n- Use the API endpoints to create cards and manage customer accounts\n- Learn best practices for integrating with our platform\n\n---\n\n## Step 1: Generate API Credentials\n\n### API Key Authentication\n\nAll API requests require an **API Key** for authentication. The API key must be included in the request header:\n\n```\nx-api-key: YOUR_API_KEY_HERE\n```\n\n### Development vs Production Keys\n\n- Both Development/UAT and Production API Keys will be shared securely through encrypted channels upon agreement and approval.\n\n### Security\
     \ Requirements\n\n⚠️ **Important Security Measures:**\n\n1. **IP Whitelisting**: Your server IP addresses must be whitelisted before you can access the APIs\n   - Contact our support team to whitelist your IPs\n   - Provide both development and production IP addresses\n\n2. **Secure Key Storage**: Never expose your API keys in client-side code or public repositories\n\n3. **HTTPS Only**: All API requests must use HTTPS protocol\n\n---\n\n\n---\n\n## Key Features\n\n- \U0001F4B3 **Instant Card Issuance**: Issue physical and virtual cards in real-time\n- \U0001F6E0️ **Card Management**: Complete lifecycle management from creation to closure\n- \U0001F4CA **Transaction Monitoring**: Real-time transaction tracking and reporting\n- \U0001F510 **PIN Management**: Secure PIN operations for enhanced security\n- \U0001F6CD️ **E-Commerce Controls**: Manage online transaction capabilities\n- \U0001F4CF **Limit Management**: Configure and monitor card spending limits and restrictions\n\n---\n\n\
     ## Next Steps\n\n1. **Review Use Cases**: Explore the different API endpoints and understand the scenarios for each\n2. **Integration Testing**: Test your integration in the UAT environment\n3. **Request Production Access**: Contact our team when ready to go live\n4. **Monitor & Optimize**: Use our transaction APIs to monitor card usage and optimize your integration\n\n---\n\n## Support\n\nIf you require further clarification or business alignment, please reach out to the assigned Product Manager.\n"
-  version: 1.1.0
+  version: 1.1.1
 servers:
 - url: https://uat-api.enza.cloud/TX/v1
 tags:
@@ -6954,6 +6954,241 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+  /cards/unsettled-transactions:
+    post:
+      operationId: getUnsettledTransactions
+      tags:
+      - Transactions Management
+      summary: Show Unsettled Transactions
+      description: 'Retrieve unsettled transaction history for a card within a specified
+        date range.
+
+        **Date Range:** Specify startDate and endDate to filter transactions using
+        ISO 8601 datetime format (YYYY-MM-DDTHH:mm:ss)
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/contentType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId:
+                  type: string
+                  description: '**Required.** Card ID (Token Id) - the card to apply the restriction change on. Must be 1-19 digits, cannot be all zeros, and cannot have leading zeros.'
+                  example: '3280'
+                startDate:
+                  type: string
+                  format: date-time
+                  description: '**Required.** Start date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
+                  example: '2025-07-01T00:00:00'
+                endDate:
+                  type: string
+                  format: date-time
+                  description: '**Required.** End date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
+                  example: '2025-10-01T23:59:59'
+                transactionCount:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  description: '**Optional.** Maximum number of transactions to return (1-100)'
+                  
+            example:
+              cardId: '3280'
+              startDate: '2025-07-01T00:00:00'
+              endDate: '2025-10-01T23:59:59'
+              transactionCount: 1
+      responses:
+        '200':
+          description: Unsettled transactions successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_UNSETTLED_TRANSACTIONS_RETRIEVED
+                  params:
+                    type: object
+                    required:
+                    - cardId
+                    - startDate
+                    - endDate
+                    - totalTransactions
+                    - transactions
+                    properties:
+                      cardId:
+                        type: string
+                        description: Card ID
+                        example: '3280'
+                      startDate:
+                        type: string
+                        format: date-time
+                        description: Start date of query
+                        example: '2025-07-01T00:00:00'
+                      endDate:
+                        type: string
+                        format: date-time
+                        description: End date of query
+                        example: '2025-10-01T23:59:59'
+                      totalTransactions:
+                        type: integer
+                        description: Total number of unsettled transactions
+                        example: 1
+                      transactions:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - transactionId
+                          - transactionKind
+                          - transactionLabel
+                          - transactionType
+                          - transactionStatus
+                          - amount
+                          - ccy
+                          - date
+                          - timestamp
+                          - terminalOwnerTitle
+                          - terminalType
+                          properties:
+                            transactionId:
+                              type: string
+                              description: Unique transaction identifier
+                              example: '250923507004941165'
+                            transactionKind:
+                              type: string
+                              description: Kind of transaction
+                              example: Goods
+                            transactionLabel:
+                              type: string
+                              description: Transaction label
+                              example: Purchase
+                            transactionType:
+                              type: string
+                              enum:
+                              - Debit
+                              - Credit
+                              - Neutral
+                              - Unknown
+                              description: 'Transaction type: Debit (money out), Credit (money in), Neutral'
+                              example: Debit
+                            transactionStatus:
+                              type: string
+                              
+                              description: Transaction status
+                              example: Hold
+                            amount:
+                              type: number
+                              description: Transaction amount
+                              example: 40
+                            ccy:
+                              type: string
+                              description: ISO 4217 alphabetic currency code
+                              example: 'SGD'
+                            date:
+                              type: string
+                              format: date
+                              description: Transaction date
+                              example: '2025-09-23'
+                            timestamp:
+                              type: string
+                              format: date-time
+                              description: Transaction timestamp
+                              example: '2025-09-23T14:05:00.000'
+                            terminalOwnerTitle:
+                              type: string
+                              description: Terminal owner/acquirer name
+                              example: ACQUIRER NAME
+                            terminalType:
+                              type: string
+                              description: Type of terminal
+                              enum:
+                              - Pos
+                              - Ecom
+                              - Man
+                              - Adm
+                              example: Pos
+              examples:
+                successResponse:
+                  summary: Successful unsettled transactions retrieval
+                  value:
+                    code: SUCCESS_UNSETTLED_TRANSACTIONS_RETRIEVED
+                    params:
+                      cardId: '3280'
+                      startDate: '2025-07-01T00:00:00'
+                      endDate: '2025-10-01T23:59:59'
+                      totalTransactions: 1
+                      transactions:
+                      - transactionId: '260108373853696586'
+                        transactionKind: Goods
+                        transactionLabel: Purchase
+                        transactionType: Debit
+                        transactionStatus: Hold
+                        amount: 100
+                        currency: 'SGD'
+                        date: '2026-01-08'
+                        timestamp: '2026-01-08T10:23:05.000'
+                        terminalOwnerTitle: HEYZIEL
+                        terminalType: Pos
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                badRequestExample:
+                  summary: Invalid date format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid startDate format
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – card not found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_READTOKEN_DECLINED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: Card not found
+              examples:
+                conflictExample:
+                  summary: Card not found
+                  value:
+                    code: ERR_READTOKEN_DECLINED
+                    params:
+                      message: Card not found
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'          
   /cards/temporary-disable-restriction:
     post:
       operationId: temporaryDisableRestriction
