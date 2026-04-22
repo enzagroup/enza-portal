@@ -5871,7 +5871,7 @@ paths:
                 cardNotFound:
                   summary: Card not found
                   value:
-                     code: ERR_CARD_NOT_FOUND
+                    code: ERR_CARD_NOT_FOUND
                     params:
                       message: Card not found
                 cardAlreadyAssigned:
