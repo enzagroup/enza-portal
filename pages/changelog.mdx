@@ -4,6 +4,24 @@ All notable changes to the enza TX API documentation are documented in this page
 
 ---
 
+## v1.1.2
+
+**Released:** April 27, 2026
+
+### Changed
+
+- Enhanced `/cards/joint-account` endpoint with flexible card issuance options
+  - Removed `accountTypeRid` requirement
+  - Added support for 3 scenarios:
+    1. Account Only (No Cards)
+    2. Account + Primary Customer Card
+    3. Account + Both Customer Cards
+  - Updated request schema with optional `primaryCard` and `secondaryCard` objects
+  - Updated response schema to handle optional card details
+  - Added comprehensive examples for all scenarios
+
+---
+
 ## v1.1.1
 
 **Released:** April 6, 2026

@@ -4,7 +4,7 @@ info:
   description: "## Overview\n\nWelcome to the enza REST API Developer Portal. Our API provides seamless integration . This portal offers all the necessary tools, detailed documentation, and API endpoints required to empower your financial operations with real-time card issuance capabilities.\n\nFollow this guide to:\n- Understand API authentication and security requirements\n- Generate and configure the credentials required to access the enza Developers API\n- Use the API endpoints to create cards and manage customer accounts\n- Learn best practices for integrating with our platform\n\n---\n\n## Step 1: Generate API Credentials\n\n### API Key Authentication\n\nAll API requests require an **API Key** for authentication. The API key must be included in the request header:\n\n```\nx-api-key: YOUR_API_KEY_HERE\n```\n\n### Development vs Production Keys\n\n- Both Development/UAT and Production API Keys will be shared securely through encrypted channels upon agreement and approval.\n\n### Security\
     \ Requirements\n\n⚠️ **Important Security Measures:**\n\n1. **IP Whitelisting**: Your server IP addresses must be whitelisted before you can access the APIs\n   - Contact our support team to whitelist your IPs\n   - Provide both development and production IP addresses\n\n2. **Secure Key Storage**: Never expose your API keys in client-side code or public repositories\n\n3. **HTTPS Only**: All API requests must use HTTPS protocol\n\n---\n\n\n---\n\n## Key Features\n\n- \U0001F4B3 **Instant Card Issuance**: Issue physical and virtual cards in real-time\n- \U0001F6E0️ **Card Management**: Complete lifecycle management from creation to closure\n- \U0001F4CA **Transaction Monitoring**: Real-time transaction tracking and reporting\n- \U0001F510 **PIN Management**: Secure PIN operations for enhanced security\n- \U0001F6CD️ **E-Commerce Controls**: Manage online transaction capabilities\n- \U0001F4CF **Limit Management**: Configure and monitor card spending limits and restrictions\n\n---\n\n\
     ## Next Steps\n\n1. **Review Use Cases**: Explore the different API endpoints and understand the scenarios for each\n2. **Integration Testing**: Test your integration in the UAT environment\n3. **Request Production Access**: Contact our team when ready to go live\n4. **Monitor & Optimize**: Use our transaction APIs to monitor card usage and optimize your integration\n\n---\n\n## Support\n\nIf you require further clarification or business alignment, please reach out to the assigned Product Manager.\n"
-  version: 1.1.1
+  version: 1.1.2
 servers:
 - url: https://uat-api.enza.cloud/TX/v1
 tags:
@@ -110,64 +110,64 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-  /products/accounts:
-    get:
-      operationId: getAccountTypes
-      summary: Get Account Types
-      description: |
-        This API is used to retrieve the account types.
-      tags:
-      - Products Retrieval
-      parameters:
-      - $ref: '#/components/parameters/apiKey'
-      responses:
-        '200':
-          description: Account types retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: SUCCESS_ACCOUNT_TYPES_RETRIEVED
-                  params:
-                    type: object
-                    required:
-                    - allowedAccountTypes
-                    properties:
-                      allowedAccountTypes:
-                        type: array
-                        items:
-                          type: string
-                        description: List of authorized account types
-                        example:
-                        - AccountPrepaidAPI
-                        - CBSFinancialContractTypeAPI
-                        - GHSAccountPrepaidAPI
-              examples:
-                success:
-                  summary: Account types retrieved
-                  value:
-                    code: SUCCESS_ACCOUNT_TYPES_RETRIEVED
-                    params:
-                      allowedAccountTypes:
-                      - AccountPrepaidAPI
-                      - CBSFinancialContractTypeAPI
-                      - GHSAccountPrepaidAPI
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-        '504':
-          $ref: '#/components/responses/LambdaTimeout'
+  # /products/accounts:
+  #   get:
+  #     operationId: getAccountTypes
+  #     summary: Get Account Types
+  #     description: |
+  #       This API is used to retrieve the account types.
+  #     tags:
+  #     - Products Retrieval
+  #     parameters:
+  #     - $ref: '#/components/parameters/apiKey'
+  #     responses:
+  #       '200':
+  #         description: Account types retrieved successfully
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #               - code
+  #               - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: SUCCESS_ACCOUNT_TYPES_RETRIEVED
+  #                 params:
+  #                   type: object
+  #                   required:
+  #                   - allowedAccountTypes
+  #                   properties:
+  #                     allowedAccountTypes:
+  #                       type: array
+  #                       items:
+  #                         type: string
+  #                       description: List of authorized account types
+  #                       example:
+  #                       - AccountPrepaidAPI
+  #                       - CBSFinancialContractTypeAPI
+  #                       - GHSAccountPrepaidAPI
+  #             examples:
+  #               success:
+  #                 summary: Account types retrieved
+  #                 value:
+  #                   code: SUCCESS_ACCOUNT_TYPES_RETRIEVED
+  #                   params:
+  #                     allowedAccountTypes:
+  #                     - AccountPrepaidAPI
+  #                     - CBSFinancialContractTypeAPI
+  #                     - GHSAccountPrepaidAPI
+  #       '401':
+  #         $ref: '#/components/responses/Unauthorized'
+  #       '403':
+  #         $ref: '#/components/responses/Forbidden'
+  #       '500':
+  #         $ref: '#/components/responses/InternalServerError'
+  #       '405':
+  #         $ref: '#/components/responses/MethodNotAllowed'
+  #       '504':
+  #         $ref: '#/components/responses/LambdaTimeout'
   /preproduced/contracts/retrieve:
     get:
       operationId: retrievePreproducedContracts
@@ -626,166 +626,166 @@ paths:
                         type: string
 
                         example: HTTP method not allowed for this endpoint
-  /accounts:
-    post:
-      operationId: createAccount
-      summary: Create Account
-      description: |
-        Create a new account for an existing customer.
+  # /accounts:
+  #   post:
+  #     operationId: createAccount
+  #     summary: Create Account
+  #     description: |
+  #       Create a new account for an existing customer.
         
-        **Note:** One of the following document IDs is required: nationalId, passport, or identityId
-      tags:
-      - Account Management
-      parameters:
-      - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                nationalId:
-                  type: string
-                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
-                  example: '123456789'
-                passport:
-                  type: string
-                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
-                  example: 'P12345678'
-                identityId:
-                  type: string
-                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
-                  example: 'ID123456'
-                accountNumber:
-                  type: string
-                  description: '**Required.** Account number to create'
-                  example: 'ACC123456'
-            examples:
-              withNationalId:
-                summary: Create account with National ID
-                value:
-                  nationalId: '123456789'
-                  accountNumber: 'ACC123456'
-              withPassport:
-                summary: Create account with Passport
-                value:
-                  passport: 'P12345678'
-                  accountNumber: 'ACC789012'
-              withIdentityId:
-                summary: Create account with Identity ID
-                value:
-                  identityId: 'ID123456'
-                  accountNumber: 'ACC345678'
-      responses:
-        '200':
-          description: Account created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: SUCCESS_ACCOUNT_CREATED
-                  params:
-                    type: object
-                    properties:
-                      message:
-                        type: string
-                        example: Account created successfully
-              examples:
-                success:
-                  summary: Account created
-                  value:
-                    code: SUCCESS_ACCOUNT_CREATED
-                    params:
-                      message: Account created successfully
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                  params:
-                    type: object
-                    properties:
-                      message:
-                        type: string
-              examples:
-                missingAccountNumber:
-                  summary: Missing account number
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: 'Missing required field: accountNumber'
-                missingDocumentId:
-                  summary: Missing document ID
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: 'One of the following fields is required: nationalId, passport, identityId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '409':
-          description: Customer not found
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: ERR_CUSTOMER_NOT_FOUND
-                  params:
-                    type: object
-                    properties:
-                      message:
-                        type: string
-                        example: Customer not found with provided document ID
-              examples:
-                customerNotFound:
-                  summary: Customer not found
-                  value:
-                    code: ERR_CUSTOMER_NOT_FOUND
-                    params:
-                      message: Customer not found with provided document ID
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        '405':
-          description: Method not allowed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: ERR_METHOD_NOT_ALLOWED
-                  params:
-                    type: object
-                    properties:
-                      message:
-                        type: string
-                        example: HTTP method not allowed for this endpoint
+  #       **Note:** One of the following document IDs is required: nationalId, passport, or identityId
+  #     tags:
+  #     - Account Management
+  #     parameters:
+  #     - $ref: '#/components/parameters/apiKey'
+  #     - $ref: '#/components/parameters/contentType'
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               nationalId:
+  #                 type: string
+  #                 description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
+  #                 example: '123456789'
+  #               passport:
+  #                 type: string
+  #                 description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
+  #                 example: 'P12345678'
+  #               identityId:
+  #                 type: string
+  #                 description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
+  #                 example: 'ID123456'
+  #               accountNumber:
+  #                 type: string
+  #                 description: '**Required.** Account number to create'
+  #                 example: 'ACC123456'
+  #           examples:
+  #             withNationalId:
+  #               summary: Create account with National ID
+  #               value:
+  #                 nationalId: '123456789'
+  #                 accountNumber: 'ACC123456'
+  #             withPassport:
+  #               summary: Create account with Passport
+  #               value:
+  #                 passport: 'P12345678'
+  #                 accountNumber: 'ACC789012'
+  #             withIdentityId:
+  #               summary: Create account with Identity ID
+  #               value:
+  #                 identityId: 'ID123456'
+  #                 accountNumber: 'ACC345678'
+  #     responses:
+  #       '200':
+  #         description: Account created successfully
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #               - code
+  #               - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: SUCCESS_ACCOUNT_CREATED
+  #                 params:
+  #                   type: object
+  #                   properties:
+  #                     message:
+  #                       type: string
+  #                       example: Account created successfully
+  #             examples:
+  #               success:
+  #                 summary: Account created
+  #                 value:
+  #                   code: SUCCESS_ACCOUNT_CREATED
+  #                   params:
+  #                     message: Account created successfully
+  #       '400':
+  #         description: Validation error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #               - code
+  #               - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                 params:
+  #                   type: object
+  #                   properties:
+  #                     message:
+  #                       type: string
+  #             examples:
+  #               missingAccountNumber:
+  #                 summary: Missing account number
+  #                 value:
+  #                   code: ERR_VALIDATION_FAILED
+  #                   params:
+  #                     message: 'Missing required field: accountNumber'
+  #               missingDocumentId:
+  #                 summary: Missing document ID
+  #                 value:
+  #                   code: ERR_VALIDATION_FAILED
+  #                   params:
+  #                     message: 'One of the following fields is required: nationalId, passport, identityId'
+  #       '401':
+  #         $ref: '#/components/responses/Unauthorized'
+  #       '403':
+  #         $ref: '#/components/responses/Forbidden'
+  #       '409':
+  #         description: Customer not found
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #               - code
+  #               - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: ERR_CUSTOMER_NOT_FOUND
+  #                 params:
+  #                   type: object
+  #                   properties:
+  #                     message:
+  #                       type: string
+  #                       example: Customer not found with provided document ID
+  #             examples:
+  #               customerNotFound:
+  #                 summary: Customer not found
+  #                 value:
+  #                   code: ERR_CUSTOMER_NOT_FOUND
+  #                   params:
+  #                     message: Customer not found with provided document ID
+  #       '500':
+  #         $ref: '#/components/responses/InternalServerError'
+  #       '405':
+  #         description: Method not allowed
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #               - code
+  #               - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: ERR_METHOD_NOT_ALLOWED
+  #                 params:
+  #                   type: object
+  #                   properties:
+  #                     message:
+  #                       type: string
+  #                       example: HTTP method not allowed for this endpoint
   /customers/search:
     post:
       operationId: checkCustomerExistence
@@ -7493,7 +7493,7 @@ paths:
       tags:
       - Card Issuance
       summary: Create Debit Card
-      description: "Create a debit card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n3. **Create Debit Card** using this API (`POST /cards/create-debit`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2\n   - Provide the account number\n   - Optionally enable auto-activation\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve`\n3. **Card Issuance**: Create issuing and financial contracts, issue physical card (inactive by default)\n4. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)\n5. **Notifications**: Use `POST /v1/notification/manage` after card creation if notifications are required\n\n**Note:** By default, card is NOT automatically activated unless `autoActivate` is set to `true`\n"
+      description: "Create a debit card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n3. **Create Debit Card** using this API (`POST /cards/create-debit`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2\n   - Provide the account number\n   - Optionally enable auto-activation\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve`\n3. **Card Issuance**: Create issuing and financial contracts, issue physical card (inactive by default)\n4. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)\n5. **Notifications**: Use `POST /v1/notification/manage` after card creation if notifications are required\n"
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -7685,8 +7685,35 @@ paths:
       operationId: createJointAccount
       tags:
       - Card Issuance
-      summary: Create Joint Account with Cards
-      description: "Create a joint account for two existing customers with debit cards for both.\n\n## Overview\n\nThis API creates a shared financial account (joint account) for two existing customers and issues a debit card for each customer linked to the shared account.\n\n## ⚠️ Important: Both Customers Must Exist First\n\n**This API only works for existing customers.** If either customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Verify Both Customers Exist** using `POST /customers/search`\n   - Search by identification number (nationalId, passport, or identityId)\n   - If either customer **does NOT exist** → Use `POST /customers/create` to create them first\n   - If both customers **exist** → Proceed to step 2\n\n2. **Retrieve Product Types** using `GET /products/retrieve`\n   - Select an **Account Type RID** from the financial contract types\n   - Select a **Card Product RID** from the issuing products\n\n3. **Create Joint Account** using this API (`POST /cards/joint-account`)\n   - Provide both customers' identification numbers\n   - Provide the account type RID and card product RID\n   - Provide the shared CBS account number\n\n"
+      summary: Create Joint Account
+      description: |
+        Create a joint account for two existing customers with optional card issuance.
+
+        ## Overview
+
+        This API creates a shared financial account (joint account) for two existing customers. Card issuance is optional and flexible.
+
+        ## ⚠️ Important: Both Customers Must Exist First
+
+        **This API only works for existing customers.** If either customer doesn't exist, you will receive an error.
+
+        **Workflow:**
+
+        1. **Verify Both Customers Exist** using `POST /customers/search`
+           - Search by identification number (nationalId, passport, or identityId)
+           - If either customer **does NOT exist** → Use `POST /customers/create` to create them first
+           - If both customers **exist** → Proceed to step 2
+
+        2. **Create Joint Account** using this API (`POST /cards/joint-account`)
+           - Provide both customers' identification numbers
+           - Provide the shared CBS account number
+           - Optionally include card product RIDs for each customer
+
+        ## Supported Scenarios
+
+        1. **Account Only (No Cards)**: Create joint account without cards
+        2. **Account + Primary Customer Card**: Create joint account with card for primary customer only
+        3. **Account + Both Customer Cards**: Create joint account with cards for both customers
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -7698,43 +7725,69 @@ paths:
               required:
               - primaryCustomerIdNumber
               - secondaryCustomerIdNumber
-              - accountTypeRid
-              - cardProductRid
               - sharedAccountNumber
               properties:
                 primaryCustomerIdNumber:
                   type: string
                   description: '**Required.** Primary customer identification number (National ID, Passport, or Identity ID)'
-                  example: '1234567890'
+                  example: '123456789'
                 secondaryCustomerIdNumber:
                   type: string
                   description: '**Required.** Secondary customer identification number (National ID, Passport, or Identity ID)'
-                  example: '0987654321'
-                accountTypeRid:
-                  type: string
-                  description: '**Required.** Financial Contract Type RID. Obtain via `GET /products/retrieve` from contract types list.'
-                  example: SAVINGS_ACCOUNT
-                cardProductRid:
-                  type: string
-                  description: '**Required.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
-                  example: VisaDebitPhysicalAPI
+                  example: '987654321'
                 sharedAccountNumber:
                   type: string
                   pattern: '^[0-9]{1,19}$'
                   description: '**Required.** Shared CBS account number (numeric only, max 19 digits, no leading zeros)'
                   example: '1234567890123'
+                primaryCard:
+                  type: object
+                  description: '**Optional.** Card details for primary customer. If not provided, no card will be issued for primary customer.'
+                  properties:
+                    cardProductRid:
+                      type: string
+                      description: '**Required if primaryCard is provided.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
+                      example: PRIMARY_CARD_PRODUCT_RID
+                  required:
+                  - cardProductRid
+                secondaryCard:
+                  type: object
+                  description: '**Optional.** Card details for secondary customer. If not provided, no card will be issued for secondary customer.'
+                  properties:
+                    cardProductRid:
+                      type: string
+                      description: '**Required if secondaryCard is provided.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
+                      example: SECONDARY_CARD_PRODUCT_RID
+                  required:
+                  - cardProductRid
             examples:
-              createJointAccount:
-                summary: Create joint account for two customers
+              accountOnly:
+                summary: 1. Account Only (No Cards)
                 value:
-                  primaryCustomerIdNumber: '1234567890'
-                  secondaryCustomerIdNumber: '0987654321'
-                  accountTypeRid: SAVINGS_ACCOUNT
-                  cardProductRid: VisaDebitPhysicalAPI
+                  primaryCustomerIdNumber: '123456789'
+                  secondaryCustomerIdNumber: '987654321'
                   sharedAccountNumber: '1234567890123'
+              accountWithPrimaryCard:
+                summary: 2. Account + Primary Customer Card
+                value:
+                  primaryCustomerIdNumber: '123456789'
+                  secondaryCustomerIdNumber: '987654321'
+                  sharedAccountNumber: '1234567890123'
+                  primaryCard:
+                    cardProductRid: PRIMARY_CARD_PRODUCT_RID
+              accountWithBothCards:
+                summary: 3. Account + Both Customer Cards
+                value:
+                  primaryCustomerIdNumber: '123456789'
+                  secondaryCustomerIdNumber: '987654321'
+                  sharedAccountNumber: '1234567890123'
+                  primaryCard:
+                    cardProductRid: PRIMARY_CARD_PRODUCT_RID
+                  secondaryCard:
+                    cardProductRid: SECONDARY_CARD_PRODUCT_RID
       responses:
         '200':
-          description: Joint account created successfully with cards for both customers
+          description: Joint account created successfully
           content:
             application/json:
               schema:
@@ -7765,9 +7818,6 @@ paths:
                         type: object
                         required:
                         - personId
-                        - cardId
-                        - panMasked
-                        - expiryDate
                         properties:
                           personId:
                             type: string
@@ -7775,23 +7825,20 @@ paths:
                             example: '5517'
                           cardId:
                             type: string
-                            description: Primary customer card ID
+                            description: Primary customer card ID (only present if primaryCard was requested)
                             example: '7775'
                           panMasked:
                             type: string
-                            description: Primary customer masked PAN (first 6 and last 4 digits visible)
+                            description: Primary customer masked PAN (only present if primaryCard was requested)
                             example: 534152******2180
                           expiryDate:
                             type: string
-                            description: Primary customer card expiry date (MM/YY format)
+                            description: Primary customer card expiry date (only present if primaryCard was requested)
                             example: 03/27
                       secondaryCustomer:
                         type: object
                         required:
                         - personId
-                        - cardId
-                        - panMasked
-                        - expiryDate
                         properties:
                           personId:
                             type: string
@@ -7799,19 +7846,44 @@ paths:
                             example: '5537'
                           cardId:
                             type: string
-                            description: Secondary customer card ID
+                            description: Secondary customer card ID (only present if secondaryCard was requested)
                             example: '7776'
                           panMasked:
                             type: string
-                            description: Secondary customer masked PAN (first 6 and last 4 digits visible)
+                            description: Secondary customer masked PAN (only present if secondaryCard was requested)
                             example: 534152******2181
                           expiryDate:
                             type: string
-                            description: Secondary customer card expiry date (MM/YY format)
+                            description: Secondary customer card expiry date (only present if secondaryCard was requested)
                             example: 03/27
               examples:
-                successResponse:
-                  summary: Joint account created successfully
+                accountOnlyResponse:
+                  summary: 1. Account Only (No Cards)
+                  value:
+                    code: SUCCESS_JOINT_ACCOUNT_CREATED
+                    params:
+                      message: Joint account created successfully
+                      sharedAccountNumber: '1234567890123'
+                      primaryCustomer:
+                        personId: '5517'
+                      secondaryCustomer:
+                        personId: '5537'
+                accountWithPrimaryCardResponse:
+                  summary: 2. Account + Primary Customer Card
+                  value:
+                    code: SUCCESS_JOINT_ACCOUNT_CREATED
+                    params:
+                      message: Joint account created successfully
+                      sharedAccountNumber: '1234567890123'
+                      primaryCustomer:
+                        personId: '5517'
+                        cardId: '7775'
+                        panMasked: 534152******2180
+                        expiryDate: 03/27
+                      secondaryCustomer:
+                        personId: '5537'
+                accountWithBothCardsResponse:
+                  summary: 3. Account + Both Customer Cards
                   value:
                     code: SUCCESS_JOINT_ACCOUNT_CREATED
                     params:
@@ -7839,7 +7911,7 @@ paths:
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
-                      message: 'Missing required field: customer1IdentificationNumber'
+                      message: 'Missing required field: primaryCustomerIdNumber'
                 invalidAccountNumber:
                   summary: Invalid account number format
                   value:
@@ -7852,18 +7924,12 @@ paths:
                     code: ERR_VALIDATION_FAILED
                     params:
                       message: Invalid sharedAccountNumber format. Account number cannot have leading zeros
-                invalidAccountType:
-                  summary: Invalid account type RID
+                missingCardProductRid:
+                  summary: Missing card product RID when card is requested
                   value:
-                    code: ERR_INVALID_ACCOUNT_TYPE
+                    code: ERR_VALIDATION_FAILED
                     params:
-                      message: Invalid Account Type RID. Use Retrieve Account Types API
-                invalidCardProduct:
-                  summary: Invalid card product RID
-                  value:
-                    code: ERR_INVALID_CARD_PRODUCT
-                    params:
-                      message: Invalid Card Product RID. Use Card Products API
+                      message: 'Missing required field: cardProductRid in primaryCard'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '409':
