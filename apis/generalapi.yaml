@@ -4248,9 +4248,9 @@ paths:
             schema:
               $ref: '#/components/schemas/PinChanging'
             example:
-              pan: '1234567890123456'
-              oldPinBlock: OLD123PIN456
-              newPinBlock: NEW789PIN012
+              pan: '5341522800276230'
+              oldPinBlock: '0412AC89ABCDEF00'
+              newPinBlock: '0412AC89ABCDEF01'
       responses:
         '200':
           description: PIN successfully changed
@@ -4334,6 +4334,12 @@ paths:
                     code: ERR_INVALID_PIN_BLOCK
                     params:
                       message: Invalid PIN block format
+                pinAuthFailed:
+                  summary: Invalid PIN (wrong old PIN)
+                  value:
+                    code: ERR_PIN_AUTH_FAILED
+                    params:
+                      message: Invalid PIN.
         '500':
           $ref: '#/components/responses/InternalServerError'
         '504':
@@ -12492,16 +12498,16 @@ components:
       properties:
         pan:
           type: string
-          description: '**Required.** The Primary Account Number (PAN) of the card'
-          example: '1234567890123456'
+          description: '**Required.** The Primary Account Number (PAN) of the card. Must be 13-19 numeric digits.'
+          example: '5341522800276230'
         oldPinBlock:
           type: string
-          description: '**Required.** The encrypted PIN block containing the current PIN for verification'
-          example: OLD123PIN456
+          description: '**Required.** The current PIN block. Must be exactly 16 hexadecimal characters (0-9, A-F).'
+          example: '0412AC89ABCDEF00'
         newPinBlock:
           type: string
-          description: '**Required.** The encrypted PIN block containing the new PIN to be set'
-          example: NEW789PIN012
+          description: '**Required.** The new PIN block. Must be exactly 16 hexadecimal characters (0-9, A-F).'
+          example: '0412AC89ABCDEF01'
     ValidationError:
       type: object
       required:
