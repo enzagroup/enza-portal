@@ -7633,297 +7633,6 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /cards/joint-account:
-    post:
-      operationId: createJointAccount
-      tags:
-      - Card Issuance
-      summary: Create Joint Account with Cards
-      description: |
-        Create a joint account for two existing customers with debit cards for both customers.
-
-        ## Overview
-
-        This API creates a shared financial account (joint account) for two existing customers and issues a debit card for each customer linked to the shared account.
-
-        ## ⚠️ Important: Both Customers Must Exist First
-
-        **This API only works for existing customers.** If either customer doesn't exist, you will receive an error.
-
-        **Workflow:**
-
-        1. **Verify Both Customers Exist** using `POST /customers/search`
-           - Search by identification number (nationalId, passport, or identityId)
-           - If either customer **does NOT exist** → Use `POST /customers/create` to create them first
-           - If both customers **exist** → Proceed to step 2
-
-        2. **Create Joint Account** using this API (`POST /cards/joint-account`)
-           - Provide both customers' identification numbers
-           - Provide the shared CBS account number
-           - Provide card product RIDs for both customers
-
-        ## Requirements
-
-        - **Both primaryCard and secondaryCard are required** - cards will be issued for both customers
-        - Each card object must include a valid `cardProductRid`
-        - Card product RIDs can be obtained via `GET /products/retrieve`
-      parameters:
-      - $ref: '#/components/parameters/apiKey'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-              - primaryCustomerIdNumber
-              - secondaryCustomerIdNumber
-              - sharedAccountNumber
-              - primaryCard
-              - secondaryCard
-              properties:
-                primaryCustomerIdNumber:
-                  type: string
-                  description: '**Required.** Primary customer identification number (National ID, Passport, or Identity ID)'
-                  example: '123456789'
-                secondaryCustomerIdNumber:
-                  type: string
-                  description: '**Required.** Secondary customer identification number (National ID, Passport, or Identity ID)'
-                  example: '987654321'
-                sharedAccountNumber:
-                  type: string
-                  pattern: '^[0-9]{1,19}$'
-                  description: '**Required.** Shared CBS account number (numeric only, max 19 digits, no leading zeros)'
-                  example: '1234567890123'
-                primaryCard:
-                  type: object
-                  description: '**Required.** Card details for primary customer.'
-                  properties:
-                    cardProductRid:
-                      type: string
-                      description: '**Required.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
-                      example: PRIMARY_CARD_PRODUCT_RID
-                  required:
-                  - cardProductRid
-                secondaryCard:
-                  type: object
-                  description: '**Required.** Card details for secondary customer.'
-                  properties:
-                    cardProductRid:
-                      type: string
-                      description: '**Required.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
-                      example: SECONDARY_CARD_PRODUCT_RID
-                  required:
-                  - cardProductRid
-            examples:
-              createJointAccount:
-                summary: Create joint account with cards for both customers
-                value:
-                  primaryCustomerIdNumber: '123456789'
-                  secondaryCustomerIdNumber: '987654321'
-                  sharedAccountNumber: '1234567890123'
-                  primaryCard:
-                    cardProductRid: PRIMARY_CARD_PRODUCT_RID
-                  secondaryCard:
-                    cardProductRid: SECONDARY_CARD_PRODUCT_RID
-      responses:
-        '200':
-          description: Joint account created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: SUCCESS_JOINT_ACCOUNT_CREATED
-                  params:
-                    type: object
-                    required:
-                    - message
-                    - sharedAccountNumber
-                    - primaryCustomer
-                    - secondaryCustomer
-                    properties:
-                      message:
-                        type: string
-                        example: Joint account created successfully
-                      sharedAccountNumber:
-                        type: string
-                        description: Shared account number
-                        example: '1234567890123'
-                      primaryCustomer:
-                        type: object
-                        required:
-                        - personId
-                        - cardId
-                        - panMasked
-                        - expiryDate
-                        properties:
-                          personId:
-                            type: string
-                            description: Primary customer person ID in TX system
-                            example: '5517'
-                          cardId:
-                            type: string
-                            description: Primary customer card ID
-                            example: '7775'
-                          panMasked:
-                            type: string
-                            description: Primary customer masked PAN (first 6 and last 4 digits visible)
-                            example: 534152******2180
-                          expiryDate:
-                            type: string
-                            description: Primary customer card expiry date (MM/YY format)
-                            example: 03/27
-                      secondaryCustomer:
-                        type: object
-                        required:
-                        - personId
-                        - cardId
-                        - panMasked
-                        - expiryDate
-                        properties:
-                          personId:
-                            type: string
-                            description: Secondary customer person ID in TX system
-                            example: '5537'
-                          cardId:
-                            type: string
-                            description: Secondary customer card ID
-                            example: '7776'
-                          panMasked:
-                            type: string
-                            description: Secondary customer masked PAN (first 6 and last 4 digits visible)
-                            example: 534152******2181
-                          expiryDate:
-                            type: string
-                            description: Secondary customer card expiry date (MM/YY format)
-                            example: 03/27
-              examples:
-                successResponse:
-                  summary: Joint account created successfully with cards for both customers
-                  value:
-                    code: SUCCESS_JOINT_ACCOUNT_CREATED
-                    params:
-                      message: Joint account created successfully
-                      sharedAccountNumber: '1234567890123'
-                      primaryCustomer:
-                        personId: '5517'
-                        cardId: '7775'
-                        panMasked: 534152******2180
-                        expiryDate: 03/27
-                      secondaryCustomer:
-                        personId: '5537'
-                        cardId: '7776'
-                        panMasked: 534152******2181
-                        expiryDate: 03/27
-        '400':
-          description: Bad request – validation failed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationError'
-              examples:
-                missingField:
-                  summary: Missing required field
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: 'Missing required field: primaryCustomerIdNumber'
-                invalidAccountNumber:
-                  summary: Invalid account number format
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: Invalid sharedAccountNumber format. Account number must contain only numbers (0-9) and be up to 19 digits long
-                leadingZeros:
-                  summary: Account number with leading zeros
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: Invalid sharedAccountNumber format. Account number cannot have leading zeros
-                missingPrimaryCard:
-                  summary: Missing required primaryCard object
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: 'Missing required field: primaryCard'
-                missingSecondaryCard:
-                  summary: Missing required secondaryCard object
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: 'Missing required field: secondaryCard'
-                missingCardProductRid:
-                  summary: Missing card product RID in card object
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: 'Missing required field: cardProductRid in primaryCard'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '409':
-          description: Conflict – customer not found or account already exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConflictError'
-              examples:
-                primaryCustomerNotFound:
-                  summary: Primary customer not found
-                  value:
-                    code: ERR_CUSTOMER_NOT_FOUND
-                    params:
-                      message: Primary customer not found
-                secondaryCustomerNotFound:
-                  summary: Secondary customer not found
-                  value:
-                    code: ERR_CUSTOMER_NOT_FOUND
-                    params:
-                      message: Secondary customer not found
-                accountAlreadyExists:
-                  summary: Account already exists
-                  value:
-                    code: ERR_ACCOUNT_ALREADY_EXISTS
-                    params:
-                      message: Account already exists
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: ERR_INTERNAL_SERVER_ERROR
-                  params:
-                    type: object
-                    required:
-                    - message
-                    properties:
-                      message:
-                        type: string
-                        example: An unexpected error occurred.
-              examples:
-                internalServerError:
-                  summary: Internal server error
-                  value:
-                    code: ERR_INTERNAL_SERVER_ERROR
-                    params:
-                      message: An unexpected error occurred.
-        '504':
-          $ref: '#/components/responses/LambdaTimeout'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
   /cards/risk-level:
     post:
       operationId: setCardRiskLevel
@@ -12082,6 +11791,297 @@ paths:
                     code: ERR_TIMEOUT
                     params:
                       message: Network timeout while connecting to backend system
+  /accounts/joint-account:
+    post:
+      operationId: createJointAccount
+      tags:
+      - Account Management
+      summary: Create Joint Account with Cards
+      description: |
+        Create a joint account for two existing customers with debit cards for both customers.
+
+        ## Overview
+
+        This API creates a shared financial account (joint account) for two existing customers and issues a debit card for each customer linked to the shared account.
+
+        ## ⚠️ Important: Both Customers Must Exist First
+
+        **This API only works for existing customers.** If either customer doesn't exist, you will receive an error.
+
+        **Workflow:**
+
+        1. **Verify Both Customers Exist** using `POST /customers/search`
+           - Search by identification number (nationalId, passport, or identityId)
+           - If either customer **does NOT exist** → Use `POST /customers/create` to create them first
+           - If both customers **exist** → Proceed to step 2
+
+        2. **Create Joint Account** using this API (`POST /cards/joint-account`)
+           - Provide both customers' identification numbers
+           - Provide the shared CBS account number
+           - Provide card product RIDs for both customers
+
+        ## Requirements
+
+        - **Both primaryCard and secondaryCard are required** - cards will be issued for both customers
+        - Each card object must include a valid `cardProductRid`
+        - Card product RIDs can be obtained via `GET /products/retrieve`
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - primaryCustomerIdNumber
+              - secondaryCustomerIdNumber
+              - sharedAccountNumber
+              - primaryCard
+              - secondaryCard
+              properties:
+                primaryCustomerIdNumber:
+                  type: string
+                  description: '**Required.** Primary customer identification number (National ID, Passport, or Identity ID)'
+                  example: '123456789'
+                secondaryCustomerIdNumber:
+                  type: string
+                  description: '**Required.** Secondary customer identification number (National ID, Passport, or Identity ID)'
+                  example: '987654321'
+                sharedAccountNumber:
+                  type: string
+                  pattern: '^[0-9]{1,19}$'
+                  description: '**Required.** Shared CBS account number (numeric only, max 19 digits, no leading zeros)'
+                  example: '1234567890123'
+                primaryCard:
+                  type: object
+                  description: '**Required.** Card details for primary customer.'
+                  properties:
+                    cardProductRid:
+                      type: string
+                      description: '**Required.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
+                      example: PRIMARY_CARD_PRODUCT_RID
+                  required:
+                  - cardProductRid
+                secondaryCard:
+                  type: object
+                  description: '**Required.** Card details for secondary customer.'
+                  properties:
+                    cardProductRid:
+                      type: string
+                      description: '**Required.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
+                      example: SECONDARY_CARD_PRODUCT_RID
+                  required:
+                  - cardProductRid
+            examples:
+              createJointAccount:
+                summary: Create joint account with cards for both customers
+                value:
+                  primaryCustomerIdNumber: '123456789'
+                  secondaryCustomerIdNumber: '987654321'
+                  sharedAccountNumber: '1234567890123'
+                  primaryCard:
+                    cardProductRid: PRIMARY_CARD_PRODUCT_RID
+                  secondaryCard:
+                    cardProductRid: SECONDARY_CARD_PRODUCT_RID
+      responses:
+        '200':
+          description: Joint account created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS_JOINT_ACCOUNT_CREATED
+                  params:
+                    type: object
+                    required:
+                    - message
+                    - sharedAccountNumber
+                    - primaryCustomer
+                    - secondaryCustomer
+                    properties:
+                      message:
+                        type: string
+                        example: Joint account created successfully
+                      sharedAccountNumber:
+                        type: string
+                        description: Shared account number
+                        example: '1234567890123'
+                      primaryCustomer:
+                        type: object
+                        required:
+                        - personId
+                        - cardId
+                        - panMasked
+                        - expiryDate
+                        properties:
+                          personId:
+                            type: string
+                            description: Primary customer person ID in TX system
+                            example: '5517'
+                          cardId:
+                            type: string
+                            description: Primary customer card ID
+                            example: '7775'
+                          panMasked:
+                            type: string
+                            description: Primary customer masked PAN (first 6 and last 4 digits visible)
+                            example: 534152******2180
+                          expiryDate:
+                            type: string
+                            description: Primary customer card expiry date (MM/YY format)
+                            example: 03/27
+                      secondaryCustomer:
+                        type: object
+                        required:
+                        - personId
+                        - cardId
+                        - panMasked
+                        - expiryDate
+                        properties:
+                          personId:
+                            type: string
+                            description: Secondary customer person ID in TX system
+                            example: '5537'
+                          cardId:
+                            type: string
+                            description: Secondary customer card ID
+                            example: '7776'
+                          panMasked:
+                            type: string
+                            description: Secondary customer masked PAN (first 6 and last 4 digits visible)
+                            example: 534152******2181
+                          expiryDate:
+                            type: string
+                            description: Secondary customer card expiry date (MM/YY format)
+                            example: 03/27
+              examples:
+                successResponse:
+                  summary: Joint account created successfully with cards for both customers
+                  value:
+                    code: SUCCESS_JOINT_ACCOUNT_CREATED
+                    params:
+                      message: Joint account created successfully
+                      sharedAccountNumber: '1234567890123'
+                      primaryCustomer:
+                        personId: '5517'
+                        cardId: '7775'
+                        panMasked: 534152******2180
+                        expiryDate: 03/27
+                      secondaryCustomer:
+                        personId: '5537'
+                        cardId: '7776'
+                        panMasked: 534152******2181
+                        expiryDate: 03/27
+        '400':
+          description: Bad request – validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                missingField:
+                  summary: Missing required field
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: primaryCustomerIdNumber'
+                invalidAccountNumber:
+                  summary: Invalid account number format
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid sharedAccountNumber format. Account number must contain only numbers (0-9) and be up to 19 digits long
+                leadingZeros:
+                  summary: Account number with leading zeros
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: Invalid sharedAccountNumber format. Account number cannot have leading zeros
+                missingPrimaryCard:
+                  summary: Missing required primaryCard object
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: primaryCard'
+                missingSecondaryCard:
+                  summary: Missing required secondaryCard object
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: secondaryCard'
+                missingCardProductRid:
+                  summary: Missing card product RID in card object
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: cardProductRid in primaryCard'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict – customer not found or account already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+              examples:
+                primaryCustomerNotFound:
+                  summary: Primary customer not found
+                  value:
+                    code: ERR_CUSTOMER_NOT_FOUND
+                    params:
+                      message: Primary customer not found
+                secondaryCustomerNotFound:
+                  summary: Secondary customer not found
+                  value:
+                    code: ERR_CUSTOMER_NOT_FOUND
+                    params:
+                      message: Secondary customer not found
+                accountAlreadyExists:
+                  summary: Account already exists
+                  value:
+                    code: ERR_ACCOUNT_ALREADY_EXISTS
+                    params:
+                      message: Account already exists
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - code
+                - params
+                properties:
+                  code:
+                    type: string
+                    example: ERR_INTERNAL_SERVER_ERROR
+                  params:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        example: An unexpected error occurred.
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    code: ERR_INTERNAL_SERVER_ERROR
+                    params:
+                      message: An unexpected error occurred.
+        '504':
+          $ref: '#/components/responses/LambdaTimeout'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'                      
 components:
   responses:
     LambdaTimeout:
