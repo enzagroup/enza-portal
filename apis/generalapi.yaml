@@ -1490,7 +1490,7 @@ paths:
                             expiryDate:
                               type: string
                               description: Card expiry timestamp
-                              example: '2029-01-31T23:59:59.000'
+                              example: '2029-01-31T23:59:59.000Z'
                             productType:
                               type: string
                               description: Contract type RID
@@ -3364,7 +3364,7 @@ paths:
                 closeTime:
                   type: string
                   description: '**Required.** Hold expiry date/time in ISO 8601 format without milliseconds. Examples: 2025-02-18T00:00:00 (start of Feb 18), 2025-02-19T23:59:59 (last second of Feb 19)'
-                  example: '2025-02-18T00:00:00'
+                  example: '2025-02-18T00:00:00Z'
             example:
               accountNumber: '100000000001488'
               amount: 10
@@ -3405,7 +3405,7 @@ paths:
                         example: '840'
                       closeTime:
                         type: string
-                        example: '2025-02-18T00:00:00'
+                        example: '2025-02-18T00:00:00Z'
               examples:
                 success:
                   summary: Debit hold created successfully
@@ -3490,7 +3490,7 @@ paths:
   #               closeTime:
   #                 type: string
   #                 description: '**Required.** Hold expiry date/time in ISO 8601 format without milliseconds. Example: 2026-02-16T00:00:00'
-  #                 example: '2026-02-16T00:00:00'
+  #                 example: '2026-02-16T00:00:00Z'
   #           example:
   #             accountNumber: '4567'
   #             amount: 1000
@@ -3531,10 +3531,10 @@ paths:
   #                       example: '840'
   #                     closeTime:
   #                       type: string
-  #                       example: '2026-02-16T00:00:00.000'
+  #                       example: '2026-02-16T00:00:00.000Z'
   #                     operationDate:
   #                       type: string
-  #                       example: '2026-02-19T00:00:00.000'
+  #                       example: '2026-02-19T00:00:00.000Z'
   #                     approvalCode:
   #                       type: string
   #                       example: 'VB1FHL'
@@ -6332,12 +6332,12 @@ paths:
                   type: string
                   format: date-time
                   description: '**Required.** Start date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
-                  example: '2025-07-01T00:00:00'
+                  example: '2025-07-01T00:00:00Z'
                 endDate:
                   type: string
                   format: date-time
                   description: '**Required.** End date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
-                  example: '2025-10-01T23:59:59'
+                  example: '2025-10-01T23:59:59Z'
                 transactionCount:
                   type: integer
                   minimum: 1
@@ -6380,12 +6380,12 @@ paths:
                         type: string
                         format: date-time
                         description: Start date of query
-                        example: '2025-07-01T00:00:00'
+                        example: '2025-07-01T00:00:00Z'
                       endDate:
                         type: string
                         format: date-time
                         description: End date of query
-                        example: '2025-10-02T23:59:59'
+                        example: '2025-10-02T23:59:59Z'
                       totalTransactions:
                         type: integer
                         description: Total number of transactions
@@ -6447,12 +6447,12 @@ paths:
                               type: string
                               format: date-time
                               description: Transaction date
-                              example: '2025-10-02T00:00:00'
+                              example: '2025-10-02T00:00:00Z'
                             timestamp:
                               type: string
                               format: date-time
                               description: Transaction timestamp
-                              example: '2025-10-02T14:12:22.000'
+                              example: '2025-10-02T14:12:22.000Z'
                             terminalOwnerTitle:
                               type: string
                               description: Terminal owner/acquirer name
@@ -6637,12 +6637,12 @@ paths:
                   type: string
                   format: date-time
                   description: '**Required.** Start date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
-                  example: '2025-07-01T00:00:00'
+                  example: '2025-07-01T00:00:00Z'
                 endDate:
                   type: string
                   format: date-time
                   description: '**Required.** End date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
-                  example: '2025-10-01T23:59:59'
+                  example: '2025-10-01T23:59:59Z'
                 transactionCount:
                   type: integer
                   minimum: 1
@@ -6685,12 +6685,12 @@ paths:
                         type: string
                         format: date-time
                         description: Start date of query
-                        example: '2025-07-01T00:00:00'
+                        example: '2025-07-01T00:00:00Z'
                       endDate:
                         type: string
                         format: date-time
                         description: End date of query
-                        example: '2025-10-01T23:59:59'
+                        example: '2025-10-01T23:59:59Z'
                       totalTransactions:
                         type: integer
                         description: Total number of settled transactions
@@ -6757,7 +6757,7 @@ paths:
                               type: string
                               format: date-time
                               description: Transaction timestamp
-                              example: '2025-09-23T14:05:00.000'
+                              example: '2025-09-23T14:05:00.000Z'
                             terminalOwnerTitle:
                               type: string
                               description: Terminal owner/acquirer name
@@ -6902,12 +6902,12 @@ paths:
                   type: string
                   format: date-time
                   description: '**Required.** Start date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
-                  example: '2025-07-01T00:00:00'
+                  example: '2025-07-01T00:00:00Z'
                 endDate:
                   type: string
                   format: date-time
                   description: '**Required.** End date in ISO 8601 format (YYYY-MM-DDTHH:mm:ss)'
-                  example: '2025-10-01T23:59:59'
+                  example: '2025-10-01T23:59:59Z'
                 transactionCount:
                   type: integer
                   minimum: 1
@@ -6950,12 +6950,12 @@ paths:
                         type: string
                         format: date-time
                         description: Start date of query
-                        example: '2025-07-01T00:00:00'
+                        example: '2025-07-01T00:00:00Z'
                       endDate:
                         type: string
                         format: date-time
                         description: End date of query
-                        example: '2025-10-01T23:59:59'
+                        example: '2025-10-01T23:59:59Z'
                       totalTransactions:
                         type: integer
                         description: Total number of unsettled transactions
@@ -7020,7 +7020,7 @@ paths:
                               type: string
                               format: date-time
                               description: Transaction timestamp
-                              example: '2025-09-23T14:05:00.000'
+                              example: '2025-09-23T14:05:00.000Z'
                             terminalOwnerTitle:
                               type: string
                               description: Terminal owner/acquirer name
@@ -7135,12 +7135,12 @@ paths:
                   type: string
                   format: date-time
                   description: '**Required.** Beginning time of the disabled hold on the restriction (ISO 8601 format without timezone)'
-                  example: '2026-02-18T14:24:41'
+                  example: '2026-02-18T14:24:41Z'
                 temporaryDisableEndTime:
                   type: string
                   format: date-time
                   description: '**Required.** End time of the disabled hold on the restriction (ISO 8601 format without timezone)'
-                  example: '2026-03-18T14:24:47'
+                  example: '2026-03-18T14:24:47Z'
             example:
               cardId: '3280'
               restrictionRid: 'CashTEST'
@@ -12210,34 +12210,6 @@ components:
                 code: ERR_METHOD_NOT_ALLOWED
                 params:
                   message: HTTP method not allowed for this endpoint. Please check the API documentation for supported methods
-    AuthenticationError:
-      description: Authentication context is missing or invalid
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-            - code
-            - params
-            properties:
-              code:
-                type: string
-                example: ERR_UNAUTHORIZED
-              params:
-                type: object
-                required:
-                - message
-                properties:
-                  message:
-                    type: string
-                    example: Missing or invalid API key. Please provide a valid API key in the request header.
-          examples:
-            authError:
-              summary: Authentication error
-              value:
-                code: ERR_UNAUTHORIZED
-                params:
-                  message: Missing or invalid API key. Please provide a valid API key in the request header.
     ConflictError:
       description: Conflict – operation declined
       content:
@@ -12280,21 +12252,6 @@ components:
                 code: ERR_INTERNAL_SERVER_ERROR
                 params:
                   message: An unexpected error occurred.
-    Options:
-      description: CORS preflight request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: CORS preflight request successful
-      examples:
-        options:
-          summary: CORS preflight
-          value:
-            message: CORS preflight request successful
   schemas:
     SuccessEnvelope:
       type: object
@@ -12313,21 +12270,6 @@ components:
             requestType:
               type: string
               example: NewAccountNewCustomer
-    ErrorEnvelope:
-      type: object
-      required:
-      - code
-      - params
-      properties:
-        code:
-          type: string
-          example: ERR_REQUEST_DECLINED
-        params:
-          type: object
-          properties:
-            message:
-              type: string
-              example: An error occurred processing the request
     BadRequest:
       type: object
       required:
@@ -12475,26 +12417,6 @@ components:
             message:
               type: string
               example: Operation was declined
-    ServerError:
-      type: object
-      required:
-      - code
-      - params
-      properties:
-        code:
-          type: string
-          enum:
-          - ERR_SUBJECT_ID_NOT_FOUND
-          - ERR_CLIENTID_NOT_FOUND
-          - ERR_INTERNAL_SERVER_ERROR
-          example: ERR_INTERNAL_SERVER_ERROR
-        params:
-          type: object
-          required:
-          - message
-          properties:
-            message:
-              example: An unexpected error occurred
     errorResponse:
       type: object
       required:
@@ -12527,87 +12449,6 @@ components:
             message:
               type: string
               example: Request processed successfully
-    CreateCardStandard:
-      type: object
-      properties:
-        requestType:
-          type: string
-          enum:
-          - NewAccountNewCustomer
-          - NewAccountExistingCustomer
-          - ExistingAccountExistingCustomer
-          description: '**Required.** Type of request - NewAccountNewCustomer, NewAccountExistingCustomer, or ExistingAccountExistingCustomer'
-          example: NewAccountNewCustomer
-        accountNum:
-          type: string
-          description: '**Required.** Account number to create or link to'
-          example: ACC123456
-        cardRefNum:
-          type: string
-          description: '**Required.** Card reference number (ExtRid) of pre-produced card'
-          example: CARD789012
-        embossedName:
-          type: string
-          description: '**Required.** Name to emboss on the card'
-          example: JOHN DOE
-        firstName:
-          type: string
-          description: '**Conditionally Required:** Required when requestType is ''NewAccountNewCustomer''. Customer''s first name'
-          example: John
-        lastName:
-          type: string
-          description: '**Conditionally Required:** Required when requestType is ''NewAccountNewCustomer''. Customer''s last name'
-          example: Doe
-        middleName:
-          type: string
-          description: '**Optional.** Customer''s middle name'
-          example: William
-        birthDate:
-          type: string
-          format: date
-          description: '**Optional.** Birth date in YYYY-MM-DD format'
-          example: '1990-01-15'
-        nationalId:
-          type: string
-          description: '**Conditionally Required:** One of nationalId, passport, or identityId is required. Customer''s national ID'
-          example: '1234567890'
-        passport:
-          type: string
-          description: '**Conditionally Required:** One of nationalId, passport, or identityId is required. Customer''s passport number'
-          example: AB1234567
-        identityId:
-          type: string
-          description: '**Conditionally Required:** One of nationalId, passport, or identityId is required. External ID number provided by the bank (use this if customer is not working with nationalId or passport)'
-          example: ID123456
-        email:
-          type: string
-          format: email
-          description: '**Optional.** Customer''s email address'
-          example: john.doe@example.com
-        mobilePhone:
-          type: string
-          description: '**Conditionally Required:** Required when requestType is ''NewAccountNewCustomer''. Customer''s mobile phone number'
-          example: '1234567890'
-        streetTitle:
-          type: string
-          description: '**Optional.** Customer''s street address'
-          example: 123 Main Street
-        zip:
-          type: string
-          description: '**Optional.** Customer''s postal code'
-          example: '12345'
-        notificationStatus:
-          type: string
-          enum:
-          - enabled
-          - disabled
-          description: '**Optional.** Notification preference - enabled or disabled'
-          example: enabled
-        autoActivate:
-          type: boolean
-          description: '**Optional.** Set to true to automatically activate the card after creation (default: false)'
-          example: false
-          default: false
   parameters:
     apiKey:
       name: x-api-key
