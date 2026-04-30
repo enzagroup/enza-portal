@@ -4,7 +4,7 @@ info:
   description: "## Overview\n\nWelcome to the enza REST API Developer Portal. Our API provides seamless integration . This portal offers all the necessary tools, detailed documentation, and API endpoints required to empower your financial operations with real-time card issuance capabilities.\n\nFollow this guide to:\n- Understand API authentication and security requirements\n- Generate and configure the credentials required to access the enza Developers API\n- Use the API endpoints to create cards and manage customer accounts\n- Learn best practices for integrating with our platform\n\n---\n\n## Step 1: Generate API Credentials\n\n### API Key Authentication\n\nAll API requests require an **API Key** for authentication. The API key must be included in the request header:\n\n```\nx-api-key: YOUR_API_KEY_HERE\n```\n\n### Development vs Production Keys\n\n- Both Development/UAT and Production API Keys will be shared securely through encrypted channels upon agreement and approval.\n\n### Security\
     \ Requirements\n\n⚠️ **Important Security Measures:**\n\n1. **IP Whitelisting**: Your server IP addresses must be whitelisted before you can access the APIs\n   - Contact our support team to whitelist your IPs\n   - Provide both development and production IP addresses\n\n2. **Secure Key Storage**: Never expose your API keys in client-side code or public repositories\n\n3. **HTTPS Only**: All API requests must use HTTPS protocol\n\n---\n\n\n---\n\n## Key Features\n\n- \U0001F4B3 **Instant Card Issuance**: Issue physical and virtual cards in real-time\n- \U0001F6E0️ **Card Management**: Complete lifecycle management from creation to closure\n- \U0001F4CA **Transaction Monitoring**: Real-time transaction tracking and reporting\n- \U0001F510 **PIN Management**: Secure PIN operations for enhanced security\n- \U0001F6CD️ **E-Commerce Controls**: Manage online transaction capabilities\n- \U0001F4CF **Limit Management**: Configure and monitor card spending limits and restrictions\n\n---\n\n\
     ## Next Steps\n\n1. **Review Use Cases**: Explore the different API endpoints and understand the scenarios for each\n2. **Integration Testing**: Test your integration in the UAT environment\n3. **Request Production Access**: Contact our team when ready to go live\n4. **Monitor & Optimize**: Use our transaction APIs to monitor card usage and optimize your integration\n\n---\n\n## Support\n\nIf you require further clarification or business alignment, please reach out to the assigned Product Manager.\n"
-  version: 1.1.2
+  version: 1.1.3
 servers:
 - url: https://uat-api.enza.cloud/TX/v1
 tags:
@@ -4504,17 +4504,9 @@ paths:
                   type: string
                   description: 'ISO-0 PIN block (16 hex characters)'
                   example: '5621E1B73F93A045'
-            examples:
-              verifyPinMatch:
-                summary: Verify PIN - Match
-                value:
-                  cardId: '3404'
-                  pinBlock: '5621E1B73F93A045'
-              verifyPinMismatch:
-                summary: Verify PIN - Mismatch
-                value:
-                  cardId: '3404'
-                  pinBlock: '0000000000000000'
+            example:
+              cardId: '3404'
+              pinBlock: '5621E1B73F93A045'
       responses:
         '200':
           description: PIN verification result
@@ -4606,12 +4598,9 @@ paths:
                   type: string
                   description: '1024-bit RSA Public Key in hex format (approximately 200+ hex characters)'
                   example: '30819F300D06092A864886F70D010101050003818D0030818902818100...'
-            examples:
-              revealPinRequest:
-                summary: Reveal PIN Request
-                value:
-                  cardId: '3404'
-                  publicKey: '30819F300D06092A864886F70D010101050003818D0030818902818100A1B2C3D4...'
+            example:
+              cardId: '3404'
+              publicKey: '30819F300D06092A864886F70D010101050003818D0030818902818100A1B2C3D4...'
       responses:
         '200':
           description: PIN revealed successfully
@@ -7685,13 +7674,13 @@ paths:
       operationId: createJointAccount
       tags:
       - Card Issuance
-      summary: Create Joint Account
+      summary: Create Joint Account with Cards
       description: |
-        Create a joint account for two existing customers with optional card issuance.
+        Create a joint account for two existing customers with debit cards for both customers.
 
         ## Overview
 
-        This API creates a shared financial account (joint account) for two existing customers. Card issuance is optional and flexible.
+        This API creates a shared financial account (joint account) for two existing customers and issues a debit card for each customer linked to the shared account.
 
         ## ⚠️ Important: Both Customers Must Exist First
 
@@ -7707,13 +7696,13 @@ paths:
         2. **Create Joint Account** using this API (`POST /cards/joint-account`)
            - Provide both customers' identification numbers
            - Provide the shared CBS account number
-           - Optionally include card product RIDs for each customer
+           - Provide card product RIDs for both customers
 
-        ## Supported Scenarios
+        ## Requirements
 
-        1. **Account Only (No Cards)**: Create joint account without cards
-        2. **Account + Primary Customer Card**: Create joint account with card for primary customer only
-        3. **Account + Both Customer Cards**: Create joint account with cards for both customers
+        - **Both primaryCard and secondaryCard are required** - cards will be issued for both customers
+        - Each card object must include a valid `cardProductRid`
+        - Card product RIDs can be obtained via `GET /products/retrieve`
       parameters:
       - $ref: '#/components/parameters/apiKey'
       - $ref: '#/components/parameters/contentType'
@@ -7726,6 +7715,8 @@ paths:
               - primaryCustomerIdNumber
               - secondaryCustomerIdNumber
               - sharedAccountNumber
+              - primaryCard
+              - secondaryCard
               properties:
                 primaryCustomerIdNumber:
                   type: string
@@ -7742,41 +7733,27 @@ paths:
                   example: '1234567890123'
                 primaryCard:
                   type: object
-                  description: '**Optional.** Card details for primary customer. If not provided, no card will be issued for primary customer.'
+                  description: '**Required.** Card details for primary customer.'
                   properties:
                     cardProductRid:
                       type: string
-                      description: '**Required if primaryCard is provided.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
+                      description: '**Required.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
                       example: PRIMARY_CARD_PRODUCT_RID
                   required:
                   - cardProductRid
                 secondaryCard:
                   type: object
-                  description: '**Optional.** Card details for secondary customer. If not provided, no card will be issued for secondary customer.'
+                  description: '**Required.** Card details for secondary customer.'
                   properties:
                     cardProductRid:
                       type: string
-                      description: '**Required if secondaryCard is provided.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
+                      description: '**Required.** Card Product RID. Obtain via `GET /products/retrieve` from issuing products list.'
                       example: SECONDARY_CARD_PRODUCT_RID
                   required:
                   - cardProductRid
             examples:
-              accountOnly:
-                summary: 1. Account Only (No Cards)
-                value:
-                  primaryCustomerIdNumber: '123456789'
-                  secondaryCustomerIdNumber: '987654321'
-                  sharedAccountNumber: '1234567890123'
-              accountWithPrimaryCard:
-                summary: 2. Account + Primary Customer Card
-                value:
-                  primaryCustomerIdNumber: '123456789'
-                  secondaryCustomerIdNumber: '987654321'
-                  sharedAccountNumber: '1234567890123'
-                  primaryCard:
-                    cardProductRid: PRIMARY_CARD_PRODUCT_RID
-              accountWithBothCards:
-                summary: 3. Account + Both Customer Cards
+              createJointAccount:
+                summary: Create joint account with cards for both customers
                 value:
                   primaryCustomerIdNumber: '123456789'
                   secondaryCustomerIdNumber: '987654321'
@@ -7818,6 +7795,9 @@ paths:
                         type: object
                         required:
                         - personId
+                        - cardId
+                        - panMasked
+                        - expiryDate
                         properties:
                           personId:
                             type: string
@@ -7825,20 +7805,23 @@ paths:
                             example: '5517'
                           cardId:
                             type: string
-                            description: Primary customer card ID (only present if primaryCard was requested)
+                            description: Primary customer card ID
                             example: '7775'
                           panMasked:
                             type: string
-                            description: Primary customer masked PAN (only present if primaryCard was requested)
+                            description: Primary customer masked PAN (first 6 and last 4 digits visible)
                             example: 534152******2180
                           expiryDate:
                             type: string
-                            description: Primary customer card expiry date (only present if primaryCard was requested)
+                            description: Primary customer card expiry date (MM/YY format)
                             example: 03/27
                       secondaryCustomer:
                         type: object
                         required:
                         - personId
+                        - cardId
+                        - panMasked
+                        - expiryDate
                         properties:
                           personId:
                             type: string
@@ -7846,44 +7829,19 @@ paths:
                             example: '5537'
                           cardId:
                             type: string
-                            description: Secondary customer card ID (only present if secondaryCard was requested)
+                            description: Secondary customer card ID
                             example: '7776'
                           panMasked:
                             type: string
-                            description: Secondary customer masked PAN (only present if secondaryCard was requested)
+                            description: Secondary customer masked PAN (first 6 and last 4 digits visible)
                             example: 534152******2181
                           expiryDate:
                             type: string
-                            description: Secondary customer card expiry date (only present if secondaryCard was requested)
+                            description: Secondary customer card expiry date (MM/YY format)
                             example: 03/27
               examples:
-                accountOnlyResponse:
-                  summary: 1. Account Only (No Cards)
-                  value:
-                    code: SUCCESS_JOINT_ACCOUNT_CREATED
-                    params:
-                      message: Joint account created successfully
-                      sharedAccountNumber: '1234567890123'
-                      primaryCustomer:
-                        personId: '5517'
-                      secondaryCustomer:
-                        personId: '5537'
-                accountWithPrimaryCardResponse:
-                  summary: 2. Account + Primary Customer Card
-                  value:
-                    code: SUCCESS_JOINT_ACCOUNT_CREATED
-                    params:
-                      message: Joint account created successfully
-                      sharedAccountNumber: '1234567890123'
-                      primaryCustomer:
-                        personId: '5517'
-                        cardId: '7775'
-                        panMasked: 534152******2180
-                        expiryDate: 03/27
-                      secondaryCustomer:
-                        personId: '5537'
-                accountWithBothCardsResponse:
-                  summary: 3. Account + Both Customer Cards
+                successResponse:
+                  summary: Joint account created successfully with cards for both customers
                   value:
                     code: SUCCESS_JOINT_ACCOUNT_CREATED
                     params:
@@ -7924,8 +7882,20 @@ paths:
                     code: ERR_VALIDATION_FAILED
                     params:
                       message: Invalid sharedAccountNumber format. Account number cannot have leading zeros
+                missingPrimaryCard:
+                  summary: Missing required primaryCard object
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: primaryCard'
+                missingSecondaryCard:
+                  summary: Missing required secondaryCard object
+                  value:
+                    code: ERR_VALIDATION_FAILED
+                    params:
+                      message: 'Missing required field: secondaryCard'
                 missingCardProductRid:
-                  summary: Missing card product RID when card is requested
+                  summary: Missing card product RID in card object
                   value:
                     code: ERR_VALIDATION_FAILED
                     params:
@@ -8806,7 +8776,6 @@ paths:
                   type: boolean
                   description: true to enable Ecommerce transactions, false to disable Ecommerce transactions
                   example: true
-              additionalProperties: false
             examples:
               enableEcomm:
                 summary: Enable Ecommerce transactions
@@ -9318,7 +9287,6 @@ paths:
                   type: string
                   description: Card ID (Token ID) to reset Last ATC
                   example: '4471'
-              additionalProperties: false
             examples:
               resetAtc:
                 summary: Reset Last ATC for card
@@ -9437,7 +9405,6 @@ paths:
                   maxLength: 50
                   description: Identity ID of the customer
                   example: ID12345678
-              additionalProperties: false
             examples:
               listAccountsByNationalId:
                 summary: List accounts by national ID
@@ -10103,7 +10070,6 @@ paths:
                   minLength: 1
                   description: Encrypted PIN block for the card
                   example: 'B7262EEDA813BCC0'
-              additionalProperties: false
             examples:
               setPin:
                 summary: Set PIN for card
@@ -10933,7 +10899,6 @@ paths:
                   example: '6522'
               required:
                 - cardId
-              additionalProperties: false
             examples:
               renewCard:
                 summary: Renew card
@@ -11035,7 +11000,6 @@ paths:
                   example: '6522'
               required:
                 - cardId
-              additionalProperties: false
             examples:
               reissueCard:
                 summary: Reissue card
@@ -11143,7 +11107,6 @@ paths:
                   example: '6522'
               required:
                 - cardId
-              additionalProperties: false
             examples:
               replaceCard:
                 summary: Replace card
@@ -11256,7 +11219,6 @@ paths:
                   type: string
                   description: '**Required.** ISO 4217 numeric currency code — must be exactly 3 digits'
                   example: '936'
-              additionalProperties: false
             example:
               cardId: '3404'
               sourceAccount: '100000000001234'
@@ -11445,7 +11407,6 @@ paths:
                   type: string
                   description: '**Required.** Transfer amount — accepts both formats: Integer (1, 100, 5000) or Decimal (1.5, 100.50, 5000.99)'
                   example: '5.00'
-              additionalProperties: false
             example:
               sourceAccount: '100000000001344'
               destinationAccount: '100000000001488'
@@ -11675,7 +11636,6 @@ paths:
                   type: string
                   description: '**Required.** Transfer amount — accepts both formats: Integer (1, 100, 5000) or Decimal (1.5, 100.50, 5000.99)'
                   example: '5.00'
-              additionalProperties: false
             example:
               cardId: '3280'
               destinationAccount: '100000000001488'
@@ -11841,7 +11801,6 @@ paths:
                   type: string
                   description: '**Required.** Transfer amount — accepts both formats: Integer (1, 100, 5000) or Decimal (1.5, 100.50, 5000.99)'
                   example: '5.00'
-              additionalProperties: false
             example:
               sourceCardId: '3280'
               destinationCardId: '3435'
@@ -12020,7 +11979,6 @@ paths:
                   type: string
                   description: '**Required.** Transfer amount — accepts both formats: Integer (1, 100, 5000) or Decimal (1.5, 100.50, 5000.99)'
                   example: '1.00'
-              additionalProperties: false
             example:
               sourcePan: '4373580001009267'
               destinationPan: '4373580001009002'
