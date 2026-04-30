@@ -266,7 +266,6 @@ paths:
       - Customer Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -638,7 +637,6 @@ paths:
   #     - Account Management
   #     parameters:
   #     - $ref: '#/components/parameters/apiKey'
-  #     - $ref: '#/components/parameters/contentType'
   #     requestBody:
   #       required: true
   #       content:
@@ -806,7 +804,6 @@ paths:
       - Customer Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -950,7 +947,6 @@ paths:
       - Customer Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -1307,7 +1303,6 @@ paths:
       - Account Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -1448,7 +1443,6 @@ paths:
       - Account Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       - name: accountNumber
         in: path
         required: true
@@ -1585,7 +1579,6 @@ paths:
       - Notifications Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -1715,7 +1708,6 @@ paths:
       - Customer Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -2017,7 +2009,6 @@ paths:
       - Notifications Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -2216,7 +2207,6 @@ paths:
       - Card Issuance
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -2345,7 +2335,6 @@ paths:
       - Card Issuance
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -2570,7 +2559,6 @@ paths:
         '
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -2669,7 +2657,6 @@ paths:
       - Card Details
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -2870,7 +2857,6 @@ paths:
       - Card Control
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         description: CVV2 verification request containing cardId and cvv2 to validate.
         required: true
@@ -2996,7 +2982,6 @@ paths:
       - Card Details
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         description: Delivery address details for the card
         required: true
@@ -3351,7 +3336,6 @@ paths:
       - Holds Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       operationId: createDebitHold
       summary: Create Debit Hold
       description: |
@@ -3621,7 +3605,6 @@ paths:
       - Holds Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -3728,7 +3711,6 @@ paths:
       - Holds Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -3857,7 +3839,6 @@ paths:
       - Holds Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -4100,7 +4081,6 @@ paths:
       - PIN Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -4241,7 +4221,6 @@ paths:
       - PIN Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -4383,7 +4362,6 @@ paths:
       - PIN Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -4495,7 +4473,6 @@ paths:
       - PIN Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -4589,7 +4566,6 @@ paths:
       - PIN Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -4691,7 +4667,6 @@ paths:
         '
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -4791,7 +4766,6 @@ paths:
       - Card Control
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -4995,7 +4969,6 @@ paths:
       - Card Control
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -5194,7 +5167,6 @@ paths:
       - Preproduced Card
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -5324,7 +5296,6 @@ paths:
       - Preproduced Card
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -5427,7 +5398,6 @@ paths:
       - Preproduced Card
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -5511,7 +5481,6 @@ paths:
       - Preproduced Card
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -5660,7 +5629,6 @@ paths:
       - Preproduced Card
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -5774,7 +5742,6 @@ paths:
       - Preproduced Card
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -5909,7 +5876,6 @@ paths:
       - Card Issuance
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -6060,7 +6026,6 @@ paths:
         '
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       - name: card_Id
         in: path
         required: true
@@ -6200,7 +6165,6 @@ paths:
         '
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -6354,7 +6318,6 @@ paths:
         '
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -6660,7 +6623,6 @@ paths:
         '
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -6926,7 +6888,6 @@ paths:
         '
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -7156,7 +7117,6 @@ paths:
         '
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -7306,7 +7266,6 @@ paths:
       description: "Create a virtual prepaid card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n3. **Create Prepaid Card** using this API (`POST /cards/create-prepaid`)\n   - Provide the customer's document ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2\n   - Optionally enable auto-activation\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve`\n3. **Card Issuance**: Create issuing and financial contracts, issue virtual card\n4. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)\n5. **Notifications**: Use `POST /v1/notification/manage` after card creation if notifications are required\n\n**Note:** By default, card is NOT automatically activated unless `autoActivate` is set to `true`\n"
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -7491,7 +7450,6 @@ paths:
       description: "Create a debit card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n3. **Create Debit Card** using this API (`POST /cards/create-debit`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2\n   - Provide the account number\n   - Optionally enable auto-activation\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve`\n3. **Card Issuance**: Create issuing and financial contracts, issue physical card (inactive by default)\n4. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)\n5. **Notifications**: Use `POST /v1/notification/manage` after card creation if notifications are required\n"
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -7711,7 +7669,6 @@ paths:
         - Card product RIDs can be obtained via `GET /products/retrieve`
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -7977,7 +7934,6 @@ paths:
       - Card Control
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -8106,7 +8062,6 @@ paths:
         - Contract Not Active: Returns 409 with ERR_CONTRACT_NOT_ACTIVE
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -8233,7 +8188,6 @@ paths:
         Block or unblock the EMV functionality of a card.
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -8364,7 +8318,6 @@ paths:
         Enable or disable the contactless interface of a card.
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -8494,7 +8447,6 @@ paths:
       description: Enable or disable ATM transaction restriction for a card.
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -8628,7 +8580,6 @@ paths:
       description: Enable or disable POS transaction restriction for a card.
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -8760,7 +8711,6 @@ paths:
         - Limits Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'  
       summary: Set Ecommerce Status
       description: |
         Enable or disable Ecommerce transaction restriction for a card. Controls whether Ecommerce limit is in use or out of use.
@@ -8905,7 +8855,6 @@ paths:
       description: 'Removes the temporary disable status and restores the original restriction. No time parameters required - the restriction is immediately re-applied.'
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -9034,7 +8983,6 @@ paths:
       
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -9277,7 +9225,6 @@ paths:
       summary: Reset Last ATC
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       description: |
         Reset the Last ATC (Application Transaction Counter) for a card to 0.
       requestBody:
@@ -9382,7 +9329,6 @@ paths:
         - Customer Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'  
       summary: Show Customer Accounts
       description: |
         Retrieve list of all customer accounts and account numbers by customer id (nationalId, passport or identityId).
@@ -9681,7 +9627,6 @@ paths:
       - Card Control
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -9809,7 +9754,6 @@ paths:
       - Credit Card Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -10053,7 +9997,6 @@ paths:
         - PIN Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       summary: Set PIN for Card by ID
       description: |
         Set or update the PIN for a customer card using Card ID.
@@ -10182,7 +10125,6 @@ paths:
       description: "Create a supplementary card for an existing customer.\n\n**Workflow:**\n\n1. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n2. **Create Supplementary Card** using this API (`POST /cards/create-supplementary`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 1 \n\n---\n\n**Process Flow:**\n1. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve` (must contain SUPP and API)\n2. **Card Issuance**: Create issuing contract, issue supplementary card\n3. **Card Details**: Return card ID for further operations\n\n**Note:** Supplementary cards are linked to existing customer accounts and require special product types containing 'SUPP' and 'API'\n"
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -10314,7 +10256,6 @@ paths:
       description: "Link a supplementary card to a main card for shared limits and controls.\n\n**Process Flow:**\n1. **Card Verification**: Both cards must exist in the system\n2. **Linking Process**: Establish main-supplementary relationship\n3. **Confirmation**: Return success confirmation\n\n**Note:** The supplementary card will be linked to the main card and share limits and controls"
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         content:
           application/json:
@@ -10624,7 +10565,6 @@ paths:
       - Limits Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -10765,7 +10705,6 @@ paths:
       - Limits Management
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -10891,7 +10830,6 @@ paths:
       description: Renew an expired card with a new expiry date while keeping the same PAN
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -10992,7 +10930,6 @@ paths:
       description: Reissue a damaged card with the same PAN and expiry date
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -11099,7 +11036,6 @@ paths:
       description: Replace a lost, stolen, or compromised card with a new PAN and new expiry date
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -11201,7 +11137,6 @@ paths:
       - Money Transfer
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -11389,7 +11324,6 @@ paths:
       - Money Transfer
       parameters:
       - $ref: '#/components/parameters/apiKey'
-      - $ref: '#/components/parameters/contentType'
       requestBody:
         required: true
         content:
@@ -11615,10 +11549,9 @@ paths:
       description: |
         Transfers funds from a Card (identified by CardId) to a destination account.
       tags:
-        - Money Transfer
+      - Money Transfer
       parameters:
-        - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/contentType'
+      - $ref: '#/components/parameters/apiKey'
       requestBody:
         required: true
         content:
@@ -11780,10 +11713,9 @@ paths:
       description: |
         Transfers funds from one Card to another Card using CardIds.
       tags:
-        - Money Transfer
+      - Money Transfer
       parameters:
-        - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/contentType'
+      - $ref: '#/components/parameters/apiKey'
       requestBody:
         required: true
         content:
@@ -11954,10 +11886,9 @@ paths:
       description: |
         Transfers funds from one card to another card using PAN (Primary Account Number) values.
       tags:
-        - Money Transfer
+      - Money Transfer
       parameters:
-        - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/contentType'
+      - $ref: '#/components/parameters/apiKey'
       requestBody:
         required: true
         content:
@@ -12685,11 +12616,3 @@ components:
       schema:
         type: string
       description: API key for authentication
-    contentType:
-      name: Content-Type
-      in: header
-      required: true
-      schema:
-        type: string
-        default: application/json
-      description: Content type of the request body
