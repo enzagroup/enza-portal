@@ -7447,7 +7447,7 @@ paths:
       tags:
       - Card Issuance
       summary: Create Debit Card
-      description: "Create a debit card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned \n\n3. **Create Debit Card** using this API (`POST /cards/create-debit`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2\n   - Provide the account number\n   - Optionally enable auto-activation\n\n---\n\n**Process Flow:**\n1. **Customer Verification**: Check if customer exists using document ID\n2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve`\n3. **Card Issuance**: Create issuing and financial contracts, issue physical card (inactive by default)\n4. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)\n5. **Notifications**: Use `POST /v1/notification/manage` after card creation if notifications are required\n"
+      description: "Create a debit card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned\n\n3. **Create Debit Card** using this API (`POST /cards/create-debit`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2\n   - Provide the account number\n   - Set `isJointAccount` to indicate which flow to follow (default: `false`)\n\n---\n\n## Step 1: Check `isJointAccount` Flag\n\nDetermine the value of the `isJointAccount` flag before proceeding. This flag controls which flow to follow.\n\n### Flow A — `isJointAccount = false` (Individual Account)\n\n1. **Check if Account Exists**\n   - If the account already exists → **Stop.** This account already has a debit card. Do not proceed.\n   - If the account does not exist → Continue to step 2.\n2. **Create Financial Contract**\n   - Contract Type: RID (`DebitFinancialContractMC`)\n   - Request Fields: `<Reference>` (Expected from the Bank: External Account number that refers to the DHI)\n3. **Create Issuing Contract**\n   - Contract Type: RID (`PhysicalDebitIssuingContractMC`)\n   - A Physical MC Debit will be created automatically upon contract creation.\n   - Token Not Active.\n4. **Link Contracts** — Link the issuing contract with the financial contract.\n5. **Retrieve Card Data** — Without CVV2 and without card activation.\n\n### Flow B — `isJointAccount = true` (Joint Account)\n\n**If Joint Account Already Exists:**\n1. **Create Issuing Contract**\n   - Contract Type: RID (`PhysicalDebitIssuingContractMC`)\n   - A Physical MC Debit will be created automatically upon contract creation.\n   - Token Not Active.\n2. **Link Contracts** — Link the issuing contract with the existing joint account's financial contract.\n3. **Retrieve Card Data** — Without CVV2 and without card activation.\n\n**If Joint Account Does Not Exist:**\n1. **Create Financial Contract**\n   - Contract Type: RID (`DebitFinancialContractMC`)\n   - Request Fields: External Account number that refers to the DHI (expected from the bank).\n2. **Create Issuing Contract**\n   - Contract Type: RID (`PhysicalDebitIssuingContractMC`)\n   - A Physical MC Debit will be created automatically upon contract creation.\n   - Token Not Active.\n3. **Link Contracts** — Link the issuing contract with the newly created joint account's financial contract.\n4. **Retrieve Card Data** — Without CVV2 and without card activation.\n"
       parameters:
       - $ref: '#/components/parameters/apiKey'
       requestBody:
@@ -7479,25 +7479,40 @@ paths:
                   type: string
                   description: '**Required.** External account number (DHI reference) to link with the financial contract'
                   example: DHI123456789
+                isJointAccount:
+                  type: boolean
+                  description: '**Optional.** Set to `true` when the card is being issued under a joint account. When `true`, the API checks for an existing joint financial contract and either links a new issuing contract to it or creates both contracts. When `false` (default), the API follows the individual-account flow and rejects the request if the account already has a debit card.'
+                  default: false
+                  example: false
             examples:
-              withNationalId:
-                summary: Create debit card with National ID
+              individualWithNationalId:
+                summary: Individual account — create debit card with National ID
                 value:
                   productType: VisaDebitPhysicalAPI
                   nationalId: '1234567890'
                   accountNumber: DHI123456789
-              withPassport:
-                summary: Create debit card with Passport
+                  isJointAccount: false
+              individualWithPassport:
+                summary: Individual account — create debit card with Passport
                 value:
                   productType: VisaDebitPhysicalAPI
                   passport: AB1234567
                   accountNumber: DHI987654321
-              withIdentityId:
-                summary: Create debit card with Identity ID
+                  isJointAccount: false
+              individualWithIdentityId:
+                summary: Individual account — create debit card with Identity ID
                 value:
                   productType: VisaDebitPhysicalAPI
                   identityId: ID123456
                   accountNumber: DHI567890123
+                  isJointAccount: false
+              jointAccount:
+                summary: Joint account — create debit card linked to a joint financial contract
+                value:
+                  productType: VisaDebitPhysicalAPI
+                  nationalId: '1234567890'
+                  accountNumber: DHI123456789
+                  isJointAccount: true
       responses:
         '200':
           description: Debit card successfully created
@@ -7507,11 +7522,20 @@ paths:
                 type: object
                 required:
                 - code
+                - message
                 - params
                 properties:
                   code:
                     type: string
                     example: SUCCESS_REQUEST_PROCESSED
+                  message:
+                    type: string
+                    description: |
+                      Human-readable result message. Varies by flow:
+                      - Individual account: `Individual debit card created successfully.`
+                      - Joint account (newly created): `Joint account created and debit card created successfully.`
+                      - Joint account (existing): `Debit card created successfully for existing joint account.`
+                    example: Individual debit card created successfully.
                   params:
                     type: object
                     required:
@@ -7543,16 +7567,39 @@ paths:
                             description: Card expiration date in YYYY-MM-DD format
                             example: '2027-12-31'
               examples:
-                successResponse:
-                  summary: Debit card created successfully
+                individualSuccess:
+                  summary: Individual debit card created successfully
                   value:
                     code: SUCCESS_REQUEST_PROCESSED
+                    message: Individual debit card created successfully.
                     params:
                       personId: PERS12345
                       cardId: '12345'
                       cardDetails:
                         pan: 526916******0106
-                        expirationDate: 2027-12-31
+                        expirationDate: '2027-12-31'
+                jointAccountCreated:
+                  summary: Joint account created and debit card issued
+                  value:
+                    code: SUCCESS_REQUEST_PROCESSED
+                    message: Joint account created and debit card created successfully.
+                    params:
+                      personId: PERS12345
+                      cardId: '12346'
+                      cardDetails:
+                        pan: 526916******0107
+                        expirationDate: '2027-12-31'
+                jointAccountExisting:
+                  summary: Debit card linked to existing joint account
+                  value:
+                    code: SUCCESS_REQUEST_PROCESSED
+                    message: Debit card created successfully for existing joint account.
+                    params:
+                      personId: PERS12345
+                      cardId: '12347'
+                      cardDetails:
+                        pan: 526916******0108
+                        expirationDate: '2027-12-31'
         '400':
           description: Bad request – validation failed
           content:
