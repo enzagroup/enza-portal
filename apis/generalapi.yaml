@@ -7447,7 +7447,16 @@ paths:
       tags:
       - Card Issuance
       summary: Create Debit Card
-      description: "Create a debit card for an **existing customer only**.\n\n## ⚠️ Important: Customer Must Exist First\n\n**This API only works for existing customers.** If the customer doesn't exist, you will receive an error.\n\n**Workflow:**\n\n1. **Check if Customer Exists** using `POST /customers/search`\n   - Search by nationalId, passport, or identityId\n   - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first\n   - If customer **exists** → Proceed to step 2\n\n2. **Retrieve Authorized Product Types** using `GET /products/retrieve`\n   - Select a product from the `allowedProducts` list\n   - Pass the product name exactly as returned\n\n3. **Create Debit Card** using this API (`POST /cards/create-debit`)\n   - Provide the customer's ID (nationalId, passport, or identityId)\n   - Provide the `productType` obtained from step 2\n   - Provide the account number\n   - Set `isJointAccount` to indicate which flow to follow (default: `false`)\n\n---\n\n## Step 1: Check `isJointAccount` Flag\n\nDetermine the value of the `isJointAccount` flag before proceeding. This flag controls which flow to follow.\n\n### Flow A — `isJointAccount = false` (Individual Account)\n\n1. **Check if Account Exists**\n   - If the account already exists → **Stop.** This account already has a debit card. Do not proceed.\n   - If the account does not exist → Continue to step 2.\n2. **Create Financial Contract**\n   - Contract Type: RID (`DebitFinancialContractMC`)\n   - Request Fields: `<Reference>` (Expected from the Bank: External Account number that refers to the DHI)\n3. **Create Issuing Contract**\n   - Contract Type: RID (`PhysicalDebitIssuingContractMC`)\n   - A Physical MC Debit will be created automatically upon contract creation.\n   - Token Not Active.\n4. **Link Contracts** — Link the issuing contract with the financial contract.\n5. **Retrieve Card Data** — Without CVV2 and without card activation.\n\n### Flow B — `isJointAccount = true` (Joint Account)\n\n**If Joint Account Already Exists:**\n1. **Create Issuing Contract**\n   - Contract Type: RID (`PhysicalDebitIssuingContractMC`)\n   - A Physical MC Debit will be created automatically upon contract creation.\n   - Token Not Active.\n2. **Link Contracts** — Link the issuing contract with the existing joint account's financial contract.\n3. **Retrieve Card Data** — Without CVV2 and without card activation.\n\n**If Joint Account Does Not Exist:**\n1. **Create Financial Contract**\n   - Contract Type: RID (`DebitFinancialContractMC`)\n   - Request Fields: External Account number that refers to the DHI (expected from the bank).\n2. **Create Issuing Contract**\n   - Contract Type: RID (`PhysicalDebitIssuingContractMC`)\n   - A Physical MC Debit will be created automatically upon contract creation.\n   - Token Not Active.\n3. **Link Contracts** — Link the issuing contract with the newly created joint account's financial contract.\n4. **Retrieve Card Data** — Without CVV2 and without card activation.\n"
+      description: |
+        Create a debit card for an existing customer.
+
+        Use `isJointAccount` to choose the flow:
+
+        - **`isJointAccount = false` (Individual)** — issues a debit card on a new account. If the account already has a debit card, the request is rejected.
+        - **`isJointAccount = true` (Joint)** — issues a debit card on a joint account. If the joint account already exists, the card is linked to it; otherwise the joint account is created and the card is linked.
+
+        **Prerequisites:** the customer must already exist (`POST /customers/search` to verify, `POST /customers/create` if not). Get a valid `productType` from `GET /products/retrieve`.
+
       parameters:
       - $ref: '#/components/parameters/apiKey'
       requestBody:
@@ -7481,7 +7490,7 @@ paths:
                   example: DHI123456789
                 isJointAccount:
                   type: boolean
-                  description: '**Optional.** Set to `true` when the card is being issued under a joint account. When `true`, the API checks for an existing joint financial contract and either links a new issuing contract to it or creates both contracts. When `false` (default), the API follows the individual-account flow and rejects the request if the account already has a debit card.'
+                  description: '**Optional.** Set to `true` to issue the card on a joint account. Set to `false` (default) for an individual account.'
                   default: false
                   example: false
             examples:
