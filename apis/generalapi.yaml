@@ -168,84 +168,85 @@ paths:
   #         $ref: '#/components/responses/MethodNotAllowed'
   #       '504':
   #         $ref: '#/components/responses/LambdaTimeout'
-  /preproduced/contracts/retrieve:
-    get:
-      operationId: retrievePreproducedContracts
-      summary: Get Preproduced Contracts
-      description: Retrieve a list of preproduced contracts under the bank's corporate customer. These contracts can be used to create preproduced cards.
-      tags:
-      - Preproduced Card
-      parameters:
-      - $ref: '#/components/parameters/apiKey'
-      responses:
-        '200':
-          description: Preproduced contracts retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: SUCCESS_PREPRODUCED_CONTRACTS_RETRIEVED
-                  params:
-                    type: object
-                    required:
-                    - contracts
-                    - count
-                    properties:
-                      contracts:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            contractRid:
-                              type: string
-                              description: Preproduced Contract RID
-                            contractTitle:
-                              type: string
-                              description: Contract title or name
-                            contractStatus:
-                              type: string
-                              description: Contract status (Active, Closed, etc.)
-                            contractTypeTitle:
-                              type: string
-                              description: Type of contract
-                      count:
-                        type: integer
-                        description: Number of preproduced contracts found
-              examples:
-                success:
-                  summary: Preproduced contracts retrieved
-                  value:
-                    code: SUCCESS_PREPRODUCED_CONTRACTS_RETRIEVED
-                    params:
-                      contracts:
-                      - contractRid: PHY-VS-PRP-CLS-PreproducedContract
-                        contractTitle: Preproduced Cards Contract
-                        contractStatus: Active
-                        contractTypeTitle: Preproduced Contract Type
-                      count: 1
-                empty:
-                  summary: No preproduced contracts found
-                  value:
-                    code: SUCCESS_PREPRODUCED_CONTRACTS_RETRIEVED
-                    params:
-                      contracts: []
-                      count: 0
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-        '504':
-          $ref: '#/components/responses/LambdaTimeout'
+  # /preproduced/contracts/retrieve:
+  #   get:
+  #     operationId: retrievePreproducedContracts
+  #     summary: Get Preproduced Contracts
+  #     description: Retrieve a list of preproduced contracts under the bank's corporate customer. These contracts can be used to create preproduced cards.
+  #     tags:
+  #     - Preproduced Card
+  #     parameters:
+  #     - $ref: '#/components/parameters/apiKey'
+  #     responses:
+  #       '200':
+  #         description: Preproduced contracts retrieved successfully
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #               - code
+  #               - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: SUCCESS_PREPRODUCED_CONTRACTS_RETRIEVED
+  #                 params:
+  #                   type: object
+  #                   required:
+  #                   - contracts
+  #                   - count
+  #                   properties:
+  #                     contracts:
+  #                       type: array
+  #                       items:
+  #                         type: object
+  #                         properties:
+  #                           contractRid:
+  #                             type: string
+  #                             description: Preproduced Contract RID
+  #                           contractTitle:
+  #                             type: string
+  #                             description: Contract title or name
+  #                           contractStatus:
+  #                             type: string
+  #                             description: Contract status (Active, Closed, etc.)
+  #                           contractTypeTitle:
+  #                             type: string
+  #                             description: Type of contract
+  #                     count:
+  #                       type: integer
+  #                       description: Number of preproduced contracts found
+  #             examples:
+  #               success:
+  #                 summary: Preproduced contracts retrieved
+  #                 value:
+  #                   code: SUCCESS_PREPRODUCED_CONTRACTS_RETRIEVED
+  #                   params:
+  #                     contracts:
+  #                     - contractRid: PHY-VS-PRP-CLS-PreproducedContract
+  #                       contractTitle: Preproduced Cards Contract
+  #                       contractStatus: Active
+  #                       contractTypeTitle: Preproduced Contract Type
+  #                     count: 1
+  #               empty:
+  #                 summary: No preproduced contracts found
+  #                 value:
+  #                   code: SUCCESS_PREPRODUCED_CONTRACTS_RETRIEVED
+  #                   params:
+  #                     contracts: []
+  #                     count: 0
+  #       '401':
+  #         $ref: '#/components/responses/Unauthorized'
+  #       '403':
+  #         $ref: '#/components/responses/Forbidden'
+  #       '500':
+  #         $ref: '#/components/responses/InternalServerError'
+  #       '405':
+  #         $ref: '#/components/responses/MethodNotAllowed'
+  #       '504':
+  #         $ref: '#/components/responses/LambdaTimeout'
+  
   /customers/create:
     post:
       operationId: createCustomer
@@ -7804,145 +7805,146 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-  /cards/create-preproduced:
-    post:
-      operationId: createPreproducedCard
-      tags:
-      - Card Issuance
-      summary: Create Preproduced Card
-      description: |
-        Create a card under a Preproduced Contract. This API enables banks to create multiple pre-produced cards programmatically under a preproduced contract.
+  # /cards/create-preproduced:
+  #   post:
+  #     operationId: createPreproducedCard
+  #     tags:
+  #     - Card Issuance
+  #     summary: Create Preproduced Card
+  #     description: |
+  #       Create a card under a Preproduced Contract. This API enables banks to create multiple pre-produced cards programmatically under a preproduced contract.
 
-        **Required Fields:**
-        - `contractRid`: Preproduced Contract RID (e.g., PHY-VS-PRP-CLS-PreproducedContract)
-        - `productRid`: Token Product RID (e.g., PHY-VS-PRP-CLS-PRE-Token)
+  #       **Required Fields:**
+  #       - `contractRid`: Preproduced Contract RID (e.g., PHY-VS-PRP-CLS-PreproducedContract)
+  #       - `productRid`: Token Product RID (e.g., PHY-VS-PRP-CLS-PRE-Token)
 
-        **Pre-requisites:**
-        - Preproduced Contract must exist and be active
-        - Token Product RID must exist
+  #       **Pre-requisites:**
+  #       - Preproduced Contract must exist and be active
+  #       - Token Product RID must exist
 
-        **Error Handling:**
-        - Invalid Contract RID: Returns 409 with ERR_INVALID_CONTRACT
-        - Invalid Product RID: Returns 409 with ERR_INVALID_PRODUCT
-        - Contract Not Active: Returns 409 with ERR_CONTRACT_NOT_ACTIVE
-      parameters:
-      - $ref: '#/components/parameters/apiKey'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-              - contractRid
-              - productRid
-              properties:
-                contractRid:
-                  type: string
-                  description: '**Required.** Preproduced Contract RID (e.g., PHY-VS-PRP-CLS-PreproducedContract)'
-                  example: PHY-VS-PRP-CLS-PreproducedContract
-                productRid:
-                  type: string
-                  description: '**Required.** Token Product RID (e.g., PHY-VS-PRP-CLS-PRE-Token)'
-                  example: PHY-VS-PRP-CLS-PRE-Token
-            examples:
-              createPreproducedCard:
-                summary: Create preproduced card
-                value:
-                  contractRid: PHY-VS-PRP-CLS-PreproducedContract
-                  productRid: PHY-VS-PRP-CLS-PRE-Token
-      responses:
-        '200':
-          description: Preproduced card created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - code
-                - params
-                properties:
-                  code:
-                    type: string
-                    example: SUCCESS_PREPRODUCED_CARD_CREATED
-                  params:
-                    type: object
-                    required:
-                    - cardId
-                    - message
-                    properties:
-                      cardId:
-                        type: string
-                        description: Card ID for the created preproduced card
-                        example: '6278'
-                      message:
-                        type: string
-                        description: Success message
-                        example: Preproduced card created successfully
-              examples:
-                success:
-                  summary: Preproduced card created successfully
-                  value:
-                    code: SUCCESS_PREPRODUCED_CARD_CREATED
-                    params:
-                      cardId: '6278'
-                      message: Preproduced card created successfully
-        '400':
-          description: Bad request - Invalid input or validation failed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-              examples:
-                validationFailed:
-                  summary: Validation failed
-                  value:
-                    code: ERR_VALIDATION_FAILED
-                    params:
-                      message: "Missing required field: contractRid"
-        '409':
-          description: Conflict - Invalid account, invalid product, or account not active
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConflictError'
-              examples:
-                invalidContract:
-                  summary: Invalid preproduced account
-                  value:
-                    code: ERR_INVALID_CONTRACT
-                    params:
-                      message: Invalid preproduced account. Account not found.
-                invalidProduct:
-                  summary: Invalid token product
-                  value:
-                    code: ERR_INVALID_PRODUCT
-                    params:
-                      message: Invalid token product. Product not found.
-                contractNotActive:
-                  summary: Contract is not active
-                  value:
-                    code: ERR_CONTRACT_NOT_ACTIVE
-                    params:
-                      message: Contract is not active.
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-              examples:
-                internalServerError:
-                  summary: Internal server error
-                  value:
-                    code: ERR_INTERNAL_SERVER_ERROR
-                    params:
-                      message: An unexpected error occurred.
-        '504':
-          $ref: '#/components/responses/LambdaTimeout'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
+  #       **Error Handling:**
+  #       - Invalid Contract RID: Returns 409 with ERR_INVALID_CONTRACT
+  #       - Invalid Product RID: Returns 409 with ERR_INVALID_PRODUCT
+  #       - Contract Not Active: Returns 409 with ERR_CONTRACT_NOT_ACTIVE
+  #     parameters:
+  #     - $ref: '#/components/parameters/apiKey'
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             required:
+  #             - contractRid
+  #             - productRid
+  #             properties:
+  #               contractRid:
+  #                 type: string
+  #                 description: '**Required.** Preproduced Contract RID (e.g., PHY-VS-PRP-CLS-PreproducedContract)'
+  #                 example: PHY-VS-PRP-CLS-PreproducedContract
+  #               productRid:
+  #                 type: string
+  #                 description: '**Required.** Token Product RID (e.g., PHY-VS-PRP-CLS-PRE-Token)'
+  #                 example: PHY-VS-PRP-CLS-PRE-Token
+  #           examples:
+  #             createPreproducedCard:
+  #               summary: Create preproduced card
+  #               value:
+  #                 contractRid: PHY-VS-PRP-CLS-PreproducedContract
+  #                 productRid: PHY-VS-PRP-CLS-PRE-Token
+  #     responses:
+  #       '200':
+  #         description: Preproduced card created successfully
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               required:
+  #               - code
+  #               - params
+  #               properties:
+  #                 code:
+  #                   type: string
+  #                   example: SUCCESS_PREPRODUCED_CARD_CREATED
+  #                 params:
+  #                   type: object
+  #                   required:
+  #                   - cardId
+  #                   - message
+  #                   properties:
+  #                     cardId:
+  #                       type: string
+  #                       description: Card ID for the created preproduced card
+  #                       example: '6278'
+  #                     message:
+  #                       type: string
+  #                       description: Success message
+  #                       example: Preproduced card created successfully
+  #             examples:
+  #               success:
+  #                 summary: Preproduced card created successfully
+  #                 value:
+  #                   code: SUCCESS_PREPRODUCED_CARD_CREATED
+  #                   params:
+  #                     cardId: '6278'
+  #                     message: Preproduced card created successfully
+  #       '400':
+  #         description: Bad request - Invalid input or validation failed
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/errorResponse'
+  #             examples:
+  #               validationFailed:
+  #                 summary: Validation failed
+  #                 value:
+  #                   code: ERR_VALIDATION_FAILED
+  #                   params:
+  #                     message: "Missing required field: contractRid"
+  #       '409':
+  #         description: Conflict - Invalid account, invalid product, or account not active
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ConflictError'
+  #             examples:
+  #               invalidContract:
+  #                 summary: Invalid preproduced account
+  #                 value:
+  #                   code: ERR_INVALID_CONTRACT
+  #                   params:
+  #                     message: Invalid preproduced account. Account not found.
+  #               invalidProduct:
+  #                 summary: Invalid token product
+  #                 value:
+  #                   code: ERR_INVALID_PRODUCT
+  #                   params:
+  #                     message: Invalid token product. Product not found.
+  #               contractNotActive:
+  #                 summary: Contract is not active
+  #                 value:
+  #                   code: ERR_CONTRACT_NOT_ACTIVE
+  #                   params:
+  #                     message: Contract is not active.
+  #       '500':
+  #         description: Internal server error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/errorResponse'
+  #             examples:
+  #               internalServerError:
+  #                 summary: Internal server error
+  #                 value:
+  #                   code: ERR_INTERNAL_SERVER_ERROR
+  #                   params:
+  #                     message: An unexpected error occurred.
+  #       '504':
+  #         $ref: '#/components/responses/LambdaTimeout'
+  #       '403':
+  #         $ref: '#/components/responses/Forbidden'
+  #       '405':
+  #         $ref: '#/components/responses/MethodNotAllowed'
+  
   /cards/emv-status:
     post:
       operationId: blockEmvCard
