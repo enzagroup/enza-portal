@@ -9172,22 +9172,13 @@ paths:
                           properties:
                             accountNumber:
                               type: string
-                              description: Account number (ContractRid)
-                            contractId:
+                              description: Account number
+                            accountDetails:
                               type: string
-                              description: Contract ID
-                            contractRid:
+                              description: Human-readable account product description
+                            accountStatus:
                               type: string
-                              description: Contract RID
-                            contractTypeRid:
-                              type: string
-                              description: Contract Type RID
-                            contractTypeTitle:
-                              type: string
-                              description: Contract Type Title
-                            contractStatus:
-                              type: string
-                              description: Contract Status
+                              description: Account status (e.g., "A" for Active)
                             personFirstName:
                               type: string
                               description: Customer first name
@@ -9209,11 +9200,8 @@ paths:
                       nationalId: NAT43691305
                       accounts:
                         - accountNumber: '100000000001288'
-                          contractId: '5081'
-                          contractRid: '100000000001288'
-                          contractTypeRid: CBSFinancialContractType
-                          contractTypeTitle: GTB GH Shadow Account Contract Type Prepaid
-                          contractStatus: A
+                          accountDetails: GTB GH Shadow Account Contract Type Prepaid
+                          accountStatus: A
                           personFirstName: Bob
                           personLastName: Brown
                       count: 1
@@ -9226,11 +9214,8 @@ paths:
                       passport: P12345678
                       accounts:
                         - accountNumber: '100000000001288'
-                          contractId: '5081'
-                          contractRid: '100000000001288'
-                          contractTypeRid: CBSFinancialContractType
-                          contractTypeTitle: GTB GH Shadow Account Contract Type Prepaid
-                          contractStatus: A
+                          accountDetails: GTB GH Shadow Account Contract Type Prepaid
+                          accountStatus: A
                           personFirstName: Bob
                           personLastName: Brown
                       count: 1
