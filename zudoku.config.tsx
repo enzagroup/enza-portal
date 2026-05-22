@@ -21,7 +21,10 @@ const config: ZudokuConfig = {
     {
       type: "file",
       path: "/api",
-      input: "./apis/generalapi.yaml",
+      input: [
+        "./apis/generalapi-v2.yaml",
+        "./apis/generalapi.yaml",
+      ],
     },
   ],
 
