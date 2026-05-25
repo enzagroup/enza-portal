@@ -134,6 +134,7 @@ paths:
         - Customer Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -456,6 +457,7 @@ paths:
         - Customer Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -574,6 +576,7 @@ paths:
         - Customer Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -836,6 +839,7 @@ paths:
         - Customer Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -1141,6 +1145,7 @@ paths:
         - ID number
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -1284,6 +1289,7 @@ paths:
         - Customer Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       summary: Show Customer Accounts
       description: |
         Retrieve list of all customer accounts and account numbers by customer id (nationalId, passport or identityId).
@@ -1484,6 +1490,7 @@ paths:
         - Card product RIDs can be obtained via `GET /products/retrieve`
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -1738,6 +1745,7 @@ paths:
         - Account Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       responses:
         '200':
           description: Account information retrieved successfully
@@ -1842,6 +1850,7 @@ paths:
         - Account Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -2004,6 +2013,7 @@ paths:
         - Account Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       responses:
         '200':
           description: Cards retrieved successfully
@@ -2149,6 +2159,7 @@ paths:
         account, preventing the card from authorizing transactions on that account.
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -2269,6 +2280,7 @@ paths:
         - Notifications Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -2394,6 +2406,7 @@ paths:
         - Notifications Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -2557,6 +2570,7 @@ paths:
         - Card Issuance
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -2687,6 +2701,7 @@ paths:
         **Note:** By default, card is NOT automatically activated unless `autoActivate` is set to `true`
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -2879,6 +2894,7 @@ paths:
         if not). Get a valid `productType` from `GET /products/retrieve`.
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -3133,6 +3149,7 @@ paths:
         containing 'SUPP' and 'API'
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -3305,6 +3322,7 @@ paths:
         - Card Issuance
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -3538,6 +3556,7 @@ paths:
         **Note:** The supplementary card will be linked to the main card and share limits and controls
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -3656,6 +3675,7 @@ paths:
         Update card status using the card reference number.
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -3750,6 +3770,7 @@ paths:
         Update card status using the card ID.
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -3846,6 +3867,7 @@ paths:
         - Card Control
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -3966,6 +3988,7 @@ paths:
         Block or unblock the EMV functionality of a card.
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -4091,6 +4114,7 @@ paths:
         Enable or disable the contactless interface of a card.
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -4215,6 +4239,7 @@ paths:
       description: 'Temporarily disable a restriction on a specific card to allow transaction types that were previously blocked. '
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -4357,6 +4382,7 @@ paths:
         restriction is immediately re-applied.
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -4475,6 +4501,7 @@ paths:
         - Card Control
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -4824,6 +4851,7 @@ paths:
         - Card Details
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -4932,6 +4960,7 @@ paths:
         - Card Details
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           description: '**Required.** Unique Card Identifier'
@@ -5034,6 +5063,7 @@ paths:
         - Card Control
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         description: CVV2 verification request containing cardId and cvv2 to validate.
         required: true
@@ -5165,6 +5195,7 @@ paths:
         - Card Details
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -5524,6 +5555,7 @@ paths:
         - PIN Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -5614,6 +5646,7 @@ paths:
         - PIN Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -5737,6 +5770,7 @@ paths:
         - PIN Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -5844,6 +5878,7 @@ paths:
         - PIN Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -5950,6 +5985,7 @@ paths:
         - PIN Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -6050,6 +6086,7 @@ paths:
         - PIN Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -6156,6 +6193,7 @@ paths:
         - Holds Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       operationId: postholdsDebits
       summary: Create Debit Hold
       description: |
@@ -6295,6 +6333,7 @@ paths:
         - Holds Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -6404,6 +6443,7 @@ paths:
         - Holds Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -6539,6 +6579,7 @@ paths:
         - Holds Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -6673,6 +6714,7 @@ paths:
         - Holds Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       responses:
         '200':
           description: Holds retrieved successfully
@@ -6787,6 +6829,7 @@ paths:
         - Card Control
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -6956,6 +6999,7 @@ paths:
         - Card Control
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -7116,6 +7160,7 @@ paths:
         - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -7254,6 +7299,7 @@ paths:
         - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -7369,6 +7415,7 @@ paths:
         - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -7463,6 +7510,7 @@ paths:
         - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -7631,6 +7679,7 @@ paths:
         - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -7766,6 +7815,7 @@ paths:
         - Preproduced Card
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -7915,6 +7965,7 @@ paths:
       description: Renew an expired card with a new expiry date while keeping the same PAN
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -8037,6 +8088,7 @@ paths:
       description: Reissue a damaged card with the same PAN and expiry date
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -8167,6 +8219,7 @@ paths:
       description: Replace a lost, stolen, or compromised card with a new PAN and new expiry date
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -8301,6 +8354,7 @@ paths:
         - Card Issuance
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -8431,6 +8485,7 @@ paths:
         **Date Range:** Specify startDate and endDate to filter transactions
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -8714,6 +8769,7 @@ paths:
         (YYYY-MM-DDTHH:mm:ss)
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -8957,6 +9013,7 @@ paths:
         (YYYY-MM-DDTHH:mm:ss)
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -9164,6 +9221,7 @@ paths:
       description: Enable or disable ATM transaction restriction for a card.
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -9303,6 +9361,7 @@ paths:
       description: Enable or disable POS transaction restriction for a card.
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -9440,6 +9499,7 @@ paths:
         - Limits Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -9889,6 +9949,7 @@ paths:
         - Limits Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -10009,6 +10070,7 @@ paths:
         - Limits Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -10131,6 +10193,7 @@ paths:
         - Credit Card Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -10355,6 +10418,7 @@ paths:
       summary: Reset Last ATC
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -10454,6 +10518,7 @@ paths:
         - Money Transfer
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -10623,6 +10688,7 @@ paths:
         - Money Transfer
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -10817,6 +10883,7 @@ paths:
         - Money Transfer
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -10956,6 +11023,7 @@ paths:
         - Money Transfer
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -11103,6 +11171,7 @@ paths:
         - Money Transfer
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -11283,6 +11352,38 @@ components:
       schema:
         type: string
       description: API key for authentication
+    idempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 550e8400-e29b-41d4-a716-446655440000
+      description: >-
+        **Required** on every write request (POST/PATCH). A client-generated
+        **UUID v4** that uniquely identifies a single logical request, so that
+        retries are processed safely without duplicating the operation.
+
+
+        Same key + same body within the 24-hour window returns the original
+        response byte-for-byte (with an `enza-idempotent-replayed: true`
+        response header) and does not re-run the operation. Use the **same**
+        key when retrying after a timeout or 5xx; generate a **new** key for a
+        different request.
+
+
+        Errors:
+
+        - `400 ERR_IDEMPOTENCY_KEY_REQUIRED` — header missing or empty.
+
+        - `400 ERR_IDEMPOTENCY_KEY_INVALID` — value is not a UUID v4.
+
+        - `409 ERR_IDEMPOTENCY_KEY_ALREADY_USED` — same key reused with a
+          different request body within the 24-hour window.
+
+        - `409 ERR_IDEMPOTENCY_IN_PROGRESS` — a previous request with this key
+          is still being processed; wait briefly and retry the same key.
   schemas:
     SuccessEnvelope:
       type: object
