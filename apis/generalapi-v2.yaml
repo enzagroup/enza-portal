@@ -457,7 +457,6 @@ paths:
         - Customer Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -576,7 +575,6 @@ paths:
         - Customer Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -1145,7 +1143,6 @@ paths:
         - ID number
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         content:
           application/json:
@@ -1289,7 +1286,6 @@ paths:
         - Customer Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
       summary: Show Customer Accounts
       description: |
         Retrieve list of all customer accounts and account numbers by customer id (nationalId, passport or identityId).
@@ -1745,7 +1741,6 @@ paths:
         - Account Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
       responses:
         '200':
           description: Account information retrieved successfully
@@ -2013,7 +2008,6 @@ paths:
         - Account Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
       responses:
         '200':
           description: Cards retrieved successfully
@@ -2280,7 +2274,6 @@ paths:
         - Notifications Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -4851,7 +4844,6 @@ paths:
         - Card Details
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         required: true
         content:
@@ -4960,7 +4952,6 @@ paths:
         - Card Details
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           description: '**Required.** Unique Card Identifier'
@@ -5063,7 +5054,6 @@ paths:
         - Card Control
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
       requestBody:
         description: CVV2 verification request containing cardId and cvv2 to validate.
         required: true
@@ -5985,7 +5975,6 @@ paths:
         - PIN Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -6086,7 +6075,6 @@ paths:
         - PIN Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -6714,7 +6702,6 @@ paths:
         - Holds Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
       responses:
         '200':
           description: Holds retrieved successfully
@@ -8485,7 +8472,6 @@ paths:
         **Date Range:** Specify startDate and endDate to filter transactions
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -8769,7 +8755,6 @@ paths:
         (YYYY-MM-DDTHH:mm:ss)
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
@@ -9013,7 +8998,6 @@ paths:
         (YYYY-MM-DDTHH:mm:ss)
       parameters:
         - $ref: '#/components/parameters/apiKey'
-        - $ref: '#/components/parameters/idempotencyKey'
         - name: cardId
           in: path
           required: true
