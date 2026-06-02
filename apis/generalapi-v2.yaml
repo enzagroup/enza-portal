@@ -359,7 +359,7 @@ paths:
                   customerId:
                     type: string
                     description: The unique identifier for the created customer
-                    example: CUST123456789
+                    example: 123456789
                   meta:
                     $ref: '#/components/schemas/Meta'
               examples:
@@ -367,7 +367,7 @@ paths:
                   summary: Customer created
                   value:
                     message: Customer created successfully
-                    customerId: CUST123456789
+                    customerId: 123456789
                     meta:
                       requestId: '260519453094700226'
                       timestamp: '2026-05-20T09:11:11.566Z'
@@ -507,6 +507,13 @@ paths:
                     type: boolean
                     description: Whether the customer exists in the system
                     example: true
+                  customerId:
+                    type: string
+                    description: >-
+                      The unique identifier of the matched customer. Use this value as the path parameter
+                      for `GET /customers/{customerId}`, `GET /customers/{customerId}/accounts`,
+                      `GET /customers/{customerId}/cards`, and any write endpoint that accepts `customerId`.
+                    example: 123456789
                   message:
                     type: string
                     description: Success message
@@ -521,6 +528,7 @@ paths:
                   summary: Customer exists in system
                   value:
                     exists: true
+                    customerId: 123456789
                     message: Customer exists
                     meta:
                       requestId: '260519453094700226'
@@ -560,59 +568,28 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /customers/lookup:
-    post:
-      operationId: postcustomersLookup
+  /customers/{customerId}:
+    get:
+      operationId: getCustomerById
       summary: Show Customer Details
       description: |
-        Retrieve comprehensive customer details by National ID, Passport, or ID.
+        Retrieve comprehensive customer details by `customerId`.
 
-        **Search By:**
-        - National ID number, OR
-        - Passport number, OR
-        - ID number
+        Use the `customerId` returned by `POST /customers` (creation) or `POST /customers/search`
+        (identity-based discovery). Identity attributes (nationalId, passport, identityId) are
+        properties of the customer resource — not lookup keys — and can be retrieved or updated
+        through this resource and `PATCH /customers/{customerId}`.
       tags:
         - Customer Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                nationalId:
-                  type: string
-                  description: >-
-                    **Conditionally Required:** One of nationalId, passport, or identityId is required. Customer's
-                    national ID
-                  example: NAT123456
-                passport:
-                  type: string
-                  description: >-
-                    **Conditionally Required:** One of nationalId, passport, or identityId is required. Customer's
-                    passport number
-                  example: passport03
-                identityId:
-                  type: string
-                  description: >-
-                    **Conditionally Required:** One of nationalId, passport, or identityId is required. External ID
-                    number provided by the bank (use this if customer is not working with nationalId or passport)
-                  example: ID123456
-            examples:
-              withPassport:
-                summary: Search by Passport
-                value:
-                  passport: passport03
-              withNationalId:
-                summary: Search by National ID
-                value:
-                  nationalId: NAT123456
-              withId:
-                summary: Search by ID
-                value:
-                  identityId: ID123456
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the customer
+          example: 123456789
       responses:
         '200':
           description: Customer details successfully retrieved
@@ -793,17 +770,17 @@ paths:
                 $ref: '#/components/schemas/ApiError'
               examples:
                 badRequestExample:
-                  summary: Missing required fields
+                  summary: Invalid customerId format
                   value:
                     code: ERR_VALIDATION_FAILED
-                    message: Both nationalId and passport are required
+                    message: customerId path parameter is invalid
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
-        '422':
+        '404':
           description: Customer not found
           content:
             application/json:
@@ -822,22 +799,28 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-  /customers/profile-update-requests:
-    post:
-      operationId: postcustomersProfileUpdateRequests
+    patch:
+      operationId: patchCustomer
       summary: Update Customer Details
       description: |
         Update customer information in the system.
 
-        **Search By (one required):**
-        - National ID number, OR
-        - Passport number, OR
-        - ID number
+        The customer is identified by `customerId` in the path (obtained from
+        `POST /customers` or `POST /customers/search`). Identity attributes
+        (`nationalId`, `passport`, `identityId`) are now updatable attributes of the
+        customer rather than lookup keys — include them in the body to change them.
       tags:
         - Customer Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/idempotencyKey'
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the customer to update. Obtain from `POST /customers` or `POST /customers/search`.
+          example: 123456789
       requestBody:
         required: true
         content:
@@ -847,21 +830,15 @@ paths:
               properties:
                 nationalId:
                   type: string
-                  description: >-
-                    **Conditionally Required:** One of nationalId, passport, or identityId is required. Customer's
-                    national ID
+                  description: '**Optional.** Updated national ID for the customer.'
                   example: NAT123456
                 passport:
                   type: string
-                  description: >-
-                    **Conditionally Required:** One of nationalId, passport, or identityId is required. Customer's
-                    passport number
+                  description: '**Optional.** Updated passport number for the customer.'
                   example: passport03
                 identityId:
                   type: string
-                  description: >-
-                    **Conditionally Required:** One of nationalId, passport, or identityId is required. External ID
-                    number
+                  description: '**Optional.** Updated external identity ID for the customer.'
                   example: ID123456
                 firstName:
                   type: string
@@ -1128,58 +1105,26 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-  /customers/cards/lookup:
-    post:
-      operationId: postcustomersCardsLookup
+  /customers/{customerId}/cards:
+    get:
+      operationId: getCustomerCards
       tags:
         - Customer Management
       summary: Show Customer Cards
       description: |
-        Retrieve all cards issued to a customer using their identification document.
+        Retrieve all cards issued to a customer by `customerId`.
 
-        **Search By:**
-        - Passport number, OR
-        - National ID number, OR
-        - ID number
+        Use the `customerId` returned by `POST /customers` (creation) or `POST /customers/search`
+        (identity-based discovery).
       parameters:
         - $ref: '#/components/parameters/apiKey'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                passport:
-                  type: string
-                  description: >-
-                    **Conditionally Required:** One of nationalId, passport, or identityId is required. Customer's
-                    passport number
-                  example: '76238310075'
-                nationalId:
-                  type: string
-                  description: >-
-                    **Conditionally Required:** One of nationalId, passport, or identityId is required. Customer's
-                    national ID
-                  example: '1234567890'
-                identityId:
-                  type: string
-                  description: >-
-                    **Conditionally Required:** One of nationalId, passport, or identityId is required. External ID
-                    number provided by the bank (use this if customer is not working with nationalId or passport)
-                  example: ID123456
-            examples:
-              withPassport:
-                summary: Search by Passport
-                value:
-                  passport: '76238310075'
-              withNationalId:
-                summary: Search by National ID
-                value:
-                  nationalId: '1234567890'
-              withId:
-                summary: Search by ID
-                value:
-                  identityId: ID123456
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the customer
+          example: 123456789
       responses:
         '200':
           description: Cards successfully retrieved
@@ -1250,10 +1195,10 @@ paths:
                 $ref: '#/components/schemas/ApiError'
               examples:
                 badRequestExample:
-                  summary: Missing identification document
+                  summary: Invalid customerId format
                   value:
                     code: ERR_VALIDATION_FAILED
-                    message: Either passport or nationalId is required
+                    message: customerId path parameter is invalid
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1279,54 +1224,26 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '504':
           $ref: '#/components/responses/LambdaTimeout'
-  /customers/accounts/lookup:
-    post:
-      operationId: postcustomersAccountsLookup
+  /customers/{customerId}/accounts:
+    get:
+      operationId: getCustomerAccounts
       tags:
         - Customer Management
       parameters:
         - $ref: '#/components/parameters/apiKey'
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the customer
+          example: 123456789
       summary: Show Customer Accounts
       description: |
-        Retrieve list of all customer accounts and account numbers by customer id (nationalId, passport or identityId).
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                nationalId:
-                  type: string
-                  minLength: 1
-                  maxLength: 50
-                  description: National ID of the customer
-                  example: NAT43691305
-                passport:
-                  type: string
-                  minLength: 1
-                  maxLength: 50
-                  description: Passport number of the customer
-                  example: P12345678
-                identityId:
-                  type: string
-                  minLength: 1
-                  maxLength: 50
-                  description: Identity ID of the customer
-                  example: ID12345678
-            examples:
-              listAccountsByNationalId:
-                summary: List accounts by national ID
-                value:
-                  nationalId: NAT43691305
-              listAccountsByPassport:
-                summary: List accounts by passport
-                value:
-                  passport: P12345678
-              listAccountsByIdentityId:
-                summary: List accounts by identity ID
-                value:
-                  identityId: ID12345678
+        Retrieve list of all customer accounts and account numbers by `customerId`.
+
+        Use the `customerId` returned by `POST /customers` (creation) or `POST /customers/search`
+        (identity-based discovery).
       responses:
         '200':
           description: Accounts retrieved successfully or empty list
@@ -1335,15 +1252,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  nationalId:
+                  customerId:
                     type: string
-                    description: National ID that was queried
-                  passport:
-                    type: string
-                    description: Passport that was queried
-                  identityId:
-                    type: string
-                    description: Identity ID that was queried
+                    description: Customer identifier that was queried
+                    example: 123456789
                   accounts:
                     type: array
                     items:
@@ -1384,28 +1296,10 @@ paths:
                 required:
                   - accounts
               examples:
-                successWithAccountsByNationalId:
-                  summary: Accounts found by National ID
+                successWithAccounts:
+                  summary: Accounts found
                   value:
-                    nationalId: NAT43691305
-                    accounts:
-                      - accountNumber: '100000000001288'
-                        contractId: '5081'
-                        contractRid: '100000000001288'
-                        contractTypeRid: CBSFinancialContractType
-                        contractTypeTitle: GTB GH Shadow Account Contract Type Prepaid
-                        contractStatus: A
-                        personFirstName: Bob
-                        personLastName: Brown
-                    count: 1
-                    message: Accounts retrieved successfully
-                    meta:
-                      requestId: '260519453094700226'
-                      timestamp: '2026-05-20T09:11:11.566Z'
-                successWithAccountsByPassport:
-                  summary: Accounts found by Passport
-                  value:
-                    passport: P12345678
+                    customerId: 123456789
                     accounts:
                       - accountNumber: '100000000001288'
                         contractId: '5081'
@@ -1423,10 +1317,10 @@ paths:
                 successNoAccounts:
                   summary: No accounts found
                   value:
-                    nationalId: NAT99999999
+                    customerId: 123456789
                     accounts: []
                     count: 0
-                    message: No accounts available for this document number
+                    message: No accounts available for this customer
                     meta:
                       requestId: '260519453094700226'
                       timestamp: '2026-05-20T09:11:11.566Z'
@@ -2280,32 +2174,18 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - customerId
               properties:
-                nationalId:
+                customerId:
                   type: string
-                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
-                  example: '321321'
-                passport:
-                  type: string
-                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
-                  example: AB1234567
-                identityId:
-                  type: string
-                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
-                  example: ID123456
+                  description: The unique identifier of the customer. Obtain from `POST /customers` or `POST /customers/search`.
+                  example: 123456789
             examples:
-              byNationalId:
-                summary: Retrieve status with National ID
+              byCustomerId:
+                summary: Retrieve status by customerId
                 value:
-                  nationalId: '321321'
-              byPassport:
-                summary: Retrieve status with Passport
-                value:
-                  passport: AB1234567
-              byIdentityId:
-                summary: Retrieve status with Identity ID
-                value:
-                  identityId: ID123456
+                  customerId: 123456789
       responses:
         '200':
           description: Notification status retrieved successfully
@@ -2384,7 +2264,7 @@ paths:
 
         **How It Works:**
 
-        1. **Customer Verification**: Verifies customer existence using National ID, Passport, or Identity ID
+        1. **Customer Verification**: Verifies customer existence using `customerId`
 
         2. **Service Activation**: Specifies which notification service to be active
 
@@ -2406,23 +2286,18 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - customerId
+                - channel
               properties:
-                nationalId:
+                customerId:
                   type: string
-                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
-                  example: '7623835006'
-                passport:
-                  type: string
-                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
-                  example: AB1234567
-                identityId:
-                  type: string
-                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
-                  example: ID123456
+                  description: The unique identifier of the customer. Obtain from `POST /customers` or `POST /customers/search`.
+                  example: 123456789
                 channel:
                   type: string
                   description: |
-                    **Required.** Notification channel(s) to activate. 
+                    **Required.** Notification channel(s) to activate.
 
                     ⚠️ **IMPORTANT:** Requesting a channel will replace/suspend any existing notification configuration.
                     - To activate Email only: send `email` (this will suspend SMS if active)
@@ -2440,19 +2315,19 @@ paths:
               createSMSService:
                 summary: Create SMS notification service
                 value:
-                  nationalId: '7623835006'
+                  customerId: 123456789
                   channel: sms
                   status: Active
               suspendEmailService:
                 summary: Suspend email notification service
                 value:
-                  passport: AB1234567
+                  customerId: 123456789
                   channel: email
                   status: Suspend
               createSMSEmailService:
                 summary: Create SMS and Email notification service
                 value:
-                  identityId: ID123456
+                  customerId: 123456789
                   channel: sms,email
       responses:
         '201':
@@ -2570,19 +2445,30 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Customer'
-            example:
-              requestType: NewAccountNewCustomer
-              lastName: EEE
-              firstName: Cust02
-              birthDate: 1990-01-20T00:00:00.000Z
-              passport: '76238310075'
-              email: test@test.com
-              mobilePhone: '9991234567'
-              streetTitle: Baker's Str
-              zip: WC1X 9NX
-              accountNum: AAABBB150573
-              cardRefNum: '000515'
-              embossedName: Cust02 New
+            examples:
+              NewAccountNewCustomer:
+                summary: New customer & new account (identity required)
+                value:
+                  requestType: NewAccountNewCustomer
+                  lastName: EEE
+                  firstName: Cust02
+                  birthDate: '1990-01-20'
+                  passport: '76238310075'
+                  email: test@test.com
+                  mobilePhone: '9991234567'
+                  streetTitle: Baker's Str
+                  zip: WC1X 9NX
+                  accountNum: AAABBB150573
+                  cardRefNum: '000515'
+                  embossedName: Cust02 New
+              NewAccountExistingCustomer:
+                summary: Existing customer, new account (customerId required)
+                value:
+                  requestType: NewAccountExistingCustomer
+                  customerId: 123456789
+                  accountNum: AAABBB150574
+                  cardRefNum: '000516'
+                  embossedName: Cust02 New
       responses:
         '201':
           description: Successful response
@@ -2670,22 +2556,23 @@ paths:
 
         1. **Check if Customer Exists** using `POST /customers/search`
            - Search by nationalId, passport, or identityId
-           - If customer **does NOT exist** → Use `POST /customers/create` to create the customer first
-           - If customer **exists** → Proceed to step 2
+           - The response returns `customerId` if the customer exists
+           - If customer **does NOT exist** → Use `POST /customers` to create the customer first
+           - If customer **exists** → Proceed to step 2 with the returned `customerId`
 
         2. **Retrieve Authorized Product Types** using `GET /products/retrieve`
            - Select a product from the `allowedProducts` list
-           - Pass the product name exactly as returned 
+           - Pass the product name exactly as returned
 
-        3. **Create Prepaid Card** using this API (`POST /cards/create-prepaid`)
-           - Provide the customer's document ID (nationalId, passport, or identityId)
+        3. **Create Prepaid Card** using this API (`POST /cards/prepaid`)
+           - Provide the customer's `customerId`
            - Provide the `productType` obtained from step 2
            - Optionally enable auto-activation
 
         ---
 
         **Process Flow:**
-        1. **Customer Verification**: Check if customer exists using document ID
+        1. **Customer Verification**: Check if customer exists using `customerId`
         2. **Product Selection**: Retrieve authorized product types via `GET /products/retrieve`
         3. **Card Issuance**: Create issuing and financial contracts, issue virtual card
         4. **Card Activation** (Optional): Set `autoActivate: true` to automatically activate the card (default: false)
@@ -2702,39 +2589,22 @@ paths:
               type: object
               required:
                 - productType
+                - customerId
               properties:
                 productType:
                   type: string
                   description: '**Required.** Product type for the prepaid card (e.g., VisaPrepaidClassicVirtualAPI)'
                   example: VisaPrepaidClassicVirtualAPI
-                nationalId:
+                customerId:
                   type: string
-                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
-                  example: '1234567890'
-                passport:
-                  type: string
-                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
-                  example: AB1234567
-                identityId:
-                  type: string
-                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
-                  example: ID123456
+                  description: '**Required.** The unique identifier of the customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  example: 123456789
             examples:
-              withNationalId:
-                summary: Create card with National ID
+              createPrepaidCard:
+                summary: Create prepaid card for an existing customer
                 value:
                   productType: VisaPrepaidClassicVirtualAPI
-                  nationalId: '1234567890'
-              withPassport:
-                summary: Create card with Passport
-                value:
-                  productType: VisaPrepaidClassicVirtualAPI
-                  passport: AB1234567
-              withIdentityId:
-                summary: Create card with Identity ID
-                value:
-                  productType: VisaPrepaidClassicVirtualAPI
-                  identityId: ID123456
+                  customerId: 123456789
       responses:
         '201':
           description: Card successfully created
@@ -2883,8 +2753,8 @@ paths:
         exists, the card is linked to it; otherwise the joint account is created and the card is linked.
 
 
-        **Prerequisites:** the customer must already exist (`POST /customers/search` to verify, `POST /customers/create`
-        if not). Get a valid `productType` from `GET /products/retrieve`.
+        **Prerequisites:** the customer must already exist. Use `POST /customers/search` to verify and obtain
+        `customerId`; if not found, create via `POST /customers`. Get a valid `productType` from `GET /products/retrieve`.
       parameters:
         - $ref: '#/components/parameters/apiKey'
         - $ref: '#/components/parameters/idempotencyKey'
@@ -2895,6 +2765,7 @@ paths:
               type: object
               required:
                 - productType
+                - customerId
                 - accountNumber
               properties:
                 productType:
@@ -2903,18 +2774,10 @@ paths:
                     **Required.** Issuing product. Obtain via `GET /products/retrieve`. Pass the product name exactly as
                     returned (including API suffix).
                   example: VisaDebitPhysicalAPI
-                nationalId:
+                customerId:
                   type: string
-                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
-                  example: '1234567890'
-                passport:
-                  type: string
-                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
-                  example: AB1234567
-                identityId:
-                  type: string
-                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
-                  example: ID123456
+                  description: '**Required.** The unique identifier of the customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  example: 123456789
                 accountNumber:
                   type: string
                   description: '**Required.** External account number (DHI reference) to link with the financial contract'
@@ -2927,32 +2790,18 @@ paths:
                   default: false
                   example: false
             examples:
-              individualWithNationalId:
-                summary: Individual account — create debit card with National ID
+              individualDebit:
+                summary: Individual account — create debit card
                 value:
                   productType: VisaDebitPhysicalAPI
-                  nationalId: '1234567890'
+                  customerId: 123456789
                   accountNumber: DHI123456789
-                  isJointAccount: false
-              individualWithPassport:
-                summary: Individual account — create debit card with Passport
-                value:
-                  productType: VisaDebitPhysicalAPI
-                  passport: AB1234567
-                  accountNumber: DHI987654321
-                  isJointAccount: false
-              individualWithIdentityId:
-                summary: Individual account — create debit card with Identity ID
-                value:
-                  productType: VisaDebitPhysicalAPI
-                  identityId: ID123456
-                  accountNumber: DHI567890123
                   isJointAccount: false
               jointAccount:
                 summary: Joint account — create debit card linked to a joint financial contract
                 value:
                   productType: VisaDebitPhysicalAPI
-                  nationalId: '1234567890'
+                  customerId: 123456789
                   accountNumber: DHI123456789
                   isJointAccount: true
       responses:
@@ -3121,9 +2970,9 @@ paths:
            - Select a product from the `allowedProducts` list
            - Pass the product name exactly as returned 
 
-        2. **Create Supplementary Card** using this API (`POST /cards/create-supplementary`)
-           - Provide the customer's ID (nationalId, passport, or identityId)
-           - Provide the `productType` obtained from step 1 
+        2. **Create Supplementary Card** using this API (`POST /cards/supplementary`)
+           - Provide the customer's `customerId`
+           - Provide the `productType` obtained from step 1
 
         ---
 
@@ -3150,6 +2999,7 @@ paths:
               type: object
               required:
                 - productType
+                - customerId
               properties:
                 productType:
                   type: string
@@ -3157,29 +3007,16 @@ paths:
                     **Required.** Issuing product. Obtain via `GET /products/retrieve`. Must contain SUPP and API for
                     supplementary cards.
                   example: GTBGH2-PHY-VS-PRP-CLS-NOR-CUS-SUPP-CardsIssuingContractAPI
-                nationalId:
+                customerId:
                   type: string
-                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
-                  example: '1234567890'
-                passport:
-                  type: string
-                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
-                  example: AB1234567
-                identityId:
-                  type: string
-                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
-                  example: ID123456
+                  description: '**Required.** The unique identifier of the customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  example: 123456789
             examples:
-              withNationalId:
-                summary: Create supplementary card with National ID
+              createSupplementary:
+                summary: Create supplementary card
                 value:
                   productType: GTBGH2-PHY-VS-PRP-CLS-NOR-CUS-SUPP-CardsIssuingContractAPI
-                  nationalId: '1234567890'
-              withPassport:
-                summary: Create supplementary card with Passport
-                value:
-                  productType: GTBGH2-PHY-VS-PRP-CLS-NOR-CUS-SUPP-CardsIssuingContractAPI
-                  passport: AB1234567
+                  customerId: 123456789
       responses:
         '201':
           description: Supplementary card created successfully
@@ -7281,7 +7118,10 @@ paths:
       operationId: postcardsPreproducedPrepaidCustomerLinking
       summary: Link Prepaid Card for Existing Customer
       description: |
-        Link prepaid card for an existing customer identified by their ID.
+        Link prepaid card for an existing customer identified by `customerId`.
+
+        The customer must already exist — obtain `customerId` from `POST /customers/search` or
+        `POST /customers`.
       tags:
         - Preproduced Card
       parameters:
@@ -7292,6 +7132,10 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - cardRefNum
+                - embossedName
+                - customerId
               properties:
                 cardRefNum:
                   type: string
@@ -7301,22 +7145,14 @@ paths:
                   type: string
                   description: '**Required.** Name to emboss on card'
                   example: JOHN DOE
-                nationalId:
+                customerId:
                   type: string
-                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
-                  example: GHA-123456789-0
-                passport:
-                  type: string
-                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
-                  example: G1234567
-                identityId:
-                  type: string
-                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
-                  example: ID-987654321
+                  description: '**Required.** The unique identifier of the existing customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  example: 123456789
             example:
               cardRefNum: PREP001234
               embossedName: JOHN DOE
-              nationalId: GHA-123456789-0
+              customerId: 123456789
       responses:
         '201':
           description: Prepaid card successfully issued to existing customer
@@ -7662,6 +7498,9 @@ paths:
       summary: Link Debit Card for Existing Customer with New Account
       description: |
         Link debit card for an existing customer with a new account.
+
+        The customer must already exist — obtain `customerId` from `POST /customers/search` or
+        `POST /customers`.
       tags:
         - Preproduced Card
       parameters:
@@ -7672,6 +7511,11 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - cardRefNum
+                - embossedName
+                - accountNum
+                - customerId
               properties:
                 cardRefNum:
                   type: string
@@ -7685,23 +7529,15 @@ paths:
                   type: string
                   description: '**Required.** Account number for the debit account'
                   example: '1234567890'
-                nationalId:
+                customerId:
                   type: string
-                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
-                  example: GHA-123456789-0
-                passport:
-                  type: string
-                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
-                  example: G1234567
-                identityId:
-                  type: string
-                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
-                  example: ID-987654321
+                  description: '**Required.** The unique identifier of the existing customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  example: 123456789
             example:
               cardRefNum: PREP001234
               embossedName: JOHN DOE
               accountNum: '1234567890'
-              nationalId: GHA-123456789-0
+              customerId: 123456789
       responses:
         '201':
           description: Debit card successfully issued to existing customer
@@ -7798,6 +7634,9 @@ paths:
       summary: Link Debit Card for Existing Customer with Existing Account
       description: |
         Link a pre-produced debit card to an existing customer's existing account.
+
+        The customer must already exist — obtain `customerId` from `POST /customers/search` or
+        `POST /customers`.
       tags:
         - Preproduced Card
       parameters:
@@ -7808,6 +7647,11 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - cardRefNum
+                - embossedName
+                - accountNum
+                - customerId
               properties:
                 cardRefNum:
                   type: string
@@ -7821,23 +7665,15 @@ paths:
                   type: string
                   description: '**Required.** Existing debit account number to link'
                   example: '1234567890'
-                nationalId:
+                customerId:
                   type: string
-                  description: '**Conditionally Required:** National ID (required if passport and identityId not provided)'
-                  example: GHA-123456789-0
-                passport:
-                  type: string
-                  description: '**Conditionally Required:** Passport number (required if nationalId and identityId not provided)'
-                  example: G1234567
-                identityId:
-                  type: string
-                  description: '**Conditionally Required:** Identity ID (required if nationalId and passport not provided)'
-                  example: ID-987654321
+                  description: '**Required.** The unique identifier of the existing customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  example: 123456789
             example:
               cardRefNum: PREP001234
               embossedName: JOHN DOE
               accountNum: '1234567890'
-              nationalId: GHA-123456789-0
+              customerId: 123456789
       responses:
         '201':
           description: Debit card successfully linked to existing account and customer
@@ -11422,48 +11258,65 @@ components:
               example: This Card Is Already Assigned To A Customer!
     Customer:
       type: object
+      required:
+        - requestType
+        - cardRefNum
+        - accountNum
       properties:
         requestType:
           type: string
+          enum:
+            - NewAccountNewCustomer
+            - NewAccountExistingCustomer
+            - ExistingAccountExistingCustomer
           description: |
             **Required.** Request type:
-            - `NewAccountNewCustomer`: New customer  
-            - `NewAccountExistingCustomer`: Existing customer
+            - `NewAccountNewCustomer`: New customer — identity fields (`nationalId` / `passport` / `identityId`) are required, `customerId` is not used.
+            - `NewAccountExistingCustomer`: Existing customer — `customerId` is required; identity fields are ignored.
+            - `ExistingAccountExistingCustomer`: Existing customer & account — `customerId` is required; identity fields are ignored.
+        customerId:
+          type: string
+          description: >-
+            **Conditionally Required:** Required when `requestType` is `NewAccountExistingCustomer` or
+            `ExistingAccountExistingCustomer`. Obtain from `POST /customers` or `POST /customers/search`.
+            Not used for `NewAccountNewCustomer`.
+          example: 123456789
         cardRefNum:
           type: string
           description: '**Required.** Card reference number'
         embossedName:
           type: string
-          description: >-
-            **Conditionally Required:** Required for NewCustomer/ExistingCustomer scenarios. Optional for DummyCustomer.
-            Name to be embossed on the card
+          description: '**Required.** Name to be embossed on the card'
         accountNum:
           type: string
           description: '**Required.** Account number to link to the card'
         firstName:
           type: string
-          description: '**Conditionally Required:** Required when requestType is ''NewAccountNewCustomer''. Customer''s first name'
+          description: '**Conditionally Required:** Required when `requestType` is `NewAccountNewCustomer`. Customer''s first name.'
         middleName:
           type: string
           description: '**Optional.** Customer''s middle name'
         lastName:
           type: string
-          description: '**Conditionally Required:** Required when requestType is ''NewAccountNewCustomer''. Customer''s last name'
+          description: '**Conditionally Required:** Required when `requestType` is `NewAccountNewCustomer`. Customer''s last name.'
         nationalId:
           type: string
           description: >-
-            **Conditionally Required:** For NewCustomer/ExistingCustomer: one of nationalId, passport, or identityId is
-            required. Optional for DummyCustomer. Customer's national ID
+            **Conditionally Required:** Required when `requestType` is `NewAccountNewCustomer` (one of
+            `nationalId`, `passport`, or `identityId` must be provided). Ignored for other requestTypes —
+            use `customerId` instead.
         passport:
           type: string
           description: >-
-            **Conditionally Required:** For NewCustomer/ExistingCustomer: one of nationalId, passport, or identityId is
-            required. Optional for DummyCustomer. Customer's passport number
+            **Conditionally Required:** Required when `requestType` is `NewAccountNewCustomer` (one of
+            `nationalId`, `passport`, or `identityId` must be provided). Ignored for other requestTypes —
+            use `customerId` instead.
         identityId:
           type: string
           description: >-
-            **Conditionally Required:** For NewCustomer/ExistingCustomer: one of nationalId, passport, or identityId is
-            required. Optional for DummyCustomer. Customer's identity ID
+            **Conditionally Required:** Required when `requestType` is `NewAccountNewCustomer` (one of
+            `nationalId`, `passport`, or `identityId` must be provided). Ignored for other requestTypes —
+            use `customerId` instead.
         birthDate:
           type: string
           format: date
