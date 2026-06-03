@@ -1421,12 +1421,12 @@ paths:
                   primaryCustomer:
                     type: object
                     required:
-                      - personId
+                      - customerId
                       - cardId
                       - panMasked
                       - expiryDate
                     properties:
-                      personId:
+                      customerId:
                         type: string
                         description: Primary customer person ID in TX system
                         example: '5517'
@@ -1445,12 +1445,12 @@ paths:
                   secondaryCustomer:
                     type: object
                     required:
-                      - personId
+                      - customerId
                       - cardId
                       - panMasked
                       - expiryDate
                     properties:
-                      personId:
+                      customerId:
                         type: string
                         description: Secondary customer person ID in TX system
                         example: '5537'
@@ -1480,12 +1480,12 @@ paths:
                     message: Joint account created successfully
                     sharedAccountNumber: '1234567890123'
                     primaryCustomer:
-                      personId: '5517'
+                      customerId: '5517'
                       cardId: '7775'
                       panMasked: 534152******2180
                       expiryDate: 03/27
                     secondaryCustomer:
-                      personId: '5537'
+                      customerId: '5537'
                       cardId: '7776'
                       panMasked: 534152******2181
                       expiryDate: 03/27
@@ -2579,7 +2579,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  personId:
+                  customerId:
                     type: string
                     description: Customer person ID
                     example: PERS12345
@@ -2610,14 +2610,14 @@ paths:
                   meta:
                     $ref: '#/components/schemas/Meta'
                 required:
-                  - personId
+                  - customerId
                   - cardId
                   - cardDetails
               examples:
                 successResponse:
                   summary: Card created successfully
                   value:
-                    personId: PERS12345
+                    customerId: PERS12345
                     cardId: '12345'
                     cardDetails:
                       pan: '1234567890123456'
@@ -2778,7 +2778,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  personId:
+                  customerId:
                     type: string
                     description: Customer person ID
                     example: PERS12345
@@ -2804,14 +2804,14 @@ paths:
                   meta:
                     $ref: '#/components/schemas/Meta'
                 required:
-                  - personId
+                  - customerId
                   - cardId
                   - cardDetails
               examples:
                 individualSuccess:
                   summary: Individual debit card created successfully
                   value:
-                    personId: PERS12345
+                    customerId: PERS12345
                     cardId: '12345'
                     cardDetails:
                       pan: 526916******0106
@@ -2822,7 +2822,7 @@ paths:
                 jointAccountCreated:
                   summary: Joint account created and debit card issued
                   value:
-                    personId: PERS12345
+                    customerId: PERS12345
                     cardId: '12346'
                     cardDetails:
                       pan: 526916******0107
@@ -2833,7 +2833,7 @@ paths:
                 jointAccountExisting:
                   summary: Debit card linked to existing joint account
                   value:
-                    personId: PERS12345
+                    customerId: PERS12345
                     cardId: '12347'
                     cardDetails:
                       pan: 526916******0108
