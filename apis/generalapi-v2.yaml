@@ -588,7 +588,7 @@ paths:
           required: true
           schema:
             type: string
-          description: The unique identifier of the customer
+          description: The unique identifier of the customer (numeric string)
           example: 123456789
       responses:
         '200':
@@ -806,9 +806,7 @@ paths:
         Update customer information in the system.
 
         The customer is identified by `customerId` in the path (obtained from
-        `POST /customers` or `POST /customers/search`). Identity attributes
-        (`nationalId`, `passport`, `identityId`) are now updatable attributes of the
-        customer rather than lookup keys — include them in the body to change them.
+        `POST /customers` or `POST /customers/search`).
       tags:
         - Customer Management
       parameters:
@@ -819,7 +817,7 @@ paths:
           required: true
           schema:
             type: string
-          description: The unique identifier of the customer to update. Obtain from `POST /customers` or `POST /customers/search`.
+          description: The unique identifier of the customer to update (numeric string). Obtain from `POST /customers` or `POST /customers/search`.
           example: 123456789
       requestBody:
         required: true
@@ -828,18 +826,6 @@ paths:
             schema:
               type: object
               properties:
-                nationalId:
-                  type: string
-                  description: '**Optional.** Updated national ID for the customer.'
-                  example: NAT123456
-                passport:
-                  type: string
-                  description: '**Optional.** Updated passport number for the customer.'
-                  example: passport03
-                identityId:
-                  type: string
-                  description: '**Optional.** Updated external identity ID for the customer.'
-                  example: ID123456
                 firstName:
                   type: string
                   description: '**Optional:** Customer''s first name'
@@ -950,10 +936,9 @@ paths:
                   description: '**Optional:** Customer''s employer'
                   example: Acme Corp
             examples:
-              fullUpdateWithPassport:
-                summary: Update all fields using passport
+              fullUpdate:
+                summary: Update all fields
                 value:
-                  passport: passport03
                   firstName: John
                   lastName: Emboss
                   middleName: William
@@ -978,10 +963,9 @@ paths:
                     flat: '200'
                     streetTitle: Baker's Street
                     countryCode: '826'
-              partialUpdateWithNationalId:
-                summary: Update only email and phone using national ID
+              partialUpdate:
+                summary: Update only email and phone
                 value:
-                  nationalId: NAT123456
                   email: newemail@test.com
                   mobilePhone: '1234567890'
                   customerUuid: 550e8400-e29b-41d4-a716-446655440004
@@ -995,24 +979,6 @@ paths:
                     building: Central
                     flat: '5'
                     streetTitle: New Street
-                    countryCode: '826'
-              updateWithId:
-                summary: Update using ID
-                value:
-                  identityId: ID123456
-                  lastName: NewLastName
-                  email: updated@test.com
-                  customerUuid: 550e8400-e29b-41d4-a716-446655440005
-                  mailAddress:
-                    house: '35'
-                    addressInCity: Unit 10
-                    addressInCountry: Liverpool
-                    recipientName: New Last Name
-                    zip: L1 1AA
-                    construction: '4'
-                    building: Mersey
-                    flat: '10'
-                    streetTitle: Albert Dock
                     countryCode: '826'
       responses:
         '201':
@@ -1045,11 +1011,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
               examples:
-                missingIdentifier:
-                  summary: Missing customer identifier
+                invalidCustomerId:
+                  summary: Invalid customerId in path
                   value:
                     code: ERR_VALIDATION_FAILED
-                    message: 'One of the following fields is required: nationalId, passport, identityId'
+                    message: Invalid customerId format. Numeric string only
                 invalidBirthDate:
                   summary: Invalid birth date format
                   value:
@@ -1123,7 +1089,7 @@ paths:
           required: true
           schema:
             type: string
-          description: The unique identifier of the customer
+          description: The unique identifier of the customer (numeric string)
           example: 123456789
       responses:
         '200':
@@ -1236,7 +1202,7 @@ paths:
           required: true
           schema:
             type: string
-          description: The unique identifier of the customer
+          description: The unique identifier of the customer (numeric string)
           example: 123456789
       summary: Show Customer Accounts
       description: |
@@ -1387,19 +1353,19 @@ paths:
             schema:
               type: object
               required:
-                - primaryCustomerIdNumber
-                - secondaryCustomerIdNumber
+                - primaryCustomerId
+                - secondaryCustomerId
                 - sharedAccountNumber
                 - primaryCard
                 - secondaryCard
               properties:
-                primaryCustomerIdNumber:
+                primaryCustomerId:
                   type: string
-                  description: '**Required.** Primary customer identification number (National ID, Passport, or Identity ID)'
+                  description: '**Required.** Primary customer ID (numeric string). Obtain from `POST /customers` or `POST /customers/search`.'
                   example: '123456789'
-                secondaryCustomerIdNumber:
+                secondaryCustomerId:
                   type: string
-                  description: '**Required.** Secondary customer identification number (National ID, Passport, or Identity ID)'
+                  description: '**Required.** Secondary customer ID (numeric string). Obtain from `POST /customers` or `POST /customers/search`.'
                   example: '987654321'
                 sharedAccountNumber:
                   type: string
@@ -1430,8 +1396,8 @@ paths:
               createJointAccount:
                 summary: Create joint account with cards for both customers
                 value:
-                  primaryCustomerIdNumber: '123456789'
-                  secondaryCustomerIdNumber: '987654321'
+                  primaryCustomerId: '123456789'
+                  secondaryCustomerId: '987654321'
                   sharedAccountNumber: '1234567890123'
                   primaryCard:
                     cardProductRid: PRIMARY_CARD_PRODUCT_RID
@@ -1537,7 +1503,7 @@ paths:
                   summary: Missing required field
                   value:
                     code: ERR_VALIDATION_FAILED
-                    message: 'Missing required field: primaryCustomerIdNumber'
+                    message: 'Missing required field: primaryCustomerId'
                 invalidAccountNumber:
                   summary: Invalid account number format
                   value:
@@ -2179,7 +2145,7 @@ paths:
               properties:
                 customerId:
                   type: string
-                  description: The unique identifier of the customer. Obtain from `POST /customers` or `POST /customers/search`.
+                  description: The unique identifier of the customer (numeric string). Obtain from `POST /customers` or `POST /customers/search`.
                   example: 123456789
             examples:
               byCustomerId:
@@ -2292,7 +2258,7 @@ paths:
               properties:
                 customerId:
                   type: string
-                  description: The unique identifier of the customer. Obtain from `POST /customers` or `POST /customers/search`.
+                  description: The unique identifier of the customer (numeric string). Obtain from `POST /customers` or `POST /customers/search`.
                   example: 123456789
                 channel:
                   type: string
@@ -2597,7 +2563,7 @@ paths:
                   example: VisaPrepaidClassicVirtualAPI
                 customerId:
                   type: string
-                  description: '**Required.** The unique identifier of the customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  description: '**Required.** The unique identifier of the customer (numeric string). Obtain from `POST /customers` or `POST /customers/search`.'
                   example: 123456789
             examples:
               createPrepaidCard:
@@ -2776,7 +2742,7 @@ paths:
                   example: VisaDebitPhysicalAPI
                 customerId:
                   type: string
-                  description: '**Required.** The unique identifier of the customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  description: '**Required.** The unique identifier of the customer (numeric string). Obtain from `POST /customers` or `POST /customers/search`.'
                   example: 123456789
                 accountNumber:
                   type: string
@@ -2887,11 +2853,11 @@ paths:
                   value:
                     code: ERR_VALIDATION_FAILED
                     message: 'Missing required field: accountNumber'
-                missingDocumentId:
-                  summary: Missing document ID
+                missingCustomerId:
+                  summary: Missing customerId
                   value:
                     code: ERR_VALIDATION_FAILED
-                    message: 'One of the following fields is required: nationalId, passport, identityId'
+                    message: 'Missing required field: customerId'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -3009,7 +2975,7 @@ paths:
                   example: GTBGH2-PHY-VS-PRP-CLS-NOR-CUS-SUPP-CardsIssuingContractAPI
                 customerId:
                   type: string
-                  description: '**Required.** The unique identifier of the customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  description: '**Required.** The unique identifier of the customer (numeric string). Obtain from `POST /customers` or `POST /customers/search`.'
                   example: 123456789
             examples:
               createSupplementary:
@@ -7147,7 +7113,7 @@ paths:
                   example: JOHN DOE
                 customerId:
                   type: string
-                  description: '**Required.** The unique identifier of the existing customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  description: '**Required.** The unique identifier of the existing customer (numeric string). Obtain from `POST /customers` or `POST /customers/search`.'
                   example: 123456789
             example:
               cardRefNum: PREP001234
@@ -7531,7 +7497,7 @@ paths:
                   example: '1234567890'
                 customerId:
                   type: string
-                  description: '**Required.** The unique identifier of the existing customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  description: '**Required.** The unique identifier of the existing customer (numeric string). Obtain from `POST /customers` or `POST /customers/search`.'
                   example: 123456789
             example:
               cardRefNum: PREP001234
@@ -7667,7 +7633,7 @@ paths:
                   example: '1234567890'
                 customerId:
                   type: string
-                  description: '**Required.** The unique identifier of the existing customer. Obtain from `POST /customers` or `POST /customers/search`.'
+                  description: '**Required.** The unique identifier of the existing customer (numeric string). Obtain from `POST /customers` or `POST /customers/search`.'
                   example: 123456789
             example:
               cardRefNum: PREP001234
@@ -7764,7 +7730,7 @@ paths:
                   summary: Missing required field
                   value:
                     code: ERR_VALIDATION_FAILED
-                    message: 'Missing required field: primaryCustomerIdNumber'
+                    message: 'Missing required field: primaryCustomerId'
                     meta:
                       requestId: '260519453094700226'
                       timestamp: '2026-05-20T09:11:11.566Z'
@@ -11278,8 +11244,8 @@ components:
           type: string
           description: >-
             **Conditionally Required:** Required when `requestType` is `NewAccountExistingCustomer` or
-            `ExistingAccountExistingCustomer`. Obtain from `POST /customers` or `POST /customers/search`.
-            Not used for `NewAccountNewCustomer`.
+            `ExistingAccountExistingCustomer` (numeric string). Obtain from `POST /customers` or
+            `POST /customers/search`. Not used for `NewAccountNewCustomer`.
           example: 123456789
         cardRefNum:
           type: string
