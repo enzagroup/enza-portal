@@ -11892,7 +11892,6 @@ paths:
                   example: '987654321'
                 sharedAccountNumber:
                   type: string
-                  pattern: '^[0-9]{1,19}$'
                   description: '**Required.** Shared CBS account number (numeric only, max 19 digits, no leading zeros)'
                   example: '1234567890123'
                 primaryCard:
